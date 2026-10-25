@@ -1,0 +1,79 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+body{
+  @apply font-sans bg-[#FBF3EA];
+}
+
+
+
+@layer base {
+  :root {
+    /* =========================
+       Primary Base (#E88DA0)
+    ========================== */
+    --primary: 347 66% 73%;
+    --primary-foreground: 0 0% 0%;
+
+    /* Primary Shades */
+    --primary-light: 347 66% 80%;
+    --primary-lighter: 347 66% 87%;
+    --primary-dark: 347 45% 60%;
+    --primary-darker: 347 40% 48%;
+
+    /* Primary Hover */
+    --primary-hover: 347 60% 66%;
+
+    /* =========================
+       Secondary Base (#9C81BE)
+    ========================== */
+    --secondary: 267 32% 63%;
+    --secondary-foreground: 0 0% 0%;
+
+    /* Secondary Shades */
+    --secondary-light: 267 35% 70%;
+    --secondary-lighter: 267 38% 78%;
+    --secondary-dark: 267 32% 52%;
+    --secondary-darker: 267 35% 42%;
+
+    /* Secondary Hover */
+    --secondary-hover: 267 32% 57%;
+
+    /* Ring */
+    --ring: 347 66% 73%;
+  }
+
+  .dark {
+    /* Primary */
+    --primary: 347 66% 73%;
+    --primary-foreground: 0 0% 0%;
+
+    --primary-light: 347 66% 80%;
+    --primary-lighter: 347 66% 87%;
+    --primary-dark: 347 45% 60%;
+    --primary-darker: 347 40% 48%;
+    --primary-hover: 347 60% 66%;
+
+    /* Secondary */
+    --secondary: 267 32% 63%;
+    --secondary-foreground: 0 0% 0%;
+
+    --secondary-light: 267 35% 70%;
+    --secondary-lighter: 267 38% 78%;
+    --secondary-dark: 267 32% 52%;
+    --secondary-darker: 267 35% 42%;
+    --secondary-hover: 267 32% 57%;
+
+    /* Ring */
+    --ring: 347 66% 73%;
+  }
+}
+
