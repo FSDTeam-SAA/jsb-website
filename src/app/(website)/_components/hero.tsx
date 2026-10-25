@@ -3,43 +3,38 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <section
-      aria-labelledby="hero-heading"
-      className="relative min-h-[100svh] overflow-hidden bg-[#f8eee8] bg-[url('/images/hero.png')] bg-cover bg-[position:62%_center] sm:bg-[position:60%_center] lg:h-screen lg:bg-center"
-    >
-      <div className="container relative z-10 mx-auto w-full pt-28 sm:pt-32 lg:px-0 lg:pt-[196px]">
-        <div className="max-w-[577px]">
-          <h1
-            id="hero-heading"
-            className="font-fredoka text-[clamp(2.5rem,4.45vw,4rem)] font-medium leading-[1.2]"
-          >
-            <span className="block text-[#E0A94C]">Their Imagination.</span>
-            <span className="block text-primary">Their Adventure.</span>
-            <span className="block text-secondary">Their Story.</span>
-          </h1>
+    <section aria-labelledby="hero-heading" className="relative h-[393px] bg-white sm:h-[460px] lg:h-[1112px]">
+      <div className="absolute inset-x-0 top-0 h-full overflow-hidden rounded-b-[24px] bg-[linear-gradient(180deg,#ffffff_0%,#dbeaf8_41%,#7eafdb_100%)] lg:h-[860px]">
+        <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_2px_2px,#729dcc_1.5px,transparent_2px)] [background-size:21px_21px]" />
+        <Image src="/images/figma/hero-map-layer.png" alt="" width={1165} height={384} priority className="pointer-events-none absolute left-1/2 top-[68px] hidden h-auto w-[min(81vw,1165px)] -translate-x-1/2 opacity-20 lg:block" />
 
-          <p className="mt-6 max-w-[539px] text-base font-medium leading-[1.38] text-white md:text-[#444] sm:text-lg">
-            Create a one-of-a-kind storybook where your child becomes the main
-            character in a world made just for them, fully personalised.
-          </p>
+        <Image src="/images/figma/hero-location.png" alt="" width={40} height={40} className="pointer-events-none absolute left-[7%] top-[111px] size-10 lg:left-[15.1%] lg:top-[163px]" />
+        <Image src="/images/figma/hero-user.png" alt="" width={40} height={40} className="pointer-events-none absolute right-[22%] top-[102px] size-10 lg:right-[16.7%] lg:top-[195px]" />
+        <Image src="/images/figma/hero-chart.png" alt="" width={52} height={52} className="pointer-events-none absolute left-[5.2%] top-[309px] size-[52px] lg:left-[15.7%] lg:top-[395px]" />
+        <Image src="/images/figma/hero-filter.png" alt="" width={52} height={52} className="pointer-events-none absolute right-[5.2%] top-[309px] size-[52px] lg:right-[16%] lg:top-[467px]" />
+      </div>
 
-          <Link
-            href="#create-your-book"
-            className="mt-6 inline-flex h-14 items-center justify-center rounded-2xl bg-[#e88da0] px-4 text-xl font-medium text-white shadow-[0_8px_18px_rgba(213,113,143,0.24)] transition hover:-translate-y-0.5 hover:bg-[#df7894] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#926daf] focus-visible:ring-offset-2"
-          >
-            Create Your Book
+      <div className="relative z-10 mx-auto flex max-w-[937px] flex-col items-center px-4 pt-[123px] text-center lg:pt-[175px]">
+        <p className="rounded-lg bg-white px-3 py-2 text-xs font-medium leading-none text-[#080808] shadow-sm lg:text-base">
+          Trusted Real Estate Lead Generation Since 2008
+        </p>
+        <h1 id="hero-heading" className="mt-3 max-w-[937px] text-balance text-2xl font-bold leading-[1.08] tracking-[-0.045em] text-[#0f2c4f] lg:mt-3 lg:text-[56px]">
+          Find Premium Real Estate Leads Before Your Competition
+        </h1>
+        <p className="mt-2 max-w-[677px] text-xs font-medium leading-[1.25] text-black lg:text-sm">
+          Access foreclosure, pre-foreclosure, mortgage, bankruptcy, tax lien, REO, and other real estate leads through one powerful marketplace.
+        </p>
+        <div className="mt-5 flex items-center gap-2 lg:mt-[23px] lg:gap-[22px]">
+          <Link href="#account" className="inline-flex h-[38px] items-center justify-center rounded-lg bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-4 text-xs font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 lg:h-12 lg:px-3 lg:text-base">
+            Create Free Account
+          </Link>
+          <Link href="#lead-types" className="inline-flex h-[38px] items-center justify-center rounded-lg bg-white px-4 text-xs font-bold text-[#104170] shadow-sm transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 lg:h-12 lg:px-3 lg:text-base">
+            Explore Leads Type
           </Link>
         </div>
       </div>
 
-      <Image
-        src="/images/hero_cloud.png"
-        alt=""
-        width={187}
-        height={174}
-        sizes="(max-width: 639px) 118px, (max-width: 1023px) 145px, 187px"
-        className="pointer-events-none absolute bottom-[-24px] right-[-26px] z-0 h-auto w-[118px] sm:bottom-[-29px] sm:right-[-30px] sm:w-[145px] lg:bottom-[-35px] lg:right-[-20px] lg:w-[187px]"
-      />
+      <Image src="/images/figma/hero-dashboard.png" alt="Foreclosure Gold marketplace dashboard" width={1082} height={574} priority className="pointer-events-none absolute left-1/2 top-[552px] hidden h-auto w-[min(75.2vw,1082px)] -translate-x-1/2 lg:block" />
     </section>
   );
 };

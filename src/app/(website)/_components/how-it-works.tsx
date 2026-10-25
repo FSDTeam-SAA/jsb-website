@@ -31,18 +31,18 @@ const steps: Step[] = [
 
 const HowItWorks = () => {
   return (
-    <section id="how-it-works" aria-labelledby="how-it-works-heading" className="bg-white py-12 sm:py-16 lg:py-[49px]">
-      <div className="container mx-auto px-5 sm:px-8 lg:px-0">
+    <section id="how-it-works" aria-labelledby="how-it-works-heading" className="bg-white py-8 sm:py-12 lg:py-[60px]">
+      <div className="container mx-auto px-4 lg:px-0">
         <header className="text-center">
-          <p className="inline-flex rounded-md bg-[#104a7d] px-2.5 py-1 text-[10px] font-medium text-white">
+          <p className="inline-flex h-[30px] items-center rounded-lg bg-[#104170] px-3 text-xs font-medium text-white lg:text-sm">
             How It Works
           </p>
-          <h2 id="how-it-works-heading" className="mt-5 text-[clamp(2rem,3.1vw,2.25rem)] font-bold leading-none tracking-[-0.04em] text-[#0f4779]">
+          <h2 id="how-it-works-heading" className="mt-6 text-2xl font-bold leading-none tracking-[-0.04em] text-[#104170] lg:text-[40px]">
             Four-Step Explanation
           </h2>
         </header>
 
-        <ol className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+        <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
           {steps.map((step, index) => {
             const Icon = step.icon;
             const isFeatured = index === 0;
@@ -50,17 +50,17 @@ const HowItWorks = () => {
             return (
               <li
                 key={step.title}
-                className={`min-h-[164px] rounded-[10px] border px-[18px] py-[35px] shadow-[0_1px_3px_rgba(15,37,60,0.08)] ${
-                  isFeatured ? "border-[#104a7d] bg-[#104a7d] text-white" : "border-black/10 bg-white text-[#111]"
+                className={`flex h-[159px] flex-col rounded-xl border p-4 shadow-[0_0_2px_rgba(0,0,0,0.25)] lg:h-[220px] lg:p-6 ${
+                  isFeatured ? "border-[#104170] bg-[#104170] text-white" : "border-black/10 bg-white text-[#111]"
                 }`}
               >
-                <span className={`flex size-[31px] items-center justify-center rounded-lg ${isFeatured ? "bg-[#dbeeff] text-[#104a7d]" : "bg-[#dbeeff] text-[#104a7d]"}`}>
-                  <Icon aria-hidden="true" size={17} strokeWidth={3} />
+                <span className="flex size-[42px] items-center justify-center rounded-[10px] border border-white bg-[#d1e4f6] text-[#104170]">
+                  <Icon aria-hidden="true" size={20} strokeWidth={2.6} />
                 </span>
-                <h3 className={`mt-3 text-lg font-bold leading-none tracking-[-0.035em] ${isFeatured ? "text-white" : "text-[#0f4779]"}`}>
+                <h3 className={`mt-4 text-base font-bold leading-none tracking-[-0.035em] lg:text-xl ${isFeatured ? "text-white" : "text-[#104170]"}`}>
                   {step.title}
                 </h3>
-                <p className={`mt-1 text-[10px] font-medium leading-[1.3] ${isFeatured ? "text-white" : "text-[#111]"}`}>
+                <p className={`mt-2 text-xs font-medium leading-[1.2] lg:text-sm ${isFeatured ? "text-white" : "text-[#111]"}`}>
                   {step.description}
                 </p>
               </li>

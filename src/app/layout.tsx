@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${nunitoSans.variable} ${crimsonText.variable} ${fredoka.variable} ${nunitoSans.className}`}
+        className={`${nunitoSans.variable} ${crimsonText.variable} ${fredoka.variable}`}
       >
         <SmoothScrollProvider>
           {children}

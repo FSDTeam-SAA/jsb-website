@@ -1,5 +1,5 @@
 import React from "react";
-// import Hero from './_components/hero'
+import Hero from './_components/hero'
 import Faq from "./_components/faq";
 import ReadyToStart from "./_components/ready-to-start";
 import ExploreLeadTypes from "./_components/explore-lead-types";
@@ -11,7 +11,7 @@ import LeadsForTheMarket from "./_components/leads-for-the-market";
 const HomePage = () => {
   return (
     <main className="overflow-x-clip">
-      {/* <Hero/> */}
+      <Hero/>
 
       <ExploreLeadTypes />
       <HowItWorks />

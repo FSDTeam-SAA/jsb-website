@@ -33,39 +33,39 @@ const plans = [
 
 const OurPlan = () => {
   return (
-    <section id="pricing" aria-labelledby="pricing-heading" className="bg-white py-10 sm:py-14 lg:py-[37px]">
-      <div className="container mx-auto px-5 sm:px-8 lg:px-0">
+    <section id="pricing" aria-labelledby="pricing-heading" className="bg-white py-8 sm:py-12 lg:py-[60px]">
+      <div className="container mx-auto px-4 lg:px-0">
         <header className="text-center">
-          <p className="inline-flex rounded-md bg-[#104a7d] px-2.5 py-1 text-[10px] font-medium text-white">
+          <p className="inline-flex h-[30px] items-center rounded-lg bg-[#104170] px-3 text-xs font-medium text-white lg:text-sm">
             Our Plan
           </p>
-          <h2 id="pricing-heading" className="mt-5 text-[clamp(2rem,3.1vw,2.25rem)] font-bold leading-none tracking-[-0.04em] text-[#0f4779]">
+          <h2 id="pricing-heading" className="mt-6 text-xl font-bold leading-none tracking-[-0.04em] text-[#104170] lg:text-[40px]">
             Membership Plans
           </h2>
         </header>
 
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-[17px]">
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
           {plans.map((plan) => (
-            <article key={plan.name} className="flex min-h-[295px] flex-col rounded-[9px] border border-black/25 px-4 py-[19px] text-center">
-              <h3 className="text-xl font-bold leading-none text-[#111]">{plan.name}</h3>
-              <p className="mx-auto mt-1.5 max-w-[190px] min-h-[32px] text-[10px] font-bold leading-[1.35] text-[#111]">
+            <article key={plan.name} className="mx-auto flex h-[397px] w-[310px] flex-col rounded-xl border border-[#949494] p-6 text-center lg:w-full">
+              <h3 className="text-2xl font-bold leading-none text-[#151515]">{plan.name}</h3>
+              <p className="mx-auto mt-1.5 max-w-[230px] min-h-[34px] text-sm font-bold leading-[1.2] text-[#151515]">
                 {plan.description}
               </p>
 
-              <p className="mt-6 flex items-baseline justify-center font-bold leading-none text-black">
-                <span className="mr-0.5 text-base">$</span>
-                <span className="text-[34px] tracking-[-0.045em]">{plan.price}</span>
-                <span className="ml-1 text-[10px]">/month</span>
+              <p className="mt-8 flex items-baseline justify-center font-bold leading-none text-black">
+                <span className="mr-0.5 text-2xl">$</span>
+                <span className="text-5xl tracking-[-0.045em]">{plan.price}</span>
+                <span className="ml-1 text-sm">/month</span>
               </p>
 
-              <div className="mt-8 rounded-[10px] bg-[#f1f5fd] py-2.5 text-[#0f4779]">
-                <p className="text-lg font-bold leading-none">{plan.discount}</p>
-                <p className="mt-1.5 text-[10px] font-bold">Lead Discount</p>
+              <div className="mt-8 rounded-xl bg-[#f4f8ff] py-3 text-[#104170]">
+                <p className="text-2xl font-bold leading-none">{plan.discount}</p>
+                <p className="mt-1.5 text-sm font-bold">Lead Discount</p>
               </div>
 
               <Link
                 href="#create-your-book"
-                className="mt-6 inline-flex h-7 items-center justify-center self-center rounded-md bg-[#104a7d] px-6 text-[10px] font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2"
+                className="mt-auto inline-flex h-[38px] w-[166px] items-center justify-center self-center rounded-lg bg-[#104170] px-3 text-sm font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
               >
                 {plan.action}
               </Link>
@@ -73,7 +73,7 @@ const OurPlan = () => {
           ))}
         </div>
 
-        <p className="mt-6 text-center text-xs text-[#111]">
+        <p className="mx-auto mt-8 max-w-[390px] text-center text-sm text-[#111] lg:max-w-none">
           All memberships are <strong>month-to-month.</strong> Customers can cancel at any time
         </p>
       </div>

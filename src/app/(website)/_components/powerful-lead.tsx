@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 // The provided dashboard artwork is intentionally repeated to create the carousel previews.
-const slides = ["/images/power-lead.png", "/images/power-lead.png", "/images/power-lead.png"];
+const slides = ["/images/figma/lead-carousel-dashboard.png", "/images/figma/lead-carousel-dashboard.png", "/images/figma/lead-carousel-dashboard.png"];
 
 const PowerfulLead = () => {
   const [activeSlide, setActiveSlide] = useState(1);
@@ -22,44 +22,44 @@ const PowerfulLead = () => {
   const nextSlide = (activeSlide + 1) % slides.length;
 
   return (
-    <section aria-labelledby="powerful-lead-heading" className="bg-white py-10 sm:py-14 lg:py-[41px]">
-      <div className="mx-auto max-w-[960px] px-5 sm:px-8 lg:px-0">
-        <div className="relative min-h-[450px] overflow-hidden rounded-xl border border-[#9bc7ed] bg-[linear-gradient(180deg,#dcebf8_0%,#eff7fe_55%,#ffffff_100%)] pt-10 sm:min-h-[483px] sm:pt-[43px]">
+    <section aria-labelledby="powerful-lead-heading" className="bg-white py-8 sm:py-12 lg:py-[60px]">
+      <div className="container mx-auto px-0">
+        <div className="relative h-[464px] overflow-hidden rounded-[21px] border border-[#bcd8f2] bg-[linear-gradient(180deg,rgba(126,175,219,0.3)_0%,rgba(255,255,255,0)_100%)] pt-[73px] lg:h-[620px] lg:pt-20">
           <header className="relative z-10 px-5 text-center">
-            <h2 id="powerful-lead-heading" className="mx-auto max-w-[390px] text-balance text-[clamp(1.6rem,3vw,2rem)] font-bold leading-[1.03] tracking-[-0.04em] text-[#0f4779]">
+            <h2 id="powerful-lead-heading" className="mx-auto max-w-[480px] text-balance text-2xl font-bold leading-[1.05] tracking-[-0.04em] text-[#104170] lg:text-[40px]">
               Powerful Lead Search<br />at Your Fingertips
             </h2>
-            <p className="mx-auto mt-3 max-w-[430px] text-[9px] font-medium leading-[1.35] text-black sm:text-[10px]">
+            <p className="mx-auto mt-2 max-w-[520px] text-xs font-normal leading-[1.2] text-black lg:mt-3 lg:text-sm">
               Explore, filter, and manage real estate leads from one easy-to-use dashboard. Find the right opportunities by lead type, location, and key property criteria.
             </p>
           </header>
 
-          <div className="absolute inset-x-0 bottom-0 top-[173px] overflow-hidden sm:top-[174px]">
-            <div className="absolute left-1/2 top-0 aspect-[490/252] w-[84vw] -translate-x-1/2 overflow-hidden rounded-sm bg-white shadow-[0_12px_24px_rgba(42,80,112,0.14)] transition-transform duration-500 sm:h-[252px] sm:w-[490px]">
+          <div className="absolute inset-x-0 bottom-0 top-[244px] overflow-hidden lg:top-[270px]">
+            <div className="absolute left-1/2 top-0 h-[171px] w-[360px] -translate-x-1/2 overflow-hidden rounded-[11px] bg-white shadow-[-18px_20px_33px_rgba(22,100,181,0.1)] transition-transform duration-500 lg:h-[323px] lg:w-[780px]">
               <Image
                 key={activeSlide}
                 src={slides[activeSlide]}
                 alt="Foreclosure Gold lead dashboard"
-                width={490}
-                height={252}
-                sizes="(max-width: 639px) 84vw, 490px"
+                width={413}
+                height={171}
+                sizes="(max-width: 1023px) 360px, 780px"
                 className="h-full w-full object-cover"
                 priority
               />
             </div>
 
-            <div aria-hidden="true" className="absolute left-[calc(50%-755px)] top-3 hidden h-[205px] w-[400px] overflow-hidden opacity-75 sm:block">
-              <Image src={slides[previousSlide]} alt="" width={400} height={205} className="h-full w-full object-cover object-right" />
+            <div aria-hidden="true" className="absolute left-[calc(50%-383px)] top-0 h-[171px] w-[174px] overflow-hidden opacity-90 lg:left-[calc(50%-950px)] lg:h-[323px] lg:w-[390px]">
+              <Image src={slides[previousSlide]} alt="" width={413} height={171} className="h-full w-[413px] max-w-none object-cover object-right lg:h-full lg:w-[780px]" />
             </div>
-            <div aria-hidden="true" className="absolute right-[calc(50%-755px)] top-3 hidden h-[205px] w-[400px] overflow-hidden opacity-75 sm:block">
-              <Image src={slides[nextSlide]} alt="" width={400} height={205} className="h-full w-full object-cover object-left" />
+            <div aria-hidden="true" className="absolute right-[calc(50%-383px)] top-0 h-[171px] w-[180px] overflow-hidden opacity-90 lg:right-[calc(50%-950px)] lg:h-[323px] lg:w-[390px]">
+              <Image src={slides[nextSlide]} alt="" width={413} height={171} className="h-full w-[413px] max-w-none object-cover object-left lg:h-full lg:w-[780px]" />
             </div>
 
             <button
               type="button"
               aria-label="Show previous lead dashboard slide"
               onClick={showPrevious}
-              className="absolute left-3 top-[105px] z-20 flex size-[27px] items-center justify-center rounded-full border border-[#111] bg-white text-[#111] transition hover:bg-[#eef5fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] sm:left-[calc(50%-276px)]"
+              className="absolute left-[calc(50%-212px)] top-[74px] z-20 flex size-6 items-center justify-center rounded-full border border-[#111] bg-white text-[#111] transition hover:bg-[#eef5fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] lg:left-[calc(50%-450px)] lg:top-[146px]"
             >
               <ChevronLeft aria-hidden="true" size={16} strokeWidth={1.5} />
             </button>
@@ -67,7 +67,7 @@ const PowerfulLead = () => {
               type="button"
               aria-label="Show next lead dashboard slide"
               onClick={showNext}
-              className="absolute right-3 top-[105px] z-20 flex size-[27px] items-center justify-center rounded-full border border-[#111] bg-white text-[#111] transition hover:bg-[#eef5fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] sm:right-[calc(50%-276px)]"
+              className="absolute right-[calc(50%-212px)] top-[74px] z-20 flex size-6 items-center justify-center rounded-full border border-[#111] bg-white text-[#111] transition hover:bg-[#eef5fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] lg:right-[calc(50%-450px)] lg:top-[146px]"
             >
               <ChevronRight aria-hidden="true" size={16} strokeWidth={1.5} />
             </button>

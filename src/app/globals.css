@@ -10,7 +10,8 @@
 }
 
 body{
-  @apply font-sans bg-[#FBF3EA];
+  @apply bg-[#FFFFFF];
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 
@@ -18,62 +19,61 @@ body{
 @layer base {
   :root {
     /* =========================
-       Primary Base (#E88DA0)
+       Primary Base (#104170)
     ========================== */
-    --primary: 347 66% 73%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 210 61% 25%;
+    --primary-foreground: 0 0% 100%;
 
     /* Primary Shades */
-    --primary-light: 347 66% 80%;
-    --primary-lighter: 347 66% 87%;
-    --primary-dark: 347 45% 60%;
-    --primary-darker: 347 40% 48%;
+    --primary-light: 210 61% 35%;
+    --primary-lighter: 210 61% 45%;
+    --primary-dark: 210 61% 20%;
+    --primary-darker: 210 61% 15%;
 
     /* Primary Hover */
-    --primary-hover: 347 60% 66%;
+    --primary-hover: 210 61% 20%;
 
     /* =========================
-       Secondary Base (#9C81BE)
+       Secondary Base (#0073DF)
     ========================== */
-    --secondary: 267 32% 63%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 209 100% 44%;
+    --secondary-foreground: 0 0% 100%;
 
     /* Secondary Shades */
-    --secondary-light: 267 35% 70%;
-    --secondary-lighter: 267 38% 78%;
-    --secondary-dark: 267 32% 52%;
-    --secondary-darker: 267 35% 42%;
+    --secondary-light: 209 100% 54%;
+    --secondary-lighter: 209 100% 64%;
+    --secondary-dark: 209 100% 37%;
+    --secondary-darker: 209 100% 30%;
 
     /* Secondary Hover */
-    --secondary-hover: 267 32% 57%;
+    --secondary-hover: 209 100% 38%;
 
     /* Ring */
-    --ring: 347 66% 73%;
+    --ring: 210 61% 25%;
   }
 
   .dark {
     /* Primary */
-    --primary: 347 66% 73%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 210 61% 25%;
+    --primary-foreground: 0 0% 100%;
 
-    --primary-light: 347 66% 80%;
-    --primary-lighter: 347 66% 87%;
-    --primary-dark: 347 45% 60%;
-    --primary-darker: 347 40% 48%;
-    --primary-hover: 347 60% 66%;
+    --primary-light: 210 61% 35%;
+    --primary-lighter: 210 61% 45%;
+    --primary-dark: 210 61% 20%;
+    --primary-darker: 210 61% 15%;
+    --primary-hover: 210 61% 20%;
 
     /* Secondary */
-    --secondary: 267 32% 63%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 209 100% 44%;
+    --secondary-foreground: 0 0% 100%;
 
-    --secondary-light: 267 35% 70%;
-    --secondary-lighter: 267 38% 78%;
-    --secondary-dark: 267 32% 52%;
-    --secondary-darker: 267 35% 42%;
-    --secondary-hover: 267 32% 57%;
+    --secondary-light: 209 100% 54%;
+    --secondary-lighter: 209 100% 64%;
+    --secondary-dark: 209 100% 37%;
+    --secondary-darker: 209 100% 30%;
+    --secondary-hover: 209 100% 38%;
 
     /* Ring */
-    --ring: 347 66% 73%;
+    --ring: 210 61% 25%;
   }
 }
-

@@ -31,28 +31,30 @@ const markets: Market[] = [
 
 const LeadsForTheMarket = () => {
   return (
-    <section aria-labelledby="markets-heading" className="bg-white py-12 sm:py-16 lg:py-[77px]">
-      <div className="container mx-auto px-5 sm:px-8 lg:px-0">
+    <section aria-labelledby="markets-heading" className="bg-white py-8 sm:py-12 lg:py-[60px]">
+      <div className="container mx-auto px-4 lg:px-0">
         <header className="text-center">
-          <h2 id="markets-heading" className="mx-auto max-w-[350px] text-balance text-[clamp(2rem,3.1vw,2.25rem)] font-bold leading-[1.03] tracking-[-0.045em] text-[#0f4779]">
+          <h2 id="markets-heading" className="mx-auto max-w-[420px] text-balance text-2xl font-bold leading-[1.03] tracking-[-0.045em] text-[#104170] lg:text-[40px]">
             Leads for the<br />Markets You Serve
           </h2>
-          <p className="mx-auto mt-6 max-w-[565px] text-[10px] font-medium leading-[1.25] text-black">
+          <p className="mx-auto mt-6 max-w-[700px] text-xs font-normal leading-[1.2] text-black lg:text-sm">
             Whether you&apos;re looking for investment opportunities, mortgage prospects, distressed properties, or targeted property data, Foreclosure Gold provides multiple lead categories from one platform.
           </p>
         </header>
 
-        <div className="mx-auto mt-4 grid max-w-[1135px] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+        <div className="mx-auto mt-6 grid max-w-[1280px] gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
           {markets.map((market) => {
             const Icon = market.icon;
 
             return (
-              <article key={market.title} className="min-h-[194px] rounded-[10px] border border-black/10 px-[13px] py-[25px] shadow-[0_1px_3px_rgba(15,37,60,0.08)]">
-                <span className="flex size-[48px] items-center justify-center rounded-[14px] bg-[#dbeeff] text-[#0f4779]">
-                  <Icon aria-hidden="true" size={25} strokeWidth={2.3} />
+              <article key={market.title} className="flex min-h-[194px] flex-col gap-[18px] rounded-xl border border-black/10 px-4 py-6 shadow-[0_0_2px_rgba(0,0,0,0.25)] lg:min-h-[270px] lg:gap-7 lg:p-8">
+                <span className="flex size-[42px] items-center justify-center rounded-[10px] bg-[#d1e4f6] text-[#104170] lg:size-[60px]">
+                  <Icon aria-hidden="true" size={22} strokeWidth={2.3} className="lg:scale-125" />
                 </span>
-                <h3 className="mt-[18px] text-lg font-bold leading-none tracking-[-0.035em] text-[#0f4779]">{market.title}</h3>
-                <p className="mt-1 max-w-[230px] text-[10px] font-medium leading-[1.25] text-black">{market.description}</p>
+                <div>
+                  <h3 className="text-base font-bold leading-none tracking-[-0.035em] text-[#104170] lg:text-xl">{market.title}</h3>
+                  <p className="mt-2 max-w-[260px] text-xs font-medium leading-[1.2] text-black lg:text-sm">{market.description}</p>
+                </div>
               </article>
             );
           })}
