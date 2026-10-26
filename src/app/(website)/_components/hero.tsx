@@ -15,7 +15,7 @@ const Hero = () => {
       </div>
 
       <div className="relative z-10 mx-auto flex max-w-[937px] flex-col items-center px-4 pt-[123px] text-center lg:pt-[175px]">
-        <p className="rounded-lg bg-white px-3 py-2 text-xs font-medium leading-none text-[#080808] shadow-sm lg:text-base">
+        <p className="rounded-[8px] bg-white px-3 py-2 text-xs font-medium leading-none text-[#080808] shadow-sm lg:text-base">
           Trusted Real Estate Lead Generation Since 2008
         </p>
         <h1 id="hero-heading" className="mt-3 max-w-[937px] text-balance text-2xl font-bold leading-[1.08] tracking-[-0.045em] text-[#0f2c4f] lg:mt-3 lg:text-[56px]">
@@ -25,10 +25,10 @@ const Hero = () => {
           Access foreclosure, pre-foreclosure, mortgage, bankruptcy, tax lien, REO, and other real estate leads through one powerful marketplace.
         </p>
         <div className="mt-5 flex items-center gap-2 lg:mt-[23px] lg:gap-[22px]">
-          <Link href="#account" className="inline-flex h-[38px] items-center justify-center rounded-lg bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-4 text-xs font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 lg:h-12 lg:px-3 lg:text-base">
+          <Link href="#account" className="inline-flex h-[38px] items-center justify-center rounded-[8px] bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-4 text-xs font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 lg:h-12 lg:px-3 lg:text-base">
             Create Free Account
           </Link>
-          <Link href="#lead-types" className="inline-flex h-[38px] items-center justify-center rounded-lg bg-white px-4 text-xs font-bold text-[#104170] shadow-sm transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 lg:h-12 lg:px-3 lg:text-base">
+          <Link href="#lead-types" className="inline-flex h-[38px] items-center justify-center rounded-[8px] bg-white px-4 text-xs font-bold text-[#104170] shadow-sm transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 lg:h-12 lg:px-3 lg:text-base">
             Explore Leads Type
           </Link>
         </div>

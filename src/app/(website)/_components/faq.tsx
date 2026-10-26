@@ -36,7 +36,7 @@ const Faq = () => {
       <div className="container mx-auto px-4 lg:px-0">
         <div className="grid gap-8 lg:grid-cols-[1fr_1.06fr] lg:gap-20">
           <header className="max-w-[450px]">
-            <p className="inline-flex h-[30px] items-center rounded-lg bg-[#104170] px-3 text-xs font-medium text-white lg:text-sm">FAQS</p>
+            <p className="inline-flex h-[30px] items-center rounded-[8px] bg-[#104170] px-3 text-xs font-medium text-white lg:text-sm">FAQS</p>
             <h2 id="faq-heading" className="mt-8 text-balance text-2xl font-bold leading-[1.08] tracking-[-0.045em] text-[#104170] lg:text-5xl">
               Common Questions About<br className="hidden lg:block" /> Our Coverage &amp; Services
             </h2>
@@ -45,7 +45,7 @@ const Faq = () => {
             </p>
             <Link
               href="#faq"
-              className="mt-8 inline-flex h-12 items-center justify-center rounded-lg bg-[#104170] px-3 text-base font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2"
+              className="mt-8 inline-flex h-12 items-center justify-center rounded-[8px] bg-[#104170] px-3 text-base font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2"
             >
               View All FAQS
             </Link>

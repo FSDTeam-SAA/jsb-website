@@ -45,7 +45,7 @@ const ExploreLeadTypes = () => {
     <section id="lead-types" aria-labelledby="lead-types-heading" className="bg-white py-8 sm:py-12 lg:py-[60px]">
       <div className="container mx-auto px-4 lg:px-0">
         <header className="text-center">
-          <p className="inline-flex h-[30px] items-center rounded-lg bg-[#104170] px-3 text-xs font-medium text-white lg:text-sm">
+          <p className="inline-flex h-[30px] items-center rounded-[8px] bg-[#104170] px-3 text-xs font-medium text-white lg:text-sm">
             Categories
           </p>
           <h2 id="lead-types-heading" className="mt-3 text-2xl font-bold leading-none tracking-[-0.04em] text-[#104170] lg:text-[40px]">
@@ -73,7 +73,7 @@ const ExploreLeadTypes = () => {
                 </p>
                 <Link
                   href="#create-your-book"
-                  className="mt-auto inline-flex h-9 w-fit items-center justify-center rounded-lg bg-[#104170] px-3 text-sm font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
+                  className="mt-auto inline-flex h-9 w-fit items-center justify-center rounded-[8px] bg-[#104170] px-3 text-sm font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
                 >
                   Find Leads
                 </Link>
@@ -85,7 +85,7 @@ const ExploreLeadTypes = () => {
         <div className="mt-8 text-center">
           <Link
             href="#lead-types"
-            className="inline-flex h-9 items-center justify-center rounded-lg bg-[#104170] px-3 text-sm font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
+            className="inline-flex h-9 items-center justify-center rounded-[8px] bg-[#104170] px-3 text-sm font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
           >
             Explore all Leads Type
           </Link>

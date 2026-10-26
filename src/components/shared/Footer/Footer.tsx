@@ -29,21 +29,21 @@ const footerGroups: FooterGroup[] = [
 const Footer = () => {
   return (
     <footer className="bg-white text-black">
-      <div className="container mx-auto px-4 py-9 lg:min-h-[327px] lg:px-0 lg:pb-[22px] lg:pt-[99px]">
-        <div className="grid grid-cols-3 gap-x-4 gap-y-6 lg:grid-cols-[267px_163px_140px_169px_1fr] lg:gap-0">
+      <div className="container mx-auto px-4 py-9 lg:min-h-[318px] lg:px-0 lg:pb-0 lg:pt-10">
+        <div className="grid grid-cols-3 gap-x-4 gap-y-6 lg:flex lg:items-start lg:justify-between lg:gap-0">
           <section className="col-span-3 max-w-none lg:col-span-1 lg:max-w-[230px]">
             <Link href="/" aria-label="Foreclosure Gold home" className="inline-flex rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2">
-              <Image src="/images/figma/foreclosure-gold-logo.png" alt="Foreclosure Gold" width={198} height={42} className="h-auto w-[273px] lg:w-[198px]" />
+              <Image src="/images/footer_logo.png" alt="Foreclosure Gold" width={1092} height={280} className="h-auto w-[273px] lg:w-[228px]" />
             </Link>
             <p className="mt-4 text-base font-medium leading-none text-black lg:mt-2 lg:text-xs">Online marketplace for real estate leads.</p>
           </section>
 
           {footerGroups.map((group) => (
             <nav key={group.title} aria-label={group.title}>
-              <h2 className="text-base font-bold leading-none tracking-[-0.035em] text-[#104170] lg:text-lg lg:font-medium">{group.title}</h2>
+              <h2 className="text-base font-bold leading-none tracking-[-0.035em] text-[#104170] lg:text-xl lg:font-medium">{group.title}</h2>
               <ul className="mt-3 space-y-3">
                 {group.links.map((link, index) => (
-                  <li key={link}>
+                  <li key={link} className="leading-none">
                     <Link
                       href={group.hrefs?.[index] ?? group.href ?? "#lead-types"}
                       className="text-xs font-medium leading-none text-black transition hover:text-[#104170] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2"
@@ -62,7 +62,7 @@ const Footer = () => {
             </h2>
             <Link
               href="#create-your-book"
-              className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-3 text-base font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2 lg:h-9 lg:text-xs"
+              className="mt-8 inline-flex h-12 items-center justify-center rounded-[8px] bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-3 text-base font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2 lg:h-10 lg:px-4 lg:text-xs"
             >
               Create Free Account
             </Link>
@@ -71,7 +71,7 @@ const Footer = () => {
       </div>
 
       <div className="bg-[#104a7d] text-white">
-        <div className="container mx-auto flex min-h-[124px] flex-col justify-center gap-4 px-4 py-3 text-base font-medium sm:flex-row sm:items-center sm:justify-between lg:min-h-7 lg:px-0 lg:py-0 lg:text-[11px]">
+        <div className="container mx-auto flex min-h-[124px] flex-col justify-center gap-4 px-4 py-3 text-base font-medium sm:flex-row sm:items-center sm:justify-between lg:min-h-[35px] lg:px-0 lg:py-0 lg:text-[11px]">
           <p>© 2026 Foreclosure Gold. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <Link href="/privacy-policy" className="transition hover:text-white/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Privacy Policy</Link>
