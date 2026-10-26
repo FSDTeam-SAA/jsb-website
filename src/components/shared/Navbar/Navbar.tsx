@@ -41,19 +41,16 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          {/* <Link href="#account" aria-label="Open your account" className="flex size-[38px] items-center justify-center rounded-xl bg-white text-[#080808] shadow-sm transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
-            <UserRound aria-hidden="true" size={18} strokeWidth={1.7} />
-          </Link> */}
-          <Link href="#account" className="inline-flex h-[42px] items-center justify-center rounded-lg bg-[#104170] px-3 text-base font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
+          <Link href="#account" className="inline-flex h-[42px] items-center justify-center rounded-[8px] bg-[#104170] px-3 text-base font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
             Create Free Account
           </Link>
-          <Link href="#account" className="inline-flex h-[42px] items-center justify-center rounded-lg border border-[#104170] bg-white px-3 text-base font-bold text-[#104170] transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
+          <Link href="#account" className="inline-flex h-[42px] items-center justify-center rounded-[8px] border border-[#104170] bg-white px-3 text-base font-bold text-[#104170] transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
             Login
           </Link>
         </div>
 
         <div className="flex items-center lg:hidden">
-          <button type="button" aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isMenuOpen} aria-controls="mobile-navigation" onClick={() => setIsMenuOpen((open) => !open)} className="flex size-[30px] items-center justify-center rounded-md bg-[#104170] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
+          <button type="button" aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isMenuOpen} aria-controls="mobile-navigation" onClick={() => setIsMenuOpen((open) => !open)} className="flex size-[30px] items-center justify-center rounded-[8px] bg-[#104170] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
             {isMenuOpen ? <X aria-hidden="true" size={19} /> : <Menu aria-hidden="true" size={20} />}
           </button>
         </div>
@@ -65,7 +62,7 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
-            <Link href="#" className="flex h-[38px] items-center justify-center rounded-lg bg-[#104170] px-3 text-base font-bold text-white">Log out</Link>
+            <Link href="#" className="flex h-[38px] items-center justify-center rounded-[8px] bg-[#104170] px-3 text-base font-bold text-white">Log out</Link>
           </nav>
         </div>
         </div>
