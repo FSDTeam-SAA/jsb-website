@@ -26,8 +26,8 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Boekerello",
-  description: "Their Imagination. Their Adventure. Their Story.",
+  title: "FORECLOSURE GOLD",
+  description: "Premium Foreclosure Leads",
 };
 
 export default function RootLayout({
