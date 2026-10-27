@@ -29,7 +29,7 @@ const footerGroups: FooterGroup[] = [
 const Footer = () => {
   return (
     <footer className="bg-white text-black">
-      <div className="container mx-auto px-4 py-9 lg:min-h-[318px] lg:px-0 lg:pb-0 lg:pt-10">
+      <div className="container mx-auto px-4 pt-9 pb-8 lg:min-h-[318px] lg:px-0 lg:pb-0 lg:pt-10">
         <div className="grid grid-cols-3 gap-x-4 gap-y-6 lg:flex lg:items-start lg:justify-between lg:gap-0">
           <section className="col-span-3 max-w-none lg:col-span-1 lg:max-w-[230px]">
             <Link href="/" aria-label="Foreclosure Gold home" className="inline-flex rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2">
@@ -62,7 +62,7 @@ const Footer = () => {
             </h2>
             <Link
               href="#create-your-book"
-              className="mt-8 inline-flex h-12 items-center justify-center rounded-[8px] bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-3 text-base font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2 lg:h-10 lg:px-4 lg:text-xs"
+              className="mt-6 inline-flex h-12 items-center justify-center rounded-[8px] bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-3 text-base font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2 lg:mt-8 lg:h-10 lg:px-4 lg:text-xs"
             >
               Create Free Account
             </Link>
@@ -71,7 +71,7 @@ const Footer = () => {
       </div>
 
       <div className="bg-[#104a7d] text-white">
-        <div className="container mx-auto flex min-h-[124px] flex-col justify-center gap-4 px-4 py-3 text-base font-medium sm:flex-row sm:items-center sm:justify-between lg:min-h-[35px] lg:px-0 lg:py-0 lg:text-[11px]">
+        <div className="container mx-auto flex flex-col justify-center gap-4 px-16 py-3 text-base font-medium sm:flex-row sm:items-center sm:justify-between lg:min-h-[35px] lg:px-0 lg:py-0 lg:text-[11px]">
           <p>© 2026 Foreclosure Gold. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <Link href="/privacy-policy" className="transition hover:text-white/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Privacy Policy</Link>
