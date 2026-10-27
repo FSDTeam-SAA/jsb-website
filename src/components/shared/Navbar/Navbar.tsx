@@ -25,11 +25,12 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 -mb-[54px] h-[54px] lg:-mb-[90px] lg:h-[90px]">
+    <header className="sticky top-0 z-50 -mb-[58px] h-[58px] lg:-mb-[90px] lg:h-[90px]">
       <div className={`pointer-events-auto absolute inset-x-0 top-0 transition-[background-color,box-shadow] duration-200 ${isScrolled ? "bg-white/95 shadow-[0_4px_18px_rgba(15,44,79,0.14)] backdrop-blur" : "bg-transparent"}`}>
-        <div className="container mx-auto flex h-[54px] items-center justify-between px-4 lg:h-[90px] lg:px-0">
+        <div className="container mx-auto flex h-[58px] items-center justify-between px-4 lg:h-[90px] lg:px-0">
         <Link href="/" aria-label="Foreclosure Gold home" className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
-          <Image src="/images/figma/foreclosure-gold-logo.png" alt="Foreclosure Gold" width={198} height={42} priority className="h-auto w-[130px] lg:w-[198px]" />
+          <Image src="/images/footer_logo.png" alt="Foreclosure Gold" width={1092} height={280} priority className="h-[42px] w-[164px] lg:hidden" />
+          <Image src="/images/figma/foreclosure-gold-logo.png" alt="Foreclosure Gold" width={198} height={42} priority className="hidden h-auto w-[198px] lg:block" />
         </Link>
 
         <nav aria-label="Primary navigation" className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 lg:flex">
@@ -50,12 +51,12 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center lg:hidden">
-          <button type="button" aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isMenuOpen} aria-controls="mobile-navigation" onClick={() => setIsMenuOpen((open) => !open)} className="flex size-[30px] items-center justify-center rounded-[8px] bg-[#104170] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
+          <button type="button" aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isMenuOpen} aria-controls="mobile-navigation" onClick={() => setIsMenuOpen((open) => !open)} className="flex size-8 items-center justify-center rounded-[4px] bg-[#104170] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
             {isMenuOpen ? <X aria-hidden="true" size={19} /> : <Menu aria-hidden="true" size={20} />}
           </button>
         </div>
 
-        <div id="mobile-navigation" className={`absolute right-4 top-[54px] w-[173px] overflow-hidden rounded-lg bg-white shadow-[0_10px_24px_rgba(15,44,79,0.16)] transition-[max-height,opacity] duration-200 lg:hidden ${isMenuOpen ? "max-h-[274px] opacity-100" : "pointer-events-none max-h-0 opacity-0"}`}>
+        <div id="mobile-navigation" className={`absolute right-4 top-[58px] w-[173px] overflow-hidden rounded-lg bg-white shadow-[0_10px_24px_rgba(15,44,79,0.16)] transition-[max-height,opacity] duration-200 lg:hidden ${isMenuOpen ? "max-h-[274px] opacity-100" : "pointer-events-none max-h-0 opacity-0"}`}>
           <nav aria-label="Mobile navigation" className="flex flex-col gap-4 p-4">
             {navigation.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)} className="px-3 py-2 text-base font-bold leading-none text-[#104170] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170]">
