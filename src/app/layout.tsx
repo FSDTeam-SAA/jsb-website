@@ -4,6 +4,9 @@ import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 import ScrollToTopComponent from "@/components/providers/ScrollToTop";
 
 import { Nunito_Sans, Crimson_Text, Fredoka } from "next/font/google";
+import AuthProvider from "@/components/providers/AuthProvider";
+import AppProvider from "@/components/providers/AppProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -41,7 +44,13 @@ export default function RootLayout({
         className={`${nunitoSans.variable} ${crimsonText.variable} ${fredoka.variable}`}
       >
         <SmoothScrollProvider>
-          {children}
+          <AuthProvider>
+          <AppProvider>
+            {children}
+
+            <Toaster />
+          </AppProvider>
+        </AuthProvider>
           <ScrollToTopComponent />
         </SmoothScrollProvider>
       </body>

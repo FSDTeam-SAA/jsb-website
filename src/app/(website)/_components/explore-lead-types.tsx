@@ -45,7 +45,7 @@ const ExploreLeadTypes = () => {
     <section id="lead-types" aria-labelledby="lead-types-heading" className="bg-white py-8 sm:py-12 lg:py-[60px]">
       <div className="container mx-auto px-4 lg:px-0">
         <header className="text-center">
-          <p className="inline-flex h-[30px] items-center rounded-[8px] bg-[#104170] px-3 text-xs font-medium text-white lg:text-sm">
+          <p className="inline-flex h-[30px] items-center rounded-[8px] bg-[#d1e4f6] px-3 text-xs font-medium text-[#104170] lg:text-sm">
             Categories
           </p>
           <h2 id="lead-types-heading" className="mt-3 text-2xl font-bold leading-none tracking-[-0.04em] text-[#104170] lg:text-[40px]">

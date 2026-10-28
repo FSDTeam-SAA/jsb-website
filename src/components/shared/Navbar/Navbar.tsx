@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const navigation = [
@@ -42,11 +42,11 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link href="#account" className="inline-flex h-[42px] items-center justify-center rounded-[8px] bg-[#104170] px-3 text-base font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
-            Create Free Account
+          <Link href="#account" aria-label="Open your account" className="flex size-[38px] items-center justify-center rounded-xl bg-white text-[#080808] shadow-sm transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
+            <UserRound aria-hidden="true" size={18} strokeWidth={1.7} />
           </Link>
-          <Link href="#account" className="inline-flex h-[42px] items-center justify-center rounded-[8px] border border-[#104170] bg-white px-3 text-base font-bold text-[#104170] transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
-            Login
+          <Link href="#account" aria-label="Open your profile" className="inline-flex size-[41px] items-center justify-center rounded-full bg-[#104170] text-base font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
+            Js
           </Link>
         </div>
 

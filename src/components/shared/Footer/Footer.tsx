@@ -22,7 +22,7 @@ const footerGroups: FooterGroup[] = [
   {
     title: "Account",
     links: ["Login", "Create Free Account"],
-    hrefs: ["#account", "#create-your-book"],
+    hrefs: ["/login", "/sign-up"],
   },
 ];
 
@@ -61,7 +61,7 @@ const Footer = () => {
               Ready to find<span className="hidden lg:inline"><br /></span><span className="lg:hidden"> </span>your next lead?
             </h2>
             <Link
-              href="#create-your-book"
+              href="/sign-up"
               className="mt-6 inline-flex h-12 items-center justify-center rounded-[8px] bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-3 text-base font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2 lg:mt-8 lg:h-10 lg:px-4 lg:text-xs"
             >
               Create Free Account
