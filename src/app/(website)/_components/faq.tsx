@@ -36,7 +36,7 @@ const Faq = () => {
       <div className="container mx-auto px-4 lg:px-0">
         <div className="grid gap-8 lg:grid-cols-[1fr_1.06fr] lg:gap-14">
           <header className="max-w-[500px]">
-            <p className="inline-flex h-[30px] items-center rounded-[8px] bg-[#104170] px-3 text-xs font-medium text-white lg:text-sm">FAQS</p>
+            <p className="inline-flex h-[30px] items-center rounded-[8px] bg-[#d1e4f6] px-3 text-xs font-medium text-[#104170] lg:text-sm">FAQS</p>
             <h2 id="faq-heading" className="mt-8 text-balance text-2xl md:text-3xl lg:text-4xl xl:text-[40px] font-bold leading-normal tracking-[-0.045em] text-[#104170]">
               Common Questions About<br className="hidden lg:block" /> Our Coverage &amp; Services
             </h2>
