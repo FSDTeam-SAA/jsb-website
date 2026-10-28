@@ -27,7 +27,7 @@ const ReadyToStart = () => {
               Create your free account and explore available lead opportunities.
             </p>
             <Link
-              href="#create-your-book"
+              href="/sign-up"
               className="mt-6 inline-flex h-12 items-center justify-center rounded-[8px] bg-[linear-gradient(270deg,#05976a_0%,#0eb57e_100%)] px-3 text-base font-bold text-white shadow-sm transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a477b]"
             >
               Create Free Account

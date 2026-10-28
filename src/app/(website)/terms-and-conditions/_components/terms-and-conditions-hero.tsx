@@ -27,7 +27,7 @@ const TermsAndConditionsHero = () => (
         terms that apply when using our platform.
       </p>
       <Link
-        href="#account"
+        href="/sign-up"
         className="inline-flex h-[38px] items-center justify-center rounded-[8px] bg-[#104170] px-3 text-sm font-bold text-white transition hover:bg-[#0b3b65] lg:text-base"
       >
         Create free account
