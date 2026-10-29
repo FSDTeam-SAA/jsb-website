@@ -70,9 +70,9 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="bg-[#104a7d] text-white">
-        <div className="container mx-auto flex flex-col justify-center gap-4 px-16 py-3 text-base font-medium sm:flex-row sm:items-center sm:justify-between lg:min-h-[35px] lg:px-0 lg:py-0 lg:text-[11px]">
-          <p>© 2026 Foreclosure Gold. All rights reserved.</p>
+      <div className=" bg-[#104a7d] text-white ">
+        <div className="container mx-auto flex flex-col justify-center gap-4 px-16 py-3 text-sm font-medium sm:flex-row sm:items-center sm:justify-between lg:min-h-[35px] lg:px-0 lg:py-0 lg:text-[11px]">
+          <p className="text-[13px]">© {new Date().getFullYear()} Foreclosure Gold. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <Link href="/privacy-policy" className="transition hover:text-white/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Privacy Policy</Link>
             <span aria-hidden="true">|</span>

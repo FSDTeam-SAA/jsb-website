@@ -1,8 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { NextAuthOptions } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+
+type LoginResponse = {
+  success: boolean;
+  message?: string;
+  data?: {
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+      photo: string | null;
+      role: string;
+    };
+    accessToken: string;
+  };
+};
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -32,6 +46,7 @@ export const authOptions: NextAuthOptions = {
             {
               method: "POST",
               headers: {
+                Accept: "*/*",
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
@@ -41,24 +56,26 @@ export const authOptions: NextAuthOptions = {
             },
           );
 
-          const response = await res.json();
-
-          console.log("response", response);
+          const response: LoginResponse = await res.json();
 
           if (!res.ok || !response?.success) {
             throw new Error(response?.message || "Login failed");
           }
-          //   if (response.data.user.role === "USER") {
-          //     throw new Error("Only admin can access this page");
-          //   }
-          const { user, accessToken } = response.data;
+
+          const { user, accessToken } = response.data ?? {};
+
+          if (!user || !accessToken) {
+            throw new Error("The login response is incomplete");
+          }
 
           return {
-            id: user._id,
-            fullName: user.fullName,
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
+            phoneNumber: user.phoneNumber,
             role: user.role,
-            profileImage: user.profileImage,
+            photo: user.photo,
             accessToken,
             provider: "credentials",
           };
@@ -75,29 +92,32 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async jwt({ token, user }: { token: JWT; user?: any }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.fullName = user.fullName;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
         token.email = user.email;
+        token.phoneNumber = user.phoneNumber;
         token.role = user.role;
-        token.profileImage = user.profileImage;
+        token.photo = user.photo;
         token.accessToken = user.accessToken;
+        token.provider = user.provider;
       }
       return token;
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, token }: { session: any; token: JWT }) {
+    async session({ session, token }) {
       session.user = {
         id: token.id,
-        fullName: token.fullName,
+        firstName: token.firstName,
         lastName: token.lastName,
         email: token.email,
+        phoneNumber: token.phoneNumber,
         role: token.role,
-        profileImage: token.profileImage,
+        photo: token.photo,
         accessToken: token.accessToken,
+        provider: token.provider,
       };
       return session;
     },
