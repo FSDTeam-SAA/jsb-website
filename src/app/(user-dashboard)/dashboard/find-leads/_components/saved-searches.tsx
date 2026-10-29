@@ -1,0 +1,5 @@
+import { ArrowRight, Trash2 } from "lucide-react";
+
+const SavedSearches = () => <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{Array.from({ length: 6 }, (_, index) => <article key={index} className="rounded-[8px] border border-[#e5eaf0] bg-white p-4 shadow-sm"><div className="flex items-start justify-between"><div><h2 className="text-[14px] font-bold text-[#17212e]">Orange County, CA 928XX</h2><p className="mt-1 text-[10px] text-[#667085]">Single Family Property</p></div><span className="rounded bg-[#fff2dd] px-1.5 py-0.5 text-[9px] text-[#ca8a04]">37 new</span></div><div className="mt-4 flex justify-between text-[9px] text-[#98a2b3]"><span>Updated 2 hours ago</span><span>Last 7 days</span></div><div className="mt-3 grid grid-cols-2 gap-2"><button className="flex h-8 items-center justify-center gap-2 rounded-[4px] bg-[#087ce7] text-[10px] text-white">View Lead <ArrowRight size={12} /></button><button className="flex h-8 items-center justify-center gap-2 rounded-[4px] bg-[#fff0f1] text-[10px] text-[#ed2532]">Delete Lead <Trash2 size={11} /></button></div></article>)}</div>;
+
+export default SavedSearches;
