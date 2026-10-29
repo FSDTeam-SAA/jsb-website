@@ -40,22 +40,22 @@ const Faq = () => {
     <section
       id="faq"
       aria-labelledby="faq-heading"
-      className="bg-white py-8 lg:py-[60px]"
+      className="bg-white py-8 lg:py-14"
     >
       <div className="container mx-auto px-4 lg:px-0">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1.06fr] lg:gap-14">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1.06fr] lg:gap-12">
           <header className="max-w-[500px]">
             <p className="inline-flex h-[30px] items-center rounded-[8px] bg-[#d1e4f6] px-3 text-xs font-medium text-[#104170] lg:text-sm">
               FAQS
             </p>
             <h2
               id="faq-heading"
-              className="mt-8 text-balance text-2xl md:text-3xl lg:text-4xl xl:text-[40px] font-bold leading-normal tracking-[-0.045em] text-[#104170]"
+              className="mt-6 text-balance text-xl font-bold leading-snug tracking-[-0.035em] text-[#104170] md:text-2xl lg:text-[34px]"
             >
               Common Questions About
               <br className="hidden lg:block" /> Our Coverage &amp; Services
             </h2>
-            <p className="mt-8 max-w-[550px] text-xs font-normal leading-[1.3] text-black lg:text-sm">
+            <p className="mt-5 max-w-[450px] text-[11px] font-normal leading-relaxed text-black lg:text-xs">
               We&apos;ve answered the most common questions to make choosing and
               managing your Leads.
             </p>
@@ -67,7 +67,7 @@ const Faq = () => {
             </Link> */}
           </header>
 
-          <div>
+          <div className="space-y-1">
             {faqs.map((faq, index) => {
               const isOpen = openIndex === index;
               const panelId = `${sectionId}-panel-${index}`;
@@ -76,7 +76,11 @@ const Faq = () => {
               return (
                 <article
                   key={faq.question}
-                  className={`${index === 1 ? "mt-8" : ""} ${isOpen ? "h-[167px] rounded-xl bg-[#104170] px-8 py-10 text-white" : "px-4"}`}
+                  className={`overflow-hidden transition-colors duration-200 ${
+                    isOpen
+                      ? "rounded-xl bg-[#104170] px-5 py-5 text-white shadow-sm lg:px-6 lg:py-6"
+                      : "border-b border-[#104170]/15 px-2 hover:bg-[#f4f8fc]"
+                  }`}
                 >
                   <h3>
                     <button
@@ -85,20 +89,20 @@ const Faq = () => {
                       aria-expanded={isOpen}
                       aria-controls={panelId}
                       onClick={() => setOpenIndex(isOpen ? null : index)}
-                      className={`flex w-full items-center justify-between gap-5 text-left text-2xl font-medium leading-none tracking-[-0.035em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset ${
+                      className={`flex w-full items-center justify-between gap-4 text-left text-lg font-medium leading-tight tracking-[-0.025em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset md:text-xl lg:text-[21px] ${
                         isOpen
                           ? "text-white focus-visible:ring-white"
-                          : "min-h-[73px] text-black focus-visible:ring-[#104170]"
+                          : "min-h-[58px] text-black focus-visible:ring-[#104170]"
                       }`}
                     >
                       <span>{faq.question}</span>
                       {isOpen ? (
-                        <Minus aria-hidden="true" size={20} strokeWidth={3} />
+                        <Minus aria-hidden="true" size={18} strokeWidth={2.5} />
                       ) : (
                         <Plus
                           aria-hidden="true"
-                          size={20}
-                          strokeWidth={3}
+                          size={18}
+                          strokeWidth={2.5}
                           className="text-[#080826]"
                         />
                       )}
@@ -111,7 +115,7 @@ const Faq = () => {
                     className={`grid transition-[grid-template-rows] duration-300 ease-out ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                   >
                     <div className="overflow-hidden">
-                      <p className="mt-4 text-sm font-medium leading-[1.3] text-white">
+                      <p className="mt-3 max-w-[560px] text-xs font-normal leading-relaxed text-white/90 lg:text-sm">
                         {faq.answer}
                       </p>
                     </div>

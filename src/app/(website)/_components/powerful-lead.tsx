@@ -4,47 +4,84 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-// The supplied dashboard artwork is intentionally repeated for the carousel.
 const slides = [
   "/images/power-lead1.png",
   "/images/power-lead2.png",
   "/images/power-lead3.png",
   "/images/power-lead1.png",
   "/images/power-lead2.png",
+  "/images/power-lead3.png",
 ];
-const carouselTransitionMs = 700;
 
 const PowerfulLead = () => {
   const [activeSlide, setActiveSlide] = useState(0);
-  const [motion, setMotion] = useState<-1 | 0 | 1>(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const transitionTimer = useRef<number | undefined>(undefined);
-  const pointerStartX = useRef<number | null>(null);
+  const [isAutoScrollPaused, setIsAutoScrollPaused] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const scrollFrame = useRef<number | undefined>(undefined);
 
-  const moveCarousel = (direction: -1 | 1) => {
-    if (isAnimating) return;
+  const scrollToSlide = (
+    index: number,
+    behavior: ScrollBehavior = "smooth",
+  ) => {
+    const carousel = carouselRef.current;
+    const slide = carousel?.querySelector<HTMLElement>(
+      `[data-carousel-slide="${index}"]`,
+    );
 
-    setIsAnimating(true);
-    setMotion(direction);
-    window.clearTimeout(transitionTimer.current);
-    transitionTimer.current = window.setTimeout(() => {
-      // Moving left sends the center card into the left preview, so the
-      // right-hand card becomes the new center (and vice versa).
-      setActiveSlide(
-        (slide) => (slide - direction + slides.length) % slides.length,
-      );
-      setMotion(0);
-      setIsAnimating(false);
-    }, carouselTransitionMs);
+    if (!carousel || !slide) return;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    carousel.scrollTo({
+      left: slide.offsetLeft - (carousel.clientWidth - slide.clientWidth) / 2,
+      behavior: prefersReducedMotion ? "auto" : behavior,
+    });
   };
 
-  const showPrevious = () => moveCarousel(1);
-  const showNext = () => moveCarousel(-1);
+  const updateActiveSlide = () => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
 
-  useEffect(() => () => window.clearTimeout(transitionTimer.current), []);
+    const carouselCenter = carousel.scrollLeft + carousel.clientWidth / 2;
+    const slideElements = Array.from(
+      carousel.querySelectorAll<HTMLElement>("[data-carousel-slide]"),
+    );
+    const closestSlide = slideElements.reduce((closest, slide) => {
+      const slideCenter = slide.offsetLeft + slide.clientWidth / 2;
+      const closestCenter = closest.offsetLeft + closest.clientWidth / 2;
 
-  const previousSlide = (activeSlide - 1 + slides.length) % slides.length;
-  const nextSlide = (activeSlide + 1) % slides.length;
+      return Math.abs(slideCenter - carouselCenter) <
+        Math.abs(closestCenter - carouselCenter)
+        ? slide
+        : closest;
+    });
+
+    setActiveSlide(Number(closestSlide.dataset.carouselSlide));
+  };
+
+  useEffect(() => {
+    const handleResize = () => scrollToSlide(activeSlide, "auto");
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (scrollFrame.current) window.cancelAnimationFrame(scrollFrame.current);
+    };
+  }, [activeSlide]);
+
+  useEffect(() => {
+    if (isAutoScrollPaused) return;
+
+    const autoScrollTimer = window.setInterval(() => {
+      scrollToSlide(
+        activeSlide === slides.length - 1 ? 0 : activeSlide + 1,
+      );
+    }, 5000);
+
+    return () => window.clearInterval(autoScrollTimer);
+  }, [activeSlide, isAutoScrollPaused]);
 
   return (
     <section
@@ -74,93 +111,110 @@ const PowerfulLead = () => {
             aria-roledescription="carousel"
             aria-label="Lead dashboard previews"
             tabIndex={0}
+            onMouseEnter={() => setIsAutoScrollPaused(true)}
+            onMouseLeave={() => setIsAutoScrollPaused(false)}
+            onFocusCapture={() => setIsAutoScrollPaused(true)}
+            onBlurCapture={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+                setIsAutoScrollPaused(false);
+              }
+            }}
+            onPointerDown={() => setIsAutoScrollPaused(true)}
+            onPointerUp={() => setIsAutoScrollPaused(false)}
+            onPointerCancel={() => setIsAutoScrollPaused(false)}
             onKeyDown={(event) => {
-              if (event.key === "ArrowLeft") showPrevious();
-              if (event.key === "ArrowRight") showNext();
+              if (event.key === "ArrowLeft" && activeSlide > 0) {
+                event.preventDefault();
+                scrollToSlide(activeSlide - 1);
+              }
+              if (
+                event.key === "ArrowRight" &&
+                activeSlide < slides.length - 1
+              ) {
+                event.preventDefault();
+                scrollToSlide(activeSlide + 1);
+              }
             }}
-            onPointerDown={(event) => {
-              pointerStartX.current = event.clientX;
-            }}
-            onPointerUp={(event) => {
-              const startX = pointerStartX.current;
-              pointerStartX.current = null;
-              if (startX === null || Math.abs(event.clientX - startX) < 48)
-                return;
-              if (event.clientX < startX) showPrevious();
-              if (event.clientX > startX) showNext();
-            }}
-            onPointerCancel={() => {
-              pointerStartX.current = null;
-            }}
-            className="absolute inset-x-0 bottom-0 top-[244px] touch-pan-y overflow-hidden outline-none lg:top-[315px]"
+            className="absolute inset-x-0 bottom-0 top-[244px] outline-none lg:top-[315px]"
           >
             <p className="sr-only" aria-live="polite">
               Dashboard slide {activeSlide + 1} of {slides.length}
             </p>
-            {[-1, 0, 1].map((slot) => {
-              const slideIndex =
-                slot === -1
-                  ? previousSlide
-                  : slot === 1
-                    ? nextSlide
-                    : activeSlide;
-              const position = slot + motion;
-              const transform =
-                position === -1
-                  ? "translateX(calc(-50% - 293px))"
-                  : position === 1
-                    ? "translateX(calc(-50% + 293px))"
-                    : position < -1
-                      ? "translateX(calc(-50% - 586px))"
-                      : position > 1
-                        ? "translateX(calc(-50% + 586px))"
-                        : "translateX(-50%)";
+            <div
+              ref={carouselRef}
+              onScroll={() => {
+                if (scrollFrame.current) return;
 
-              return (
+                scrollFrame.current = window.requestAnimationFrame(() => {
+                  updateActiveSlide();
+                  scrollFrame.current = undefined;
+                });
+              }}
+              className="h-full overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              <div className="flex min-w-full gap-3 px-[calc(50%-180px)] lg:gap-7 lg:px-[calc(50%-390px)] xl:px-[calc(50%-445px)]">
+                {slides.map((slide, index) => (
                 <div
-                  key={slot}
-                  aria-hidden={slot !== 0}
-                  className="absolute left-1/2 top-0 h-[185px] w-[360px] overflow-hidden rounded-[11px] bg-white shadow-[-18px_20px_33px_rgba(22,100,181,0.1)] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:h-[460px] lg:w-[890px] lg:[--carousel-shift:925px]"
-                  style={{
-                    transform: transform
-                      .replaceAll("293px", "var(--carousel-shift, 293px)")
-                      .replaceAll(
-                        "586px",
-                        "calc(var(--carousel-shift, 293px) * 2)",
-                      ),
-                  }}
+                  key={slide}
+                  id={`lead-dashboard-slide-${index}`}
+                  data-carousel-slide={index}
+                  aria-hidden={activeSlide !== index}
+                  className="h-[185px] w-[360px] shrink-0 snap-center overflow-hidden rounded-[11px] bg-white shadow-[-18px_20px_33px_rgba(22,100,181,0.1)] lg:h-[460px] lg:w-[780px] xl:w-[890px]"
                 >
                   <Image
-                    src={slides[slideIndex]}
-                    alt={slot === 0 ? "Foreclosure Gold lead dashboard" : ""}
+                    src={slide}
+                    alt={
+                      activeSlide === index
+                        ? "Foreclosure Gold lead dashboard"
+                        : ""
+                    }
                     width={1818}
                     height={934}
-                    sizes="(max-width: 1023px) 360px, 780px"
+                    sizes="(max-width: 1023px) 360px, (max-width: 1279px) 780px, 890px"
                     className="h-full w-full object-contain"
-                    priority={slot === 0}
+                    priority={index === 0}
                   />
                 </div>
-              );
-            })}
+                ))}
+              </div>
+            </div>
 
             <button
               type="button"
               aria-label="Show previous lead dashboard slide"
-              onClick={showPrevious}
-              disabled={isAnimating}
-              className="absolute left-[calc(50%-212px)] top-[81px] z-20 flex size-8 items-center justify-center rounded-full border border-[#111] bg-white text-[#111] transition hover:bg-[#eef5fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] disabled:pointer-events-none disabled:opacity-60 lg:left-[calc(50%-485px)] lg:top-[218px] lg:size-10"
+              aria-controls={`lead-dashboard-slide-${activeSlide}`}
+              onClick={() => scrollToSlide(activeSlide - 1)}
+              disabled={activeSlide === 0}
+              className="absolute left-[calc(50%-205px)] top-[76px] z-20 flex size-8 items-center justify-center rounded-full border border-[#111] bg-white text-[#111] transition hover:bg-[#eef5fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] disabled:pointer-events-none disabled:opacity-60 lg:left-[calc(50%-430px)] lg:top-[210px] lg:size-10 xl:left-[calc(50%-485px)]"
             >
               <ChevronLeft aria-hidden="true" size={18} strokeWidth={1.5} />
             </button>
             <button
               type="button"
               aria-label="Show next lead dashboard slide"
-              onClick={showNext}
-              disabled={isAnimating}
-              className="absolute right-[calc(50%-212px)] top-[81px] z-20 flex size-8 items-center justify-center rounded-full border border-[#111] bg-white text-[#111] transition hover:bg-[#eef5fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] disabled:pointer-events-none disabled:opacity-60 lg:right-[calc(50%-485px)] lg:top-[218px] lg:size-10"
+              aria-controls={`lead-dashboard-slide-${activeSlide}`}
+              onClick={() => scrollToSlide(activeSlide + 1)}
+              disabled={activeSlide === slides.length - 1}
+              className="absolute right-[calc(50%-205px)] top-[76px] z-20 flex size-8 items-center justify-center rounded-full border border-[#111] bg-white text-[#111] transition hover:bg-[#eef5fc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] disabled:pointer-events-none disabled:opacity-60 lg:right-[calc(50%-430px)] lg:top-[210px] lg:size-10 xl:right-[calc(50%-485px)]"
             >
               <ChevronRight aria-hidden="true" size={18} strokeWidth={1.5} />
             </button>
+            <div className="absolute inset-x-0 bottom-3 z-20 flex justify-center gap-2 lg:bottom-5">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  aria-label={`Show dashboard slide ${index + 1}`}
+                  aria-current={activeSlide === index ? "true" : undefined}
+                  onClick={() => scrollToSlide(index)}
+                  className={`h-1.5 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2 ${
+                    activeSlide === index
+                      ? "w-5 bg-[#104170]"
+                      : "w-1.5 bg-[#104170]/35 hover:bg-[#104170]/65"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
