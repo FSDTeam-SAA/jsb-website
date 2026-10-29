@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
-import ScrollToTopComponent from "@/components/providers/ScrollToTop";
+// import ScrollToTopComponent from "@/components/providers/ScrollToTop";
 
 import { Nunito_Sans, Crimson_Text, Fredoka } from "next/font/google";
 import AuthProvider from "@/components/providers/AuthProvider";
@@ -51,7 +51,7 @@ export default function RootLayout({
             <Toaster />
           </AppProvider>
         </AuthProvider>
-          <ScrollToTopComponent />
+          {/* <ScrollToTopComponent /> */}
         </SmoothScrollProvider>
       </body>
     </html>

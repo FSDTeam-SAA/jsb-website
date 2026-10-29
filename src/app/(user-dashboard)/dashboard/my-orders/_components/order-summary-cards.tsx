@@ -1,0 +1,4 @@
+import { CreditCard, FileText, ReceiptText } from "lucide-react";
+const stats = [{ label: "Total orders", value: "30", icon: ReceiptText, color: "bg-[#e7f2ff] text-[#087ce7]" }, { label: "Total leads purchased", value: "200", icon: FileText, color: "bg-[#dff9e9] text-[#00a77a]" }, { label: "Total spent", value: "$4500.00", icon: CreditCard, color: "bg-[#e7f2ff] text-[#087ce7]" }];
+const OrderSummaryCards = () => <section className="mt-4 grid gap-3 md:grid-cols-3">{stats.map(({ label, value, icon: Icon, color }) => <article key={label} className="flex h-[90px] items-center justify-center gap-5 rounded-[7px] bg-white shadow-[0_2px_10px_rgba(31,61,96,0.04)]"><span className={`grid size-12 place-items-center rounded-full ${color}`}><Icon size={21} /></span><div><p className="text-[10px] text-[#344054]">{label}</p><p className="mt-1 text-[18px] font-bold text-black">{value}</p></div></article>)}</section>;
+export default OrderSummaryCards;
