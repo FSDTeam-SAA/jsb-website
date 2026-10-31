@@ -13,201 +13,168 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  requestPasswordReset,
+  resendRegistrationOtp,
+  verifyPasswordResetOtp,
+  verifyRegistrationOtp,
+} from "@/lib/auth-api";
+
+type OtpFlow = "registration" | "password-reset";
 
 export default function OtpForm() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
   const searchParams = useSearchParams();
-  const email = searchParams.get("email");
-  const decodedEmail = decodeURIComponent(email || "");
+  const email = searchParams.get("email") || "";
+  const flow: OtpFlow =
+    searchParams.get("flow") === "registration"
+      ? "registration"
+      : "password-reset";
   const router = useRouter();
 
-  // Focus the first input on component mount
   useEffect(() => {
-    if (inputRefs.current[0]) {
-      inputRefs.current[0].focus();
-    }
+    inputRefs.current[0]?.focus();
   }, []);
 
+  const verifyMutation = useMutation({
+    mutationKey: ["auth", "verify-otp", flow],
+    mutationFn: async ({ email, otp }: { email: string; otp: string }) => {
+      if (flow === "registration") {
+        await verifyRegistrationOtp(email, otp);
+        return { resetToken: null };
+      }
+
+      const response = await verifyPasswordResetOtp(email, otp);
+      return { resetToken: response.data.resetToken };
+    },
+    onSuccess: ({ resetToken }) => {
+      if (flow === "registration") {
+        toast.success("Email verified. Please log in to continue.");
+        router.replace("/login?callbackUrl=/lead-interests");
+        return;
+      }
+
+      if (!resetToken) {
+        toast.error("Could not start password reset. Please request a new code.");
+        return;
+      }
+
+      sessionStorage.setItem(`password-reset-token:${email}`, resetToken);
+      toast.success("Code verified. Create a new password.");
+      router.push(
+        `/forgot-password/otp/reset-password?email=${encodeURIComponent(email)}`,
+      );
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const resendMutation = useMutation({
+    mutationKey: ["auth", "resend-otp", flow],
+    mutationFn: (emailToResend: string) =>
+      flow === "registration"
+        ? resendRegistrationOtp(emailToResend)
+        : requestPasswordReset(emailToResend),
+    onSuccess: (data) => {
+      setOtp(Array(6).fill(""));
+      inputRefs.current[0]?.focus();
+      toast.success(data.message || "A new code has been sent.");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   const handleChange = (index: number, value: string) => {
-    // Only allow numbers
     if (!/^\d*$/.test(value)) return;
 
-    // Update the OTP array
-    const newOtp = [...otp];
-    newOtp[index] = value.slice(0, 1); // Only take the first character
+    const nextOtp = [...otp];
+    nextOtp[index] = value.slice(0, 1);
+    setOtp(nextOtp);
 
-    setOtp(newOtp);
-
-    // Auto-focus next input if value is entered
-    if (value && index < 5 && inputRefs.current[index + 1]) {
-      inputRefs.current[index + 1]?.focus();
-    }
+    if (value && index < 5) inputRefs.current[index + 1]?.focus();
   };
 
-  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
-    // Move to previous input on backspace if current input is empty
-    if (
-      e.key === "Backspace" &&
-      !otp[index] &&
-      index > 0 &&
-      inputRefs.current[index - 1]
-    ) {
+  const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
-
-    // Handle arrow keys for navigation
-    if (e.key === "ArrowLeft" && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-    if (e.key === "ArrowRight" && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
+    if (event.key === "ArrowLeft" && index > 0) inputRefs.current[index - 1]?.focus();
+    if (event.key === "ArrowRight" && index < 5) inputRefs.current[index + 1]?.focus();
   };
 
-  // otp api integration
-  const { mutate, isPending } = useMutation({
-    mutationKey: ["verify-otp"],
-    mutationFn: (values: { otp: string; email: string }) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/verify`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(values),
-      }).then((res) => res.json()),
-    onSuccess: (data) => {
-      if (!data?.success) {
-        toast.error(data?.message || "Something went wrong");
-        return;
-      } else {
-        toast.success(data?.message || "Email sent successfully!");
-        router.push(
-          `/forgot-password/otp/reset-password?email=${encodeURIComponent(decodedEmail)}`
-        );
-      }
-    },
-  });
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const pastedData = event.clipboardData.getData("text/plain").trim();
+    if (!/^\d{6}$/.test(pastedData)) return;
 
-  // reset otp api integrattion
-  const { mutate: resentOtp, isPending: resentOtpPending } = useMutation({
-    mutationKey: ["fotgot-password"],
-    mutationFn: (email: string) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/forgot-password`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      }).then((res) => res.json()),
-    onSuccess: (data, email) => {
-      if (!data?.success) {
-        toast.error(data?.message || "Something went wrong");
-        return;
-      } else {
-        toast.success(data?.message || "Email sent successfully!");
-        router.push(`/forgot-password/otp?email=${encodeURIComponent(email)}`);
-      }
-    },
-  });
-
-  const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData.getData("text/plain").trim();
-
-    // Check if pasted content is a valid 6-digit number
-    if (/^\d{6}$/.test(pastedData)) {
-      const digits = pastedData.split("");
-      setOtp(digits);
-
-      // Focus the last input
-      if (inputRefs.current[5]) {
-        inputRefs.current[5].focus();
-      }
-    }
+    setOtp(pastedData.split(""));
+    inputRefs.current[5]?.focus();
   };
 
-  // handle resend otp
-  const handleResendOtp = async () => {
-    resentOtp(decodedEmail);
+  const handleVerify = () => {
+    const value = otp.join("");
+    if (!email) return toast.error("Your email is missing. Please start again.");
+    if (value.length !== 6) return toast.error("Please enter all 6 digits of the code.");
+    verifyMutation.mutate({ email, otp: value });
   };
 
-  // handle verify otp
-  const handleVerify = async () => {
-    const otpValue = otp.join("");
-
-    // Check if OTP is complete
-    if (otpValue.length !== 6) {
-      toast.error("Please enter all 6 digits of the OTP.");
-      return;
-    }
-    mutate({ otp: otpValue, email: decodedEmail });
-
-    console.log("OTP Verified:", otpValue);
-  };
+  const isRegistration = flow === "registration";
+  const heading = isRegistration ? "Verify Your Email" : "Verify Reset Code";
 
   return (
-    <div className="">
-      <div className="w-full max-w-[520px] bg-white">
-        <div className="hidden w-full items-center justify-center pb-6">
-          <Link href="/">
-          <Image src="/assets/images/logo.png" alt="auth logo" width={500} height={500} className="w-[174px] h-[174px] object-contain" />
-          </Link>
-        </div>
+    <div className="w-full max-w-[520px] bg-white">
+      <div className="hidden w-full items-center justify-center pb-6">
+        <Link href="/">
+          <Image src="/assets/images/logo.png" alt="auth logo" width={500} height={500} className="h-[174px] w-[174px] object-contain" />
+        </Link>
+      </div>
 
-        <h3 className="text-2xl md:text-[32px] lg:text-[40px] font-bold text-[#131313] text-center leading-[120%] ">
-          Verify Your Email
-        </h3>
-         <p className="text-base md:text-lg font-normal text-[#787878] leading-[150%] text-center pt-2 pb-6">
-          we sent a 6-digit code to {decodedEmail || "you@gmail.com"}
-        </p>
-        {/* OTP Input Fields */}
-        <div className="flex gap-[10px] md:gap-5 lg:gap-6 w-full justify-center">
-          {otp.map((digit, index) => (
-            <Input
-              key={index}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              onPaste={index === 0 ? handlePaste : undefined}
-              ref={(el) => {
-                inputRefs.current[index] = el;
-              }}
-              className={` w-[54px] md:w-[60px] lg:w-[54px] h-[56px] md:h-[60px] lg:h-[64px] border border-[#606060] bg-[#EAEAEA] text-[#212121] placeholder:text-[#999999] text-center tracking-[0%] !text-xl font-semibold leading-[120%] focus:outline-none rounded-[8px] ${digit ? "border-[#212121]" : "border-black"
-                }`}
-              aria-label={`OTP digit ${index + 1}`}
-            />
-          ))}
-        </div>
+      <h3 className="text-center text-2xl font-bold leading-[120%] text-[#131313] md:text-[32px] lg:text-[40px]">
+        {heading}
+      </h3>
+      <p className="pb-6 pt-2 text-center text-base font-normal leading-[150%] text-[#787878] md:text-lg">
+        We sent a 6-digit code to {email || "your email address"}.
+      </p>
 
-        {/* Resend OTP */}
-        <div className="text-center flex items-center justify-between pt-5 lg:pt-6 pb-5 lg:pb-6">
-          <span className=" text-base font-medium leading-[120%] text-black tracking-[0%]">
-            Didn&apos;t Receive OTP?{" "}
-          </span>
-          <button
-            onClick={handleResendOtp}
-            disabled={resentOtpPending}
-            className=" text-base font-medium leading-[120%] text-[#8C311E] tracking-[0%] hover:underline"
-          >
-            {resentOtpPending ? "Resending..." : "Resend OTP"}
-          </button>
-        </div>
+      <div className="flex w-full justify-center gap-[10px] md:gap-5 lg:gap-6">
+        {otp.map((digit, index) => (
+          <Input
+            key={index}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(event) => handleChange(index, event.target.value)}
+            onKeyDown={(event) => handleKeyDown(index, event)}
+            onPaste={index === 0 ? handlePaste : undefined}
+            ref={(element) => {
+              inputRefs.current[index] = element;
+            }}
+            className={`h-[56px] w-[54px] rounded-[8px] border bg-[#EAEAEA] text-center text-xl font-semibold leading-[120%] text-[#212121] md:h-[60px] md:w-[60px] lg:h-[64px] lg:w-[54px] ${digit ? "border-[#212121]" : "border-black"}`}
+            aria-label={`OTP digit ${index + 1}`}
+          />
+        ))}
+      </div>
 
-        {/* Verify Button */}
+      <div className="flex items-center justify-between pb-5 pt-5 text-center lg:pb-6 lg:pt-6">
+        <span className="text-base font-medium leading-[120%] text-black">Didn&apos;t receive a code?</span>
         <button
-          onClick={handleVerify}
-          type="submit"
-          className="w-full h-[52px] bg-primary rounded-[8px] py-[15px] px-[151px] text-lg font-semibold  leading-[120%] tracking-[0%] text-[#F4F4F4]"
-          disabled={isPending}
+          type="button"
+          onClick={() => email && resendMutation.mutate(email)}
+          disabled={!email || resendMutation.isPending}
+          className="text-base font-medium leading-[120%] text-[#8C311E] hover:underline disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isPending ? "Verifying..." : "Verify"}
+          {resendMutation.isPending ? "Resending..." : "Resend code"}
         </button>
       </div>
+
+      <button
+        onClick={handleVerify}
+        type="button"
+        className="h-[52px] w-full rounded-[8px] bg-primary px-4 py-[15px] text-lg font-semibold leading-[120%] text-[#F4F4F4] disabled:cursor-not-allowed disabled:opacity-60"
+        disabled={verifyMutation.isPending || !email}
+      >
+        {verifyMutation.isPending ? "Verifying..." : "Verify"}
+      </button>
     </div>
   );
 }

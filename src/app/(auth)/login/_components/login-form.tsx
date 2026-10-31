@@ -21,8 +21,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -37,7 +38,7 @@ const formSchema = z.object({
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,33 +48,34 @@ const LoginForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
-async function onSubmit(values: z.infer<typeof formSchema>) {
-  try {
-    setIsLoading(true);
+  const loginMutation = useMutation({
+    mutationKey: ["auth", "login"],
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const result = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
 
-    const res = await signIn("credentials", {
-      email: values?.email,
-      password: values?.password,
-      redirect: false,
-    });
+      if (!result || result.error) {
+        throw new Error(result?.error || "Login failed");
+      }
+    },
+    onSuccess: () => {
+      const callbackUrl = searchParams.get("callbackUrl");
+      const destination =
+        callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//")
+          ? callbackUrl
+          : "/dashboard";
+      toast.success("Login successful!");
+      router.push(destination);
+      router.refresh();
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
 
-    if (res?.error) {
-      toast.error(res.error || "Login failed");
-      return;
-    }
-
-    toast.success("Login successful!");
-
-    router.push("/");
-
-  } catch (error) {
-    console.error("Login failed:", error);
-    toast.error("Login failed. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
-}
+  const onSubmit = (values: z.infer<typeof formSchema>) =>
+    loginMutation.mutate(values);
   return (
     <div>
       <div className="w-full max-w-[520px] bg-white">
@@ -183,12 +185,12 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
             />
             <div className="pt-2">
               <Button
-                disabled={isLoading}
-                className={`text-base font-medium text-white cursor-pointer leading-[120%] rounded-[8px] py-4 w-full h-[51px] ${isLoading ? "opacity-50 cursor-not-allowed" : "bg-primary"
+                disabled={loginMutation.isPending}
+                className={`text-base font-medium text-white cursor-pointer leading-[120%] rounded-[8px] py-4 w-full h-[51px] ${loginMutation.isPending ? "opacity-50 cursor-not-allowed" : "bg-primary"
                   }`}
                 type="submit"
               >
-                {isLoading ? "Login ..." : "Login"}
+                {loginMutation.isPending ? "Login ..." : "Login"}
               </Button>
             </div>
               <p className="text-sm text-[#363636] font-medium text-center pt-2 leading-[120%] ">Don’t have an account? <Link className="text-[#104170]" href="/sign-up">Create account</Link></p>

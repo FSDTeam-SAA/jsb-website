@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { requestPasswordReset } from "@/lib/auth-api";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -37,32 +38,19 @@ const ForgotPasswordForm = () => {
     },
   });
 
-  const {mutate, isPending} = useMutation({
-    mutationKey: ["forgot-password"],
-    mutationFn : async (values:{email:string})=>{
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/forgot-password`,{
-        method : "POST",
-        headers: {
-          "Content-Type" : "application/json"
-        },
-        body : JSON.stringify(values)
-      });
-      return res.json();
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["auth", "forgot-password"],
+    mutationFn: requestPasswordReset,
+    onSuccess: (data, email) => {
+      toast.success(data.message || "If the account exists, a code has been sent.");
+      router.push(`/forgot-password/otp?email=${encodeURIComponent(email)}`);
     },
-    onSuccess: (data, email)=>{
-      if(!data?.success){
-        toast?.error(data?.message || "Something went wrong");
-        return
-      }
-      toast?.success(data?.message || "OTP sent to your email");
-      router.push(`/forgot-password/otp?email=${encodeURIComponent(email?.email)}`)
-    }
-  })
+    onError: (error: Error) => toast.error(error.message),
+  });
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-   console.log(values);
-   mutate(values)
+   mutate(values.email);
   }
   return (
     <div>

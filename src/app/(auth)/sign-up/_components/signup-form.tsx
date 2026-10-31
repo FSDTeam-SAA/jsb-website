@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { registerUser } from "@/lib/auth-api";
 
 const formSchema = z
   .object({
@@ -49,23 +50,6 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
-type SignupPayload = Pick<
-  FormValues,
-  "firstName" | "lastName" | "email" | "phoneNumber" | "password"
->;
-
-type SignupResponse = {
-  success: boolean;
-  message?: string;
-  data?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-  };
-};
-
 const inputClassName =
   "h-12 rounded-[7px] border border-[#dce1e9] bg-white px-3 text-sm text-[#161616] shadow-none placeholder:text-[#a9adb5] focus-visible:ring-1 focus-visible:ring-[#174d7e]";
 
@@ -87,30 +71,14 @@ const SignupForm = () => {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["signup"],
-    mutationFn: async (values: SignupPayload): Promise<SignupResponse> => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        },
-      );
-
-      const data: SignupResponse = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Registration failed");
-      return data;
-    },
-    onSuccess: (data) => {
-      if (!data?.success)
-        return toast.error(data?.message || "Something went wrong!");
-      toast.success(data?.message || "Registration successful");
+    mutationKey: ["auth", "register"],
+    mutationFn: registerUser,
+    onSuccess: (data, values) => {
+      toast.success(data.message || "Registration successful");
       form.reset();
-      window.setTimeout(() => router.push("/select-plan"), 1200);
+      router.push(
+        `/forgot-password/otp?email=${encodeURIComponent(values.email)}&flow=registration`,
+      );
     },
     onError: (error: Error) =>
       toast.error(error.message || "Something went wrong"),
@@ -122,8 +90,9 @@ const SignupForm = () => {
     email,
     phoneNumber,
     password,
-  }: FormValues) =>
+  }: FormValues) => {
     mutate({ firstName, lastName, email, phoneNumber, password });
+  };
 
   return (
     <div className="w-full max-w-[520px] bg-white">
