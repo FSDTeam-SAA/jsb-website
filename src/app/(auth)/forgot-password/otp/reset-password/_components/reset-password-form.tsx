@@ -24,6 +24,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import SuccessfullyApprovedModal from "@/components/modals/successfully-approved-modal";
+import { resetPassword } from "@/lib/auth-api";
 
 const formSchema = z
   .object({
@@ -60,40 +61,41 @@ const ResetPasswordForm = () => {
   });
 
 
-  const {mutate, isPending} = useMutation({
-    mutationKey: ["reset-password"],
-    mutationFn : async (values: {email:string, newPassword:string})=>{
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`,{
-        method: "POST",
-        headers: {
-          "Content-Type" : "application/json"
-        },
-        body : JSON.stringify(values)
-      })
-      return res.json();
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["auth", "reset-password"],
+    mutationFn: ({
+      email,
+      newPassword,
+      resetToken,
+    }: {
+      email: string;
+      newPassword: string;
+      resetToken: string;
+    }) => resetPassword(email, newPassword, resetToken),
+    onSuccess: (data) => {
+      sessionStorage.removeItem(`password-reset-token:${decodedEmail}`);
+      toast.success(data.message || "Password reset successfully");
+      setIsOpen(true);
+      setTimeout(() => {
+        router.push("/login");
+      }, 5000);
     },
-    onSuccess: (data)=>{
-      if(!data?.success){
-        toast.error(data?.message || "Something went wrong");
-        return
-      }else{
-        // toast.success(data?.message || "Password reset successfully");
-        // router.push("/login")
-
-         setIsOpen(true);
-        setTimeout(() => {
-          router.push("/login");
-        }, 5000);
-      }
-    }
-  })
+    onError: (error: Error) => toast.error(error.message),
+  });
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const resetToken = sessionStorage.getItem(`password-reset-token:${decodedEmail}`);
+    if (!decodedEmail || !resetToken) {
+      toast.error("Your reset session has expired. Please request a new code.");
+      router.replace("/forgot-password");
+      return;
+    }
     const payload ={
       email: decodedEmail,
-      newPassword: values?.password
-    }
-    mutate(payload)
+      newPassword: values.password,
+      resetToken,
+    };
+    mutate(payload);
   }
   return (
     <div className="w-full max-w-[520px] bg-white">
