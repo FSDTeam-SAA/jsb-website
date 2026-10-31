@@ -7,6 +7,44 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Figma uses a 14px minimum for dashboard data, controls, and metadata.
+     Keep that accessible baseline scoped to the dashboard only. */
+  .dashboard-typography .text-\[8px\] {
+    font-size: 14px !important;
+  }
+
+  .dashboard-typography .text-\[9px\] {
+    font-size: 14px !important;
+  }
+
+  .dashboard-typography .text-\[10px\] {
+    font-size: 14px !important;
+  }
+
+  .dashboard-typography .text-\[11px\] {
+    font-size: 14px !important;
+  }
+
+  .dashboard-typography .text-\[12px\] {
+    font-size: 14px !important;
+  }
+
+  .dashboard-typography .text-\[13px\] {
+    font-size: 14px !important;
+  }
+
+  /* Give every text-entry control the same comfortable Figma touch target.
+     Checkboxes and radio controls retain their compact native size. */
+  .dashboard-typography input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+  .dashboard-typography select {
+    height: 51px !important;
+  }
+
+  .dashboard-typography .relative:has(> input:not([type="checkbox"]):not([type="radio"])) > svg {
+    top: 50% !important;
+    transform: translateY(-50%);
+  }
 }
 
 body{

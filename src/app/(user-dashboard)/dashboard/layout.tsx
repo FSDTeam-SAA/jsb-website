@@ -7,7 +7,7 @@ const DashboardOverviewLayout = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="flex min-h-screen bg-[#f6f9fd]">
+    <div className="dashboard-typography flex min-h-screen bg-[#f6f9fd]">
       <DashboardSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardHeader />
