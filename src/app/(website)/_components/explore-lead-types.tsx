@@ -42,7 +42,11 @@ const leadTypes: LeadType[] = [
 
 const ExploreLeadTypes = () => {
   return (
-    <section id="lead-types" aria-labelledby="lead-types-heading" className="bg-white py-8 sm:py-12 lg:py-[60px]">
+    <section
+      id="lead-types"
+      aria-labelledby="lead-types-heading"
+      className="scroll-mt-24 bg-white py-8 sm:scroll-mt-28 sm:py-12 lg:py-[60px]"
+    >
       <div className="container mx-auto px-4 lg:px-0">
         <header className="text-center">
           <p className="inline-flex h-[30px] items-center rounded-[8px] bg-[#d1e4f6] px-3 text-xs font-medium text-[#104170] lg:text-sm">

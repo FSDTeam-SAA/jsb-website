@@ -1,124 +1,52 @@
 "use client";
 
 import Image from "next/image";
-import { CheckCircle2, Circle, Info, X } from "lucide-react";
-import { Fragment } from "react";
+import { CheckCircle2, Circle, Info, Lightbulb, X } from "lucide-react";
 
-const LeadPreview = ({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) => {
+const previewDetails = [
+  ["Property Type", "Single Family"], ["Estimated Value", "$685,000"], ["Estimated Equity", "$240,000"], ["Foreclosure Stage", "Notice of Default"],
+  ["Phone Available", "Yes"], ["Email Available", "Yes"], ["Added", "3 Days Ago"], ["Owner", "J***** S*****"],
+  ["Street Address", "Hidden Until Purchase"], ["Phone", "(***)***-1234"], ["Email", "J*****@gmail.com"], ["Shared", "$XX"], ["Exclusive", "$XX"],
+];
+
+const LeadPreview = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   if (!open) return null;
+
   return (
-    <div className="fixed inset-0 z-40 bg-[#0d1f35]/55" onClick={onClose}>
-      <aside
-        className="absolute right-0 top-0 h-full w-full max-w-[500px] overflow-y-auto bg-white p-5 shadow-2xl"
-        onClick={(event) => event.stopPropagation()}
-        aria-label="Lead Preview"
-      >
-        <div className="flex items-center justify-between border-b border-[#edf1f5] pb-4">
-          <h2 className="text-[16px] font-bold text-[#17212e]">Lead Preview</h2>
-          <button onClick={onClose} aria-label="Close lead preview">
-            <X size={18} className="text-[#98a2b3]" />
-          </button>
-        </div>
-        <div className="mt-5 flex justify-end">
-          <span className="rounded bg-[#e7f2ff] px-2 py-1 text-[9px] text-[#087ce7]">
-            SAMPLE DATA ONLY
-          </span>
-        </div>
-        <div className="mt-4 flex gap-2">
-          <span className="rounded bg-[#ffe9ed] px-2 py-1 text-[10px] text-[#fb5570]">
-            Foreclosure
-          </span>
-          <span className="rounded bg-[#dff8f7] px-2 py-1 text-[10px] text-[#00a77a]">
-            Shared Lead
-          </span>
-        </div>
-        <h3 className="mt-3 text-[19px] font-bold text-[#17212e]">
-          Orange County, CA 928XX
-        </h3>
-        <p className="mt-1 text-[11px] text-[#667085]">
-          Single Family Property
-        </p>
-        <div className="relative mt-4 h-[170px] overflow-hidden rounded-[6px] bg-[#dfeaf5]">
-          <Image
-            src="/images/auth_bg.png"
-            alt="Property preview"
-            fill
-            className="object-cover object-bottom"
-          />
-        </div>
-        <div className="mt-4 grid grid-cols-[1fr_auto] gap-y-2 border-b border-[#edf1f5] pb-4 text-[11px]">
-          {[
-            ["Property Type", "Single Family"],
-            ["Estimated Value", "$665,000"],
-            ["Estimated Equity", "$240,000"],
-            ["Foreclosure Stage", "Notice Of Default"],
-            ["Phone Available", "Yes"],
-            ["Email Available", "Yes"],
-            ["Added", "3 Days Ago"],
-            ["Source", "******* Purchase"],
-            ["Street Address", "Hidden Until Purchase"],
-            ["Phone", "***-***-1234"],
-            ["Email", "j***@gmail.com"],
-            ["Shared", "$XX"],
-          ].map(([label, value]) => (
-            <Fragment key={label}>
-              <span className="text-[#667085]">{label}</span>
-              <span className="flex items-center justify-end gap-1 font-medium text-[#344054]">
-                {(label === "Phone Available" ||
-                  label === "Email Available") && (
-                  <CheckCircle2 size={12} className="text-[#00a77a]" />
-                )}
-                {value}
-              </span>
-            </Fragment>
-          ))}
-        </div>
-        <div className="mt-4 rounded-[8px] bg-[#e7f2ff] p-3 text-[11px] text-[#475467]">
-          <div className="flex gap-2">
-            <Info size={15} className="shrink-0 text-[#087ce7]" />
-            This is a protected preview. Purchase the lead to unlock full
-            property and owner details.
+    <aside data-lenis-prevent className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-[410px] flex-col overflow-hidden border-l border-[#edf2f7] bg-white shadow-[-2px_0_3px_rgba(0,0,0,0.1)]" aria-label="Lead Preview">
+      <header className="flex h-[75px] shrink-0 items-center justify-between border-b border-[rgba(219,236,255,0.7)] px-4">
+        <h2 className="text-xl font-bold text-[#0f1839]">Lead Preview</h2>
+        <button type="button" onClick={onClose} aria-label="Close lead preview" className="grid size-9 place-items-center rounded-md text-[#77839a] transition hover:bg-[#f3f6fa] hover:text-[#334155] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df]"><X size={20} strokeWidth={1.8} /></button>
+      </header>
+
+      <div className="dashboard-summary-scroll min-h-0 flex-1 overflow-y-auto pb-6" data-lenis-prevent>
+        <section className="px-4 pt-3">
+          <div className="flex justify-end"><span className="rounded bg-[#e5eff9] px-2 py-1 text-xs font-medium text-[#177afe]">SAMPLE DATA ONLY</span></div>
+          <div className="mt-8">
+            <div className="flex items-center gap-2"><span className="rounded bg-[#fcdee0] px-2 py-1 text-xs font-medium text-[#8f4d4f]">Foreclosure</span><span className="rounded bg-[#d9fae9] px-2 py-1 text-xs font-medium text-[#05976a]">Shared Lead</span></div>
+            <h3 className="mt-4 text-xl font-bold text-[#0f1839]">Orange Country, CA 928XX</h3>
+            <p className="mt-2 text-sm font-medium text-[#878a9b]">Single Family Property</p>
           </div>
-        </div>
-        <div className="mt-4 rounded-[8px] border border-[#e1e8f0] p-3">
-          <div className="flex items-center justify-between">
-            <p className="flex items-center gap-1 text-[11px] font-semibold">
-              <Circle size={14} /> Shared Lead{" "}
-              <span className="font-normal text-[#667085]">
-                • Limited Availability
-              </span>
-            </p>
-            <b className="text-[16px]">$25.00</b>
-          </div>
-          <p className="mt-1 text-[10px] text-[#667085]">
-            May be purchased by multiple users
-          </p>
-          <button className="mt-3 h-9 w-full rounded-[4px] bg-[#087ce7] text-[11px] font-medium text-white">
-            Purchase Shared Lead
-          </button>
-        </div>
-        <div className="mt-3 rounded-[8px] border border-[#e1e8f0] p-3">
-          <div className="flex items-center justify-between">
-            <p className="flex items-center gap-1 text-[11px] font-semibold">
-              <Circle size={14} /> Exclusive Lead
-            </p>
-            <b className="text-[16px]">$49.00</b>
-          </div>
-          <p className="mt-1 text-[10px] text-[#667085]">
-            Be the only customer to receive this lead
-          </p>
-          <button className="mt-3 h-9 w-full rounded-[4px] border border-[#087ce7] text-[11px] font-medium text-[#087ce7]">
-            Purchase Exclusive Lead
-          </button>
-        </div>
-      </aside>
-    </div>
+        </section>
+
+        <section className="mt-4 px-4">
+          <div className="relative h-[127px] overflow-hidden rounded-lg bg-[#e6edf5]"><Image src="/images/figma/lead-preview-property.png" alt="Single-family property in Orange County" fill sizes="410px" className="object-cover" priority /></div>
+          <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 py-1 text-xs font-medium">
+            {previewDetails.map(([label, value]) => {
+              const isAvailable = label === "Phone Available" || label === "Email Available";
+              return <div key={label} className="contents"><dt className="text-[#878a9b]">{label}</dt><dd className={`flex items-center gap-1 ${isAvailable ? "text-[#0aa976]" : "text-black"}`}>{isAvailable && <CheckCircle2 size={16} aria-hidden="true" />}{value}</dd></div>;
+            })}
+          </dl>
+        </section>
+
+        <section className="mt-4 space-y-4 px-4">
+          <div className="rounded-lg border border-[#ebf4ff] bg-[#eaf4ff] p-3"><p className="flex items-center gap-3 text-xs font-medium leading-5 text-[#333]"><Info className="shrink-0 text-[#087ce1]" size={20} />This is a protected preview. Purchase the lead to unlock full property and owner details.</p></div>
+          <article className="rounded-2xl border border-[#cedcf0] bg-[#eaf4ff] p-3 shadow-sm"><div className="flex gap-3"><Circle className="mt-0.5 shrink-0 text-[#087ce1]" size={20} /><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold text-black">Shared Lead <span className="font-medium">• Limited Availability</span></p><p className="mt-1 text-xs font-medium text-[#333]">May be purchased by other users</p></div><b className="text-lg text-black">$25.00</b></div><button type="button" className="mt-3 flex h-9 w-full items-center justify-center rounded-md bg-[#0073df] px-3 text-base font-medium text-white transition hover:bg-[#0065c5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2">Purchase Shared Lead</button></div></div></article>
+          <article className="rounded-2xl border border-[#cedcf0] bg-white p-3 shadow-sm"><div className="flex gap-3"><Circle className="mt-0.5 shrink-0 text-[#8ca1b8]" size={20} /><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold text-black">Exclusive Lead</p><p className="mt-1 text-xs font-medium text-[#333]">Be the only customer to receive this lead</p></div><b className="text-lg text-black">$49.00</b></div><button type="button" className="mt-3 flex h-9 w-full items-center justify-center rounded-md border border-[#0073df] bg-[#eaf4ff] px-3 text-base font-medium text-[#0073df] transition hover:bg-[#dceeff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2">Purchase Exclusive Lead</button></div></div><p className="mt-4 flex items-center gap-3 rounded-lg bg-[#faf2e7] p-3 text-xs font-medium leading-5 text-[#734300]"><Lightbulb className="shrink-0" size={20} />Exclusive prevents future customers from purchasing this lead.</p></article>
+          <p className="flex items-center gap-3 px-2 text-xs font-medium text-[#333]"><Info className="text-[#087ce1]" size={16} />Sample Data Only. Actual data varies.</p>
+        </section>
+      </div>
+    </aside>
   );
 };
 

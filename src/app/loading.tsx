@@ -1,27 +1,27 @@
 import Image from "next/image";
-import { BookOpenCheck } from "lucide-react";
+import { Building2, MapPin } from "lucide-react";
 
 type LoaderVariant = "page" | "section" | "inline";
 
-interface LoaderProps {
+type LoaderProps = {
   variant?: LoaderVariant;
   message?: string;
   className?: string;
-}
+};
 
 const variantClasses: Record<LoaderVariant, string> = {
-  page: "fixed inset-0 z-[100] min-h-screen bg-[#003be2] text-white",
-  section: "min-h-[360px] w-full bg-white text-[#242528]",
-  inline: "min-h-40 w-full bg-transparent text-[#242528]",
+  page: "fixed inset-0 z-[100] min-h-[100svh] bg-[#f8fbff] text-[#0f2c4f]",
+  section: "min-h-[360px] w-full bg-white text-[#0f2c4f]",
+  inline: "min-h-40 w-full bg-transparent text-[#0f2c4f]",
 };
 
 const Loader = ({
   variant = "page",
-  message = "Getting your learning space ready...",
+  message = "Preparing your lead marketplace...",
   className = "",
 }: LoaderProps) => {
   const isPage = variant === "page";
-  const isCompact = variant === "inline";
+  const isInline = variant === "inline";
 
   return (
     <div
@@ -32,80 +32,53 @@ const Loader = ({
     >
       {isPage && (
         <>
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:60px_60px]"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(216,251,32,0.16),transparent_52%)]"
-          />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(209,228,246,0.9),transparent_31%),linear-gradient(180deg,#ffffff_0%,#f5faff_100%)]" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[46%] bg-[radial-gradient(circle_at_1px_1px,rgba(16,65,112,0.1)_1px,transparent_0)] [background-size:20px_20px]" />
+          <div aria-hidden="true" className="pointer-events-none absolute -left-16 bottom-[-120px] size-72 rounded-full bg-[#d1e4f6]/70 blur-3xl" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-16 top-[28%] size-64 rounded-full bg-[#dbeaf8]/70 blur-3xl" />
         </>
       )}
 
-      <div
-        className={`relative z-10 flex flex-col items-center px-6 text-center ${isCompact ? "gap-3" : "gap-6"}`}
-      >
+      <div className={`relative z-10 flex flex-col items-center px-6 text-center ${isInline ? "gap-3" : "gap-5"}`}>
         {isPage && (
           <Image
-            src="/images/logo.png"
-            alt="ByteSpace"
-            width={202}
-            height={41}
+            src="/images/sm_logo.png"
+            alt="Foreclosure Gold"
+            width={492}
+            height={126}
             priority
-            className="h-auto w-[164px] sm:w-[190px]"
+            className="h-auto w-[230px] sm:w-[270px]"
           />
         )}
 
-        <div
-          className={`relative flex items-center justify-center ${isCompact ? "h-14 w-14" : "h-24 w-24"}`}
-          aria-hidden="true"
-        >
-          <div
-            className={`absolute inset-0 rounded-full border ${isPage ? "border-white/20" : "border-secondary/15"}`}
-          />
-          <div
-            className={`absolute inset-1 animate-[spin_1.6s_cubic-bezier(0.5,0,0.5,1)_infinite] rounded-full border-[3px] border-transparent ${isPage ? "border-t-primary border-r-primary" : "border-t-secondary border-r-primary"} motion-reduce:animate-none`}
-          />
-          <div
-            className={`relative flex items-center justify-center rounded-full ${isPage ? "bg-white/10" : "bg-secondary/5"} ${isCompact ? "h-9 w-9" : "h-14 w-14"}`}
-          >
-            <BookOpenCheck
-              className={`${isPage ? "text-primary" : "text-secondary"} ${isCompact ? "h-5 w-5" : "h-7 w-7"}`}
-              strokeWidth={1.8}
-            />
-          </div>
-          <span
-            className={`absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full ${isPage ? "bg-primary shadow-[0_0_14px_rgba(216,251,32,0.8)]" : "bg-secondary"}`}
-          />
+        <div className={`relative grid place-items-center ${isInline ? "size-14" : "size-28"}`} aria-hidden="true">
+          <span className={`absolute inset-0 rounded-full border ${isPage ? "border-[#b8d2e9]" : "border-[#d9e6f1]"}`} />
+          <span className={`absolute inset-2 animate-[spin_1.35s_linear_infinite] rounded-full border-[3px] border-transparent border-t-[#104170] border-r-[#104170] motion-reduce:animate-none`} />
+          <span className={`absolute inset-4 animate-pulse rounded-full bg-[#dcecf9] motion-reduce:animate-none`} />
+          <span className={`relative grid place-items-center rounded-full bg-[#104170] text-white shadow-[0_9px_24px_rgba(16,65,112,0.28)] ${isInline ? "size-9" : "size-14"}`}>
+            <Building2 size={isInline ? 19 : 27} strokeWidth={1.8} />
+          </span>
+          {!isInline && <MapPin className="absolute -right-1 top-2 animate-bounce text-[#0b83c9] motion-reduce:animate-none" size={isPage ? 22 : 18} fill="white" />}
         </div>
 
         <div className="space-y-2">
-          <p
-            className={`${isCompact ? "text-sm" : "text-base sm:text-lg"} font-semibold ${isPage ? "text-white" : "text-[#242528]"}`}
-          >
+          <p className={`${isInline ? "text-sm" : "text-base sm:text-lg"} font-bold text-[#104170]`}>
             {message}
           </p>
-          {isPage && (
-            <p className="text-xs text-white/70 sm:text-sm">
-              Just a moment — your courses are on the way.
+          {!isInline && (
+            <p className="max-w-[280px] text-xs leading-5 text-[#587087] sm:max-w-none sm:text-sm">
+              Finding the latest real estate opportunities for you.
             </p>
           )}
         </div>
 
-        {!isCompact && (
-          <div className="flex items-center justify-center gap-1.5" aria-hidden="true">
-            {[0, 1, 2].map((dot) => (
-              <span
-                key={dot}
-                className={`h-1.5 w-1.5 animate-bounce rounded-full motion-reduce:animate-none ${isPage ? "bg-primary" : "bg-secondary"}`}
-                style={{ animationDelay: `${dot * 0.15}s` }}
-              />
-            ))}
+        {!isInline && (
+          <div aria-hidden="true" className="h-1.5 w-40 overflow-hidden rounded-full bg-[#dceaf6]">
+            <span className="block h-full w-1/2 animate-[pulse_1.2s_ease-in-out_infinite] rounded-full bg-[#104170] motion-reduce:animate-none" />
           </div>
         )}
 
-        <span className="sr-only">Please wait while the content loads.</span>
+        <span className="sr-only">Please wait while Foreclosure Gold loads your content.</span>
       </div>
     </div>
   );

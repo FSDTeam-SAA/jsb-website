@@ -71,6 +71,7 @@ const Hero = () => {
             </Link>
             <Link
               href="#lead-types"
+              aria-label="Explore available lead types"
               className="inline-flex h-14 w-[calc(50%-5px)] max-w-[195px] items-center justify-center rounded-[8px] bg-white px-2 text-[13px] font-bold text-[#104170] shadow-sm transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 sm:h-12 sm:w-[168px] sm:px-3 sm:text-xs lg:h-12 lg:w-auto lg:px-3 lg:text-base"
             >
               Explore Leads Type

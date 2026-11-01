@@ -1,21 +1,44 @@
 "use client";
 
-import { X } from "lucide-react";
+import { BadgePercent, CircleAlert, CreditCard, FileText, Search, ShoppingCart, WalletCards, X } from "lucide-react";
+import { useMemo, useState } from "react";
 
-const notifications = [
-  ["New lead matches available", "37 new pre-foreclosure leads match your Orange county saved search.", "2:00 PM"],
-  ["Saved search updated", "Your saved search ‘Riverside Country’ has been updated.", "3:23 PM"],
-  ["Order completed", "Your order has been completed successfully.", "Yesterday"],
-  ["Credit Request Approved", "Your bad lead credit request has been approved.", "4:34 PM"],
-  ["Payment Failed", "Your subscription payment could not be processed.", "5:22 PM"],
+type Notification = { title: string; description: string; time: string; group: "Today" | "Yesterday" | "Previous"; icon: typeof Search; iconClass: string; read: boolean };
+
+const notifications: Notification[] = [
+  { title: "New lead matches available", description: "37 new pre-foreclosure leads match your “Orange country” saved search.", time: "2:00 PM", group: "Today", icon: Search, iconClass: "text-[#087ce1]", read: false },
+  { title: "Saved search updated", description: "Your saved search “Riverside Country” has been updated.", time: "3:23 PM", group: "Today", icon: FileText, iconClass: "text-[#9b5de5]", read: true },
+  { title: "Order completed", description: "Your order has been completed successfully.", time: "2:34 PM", group: "Yesterday", icon: ShoppingCart, iconClass: "text-[#10a44c]", read: true },
+  { title: "Credit Request Approved", description: "Your bad lead credit request has been approved.", time: "4:34 PM", group: "Yesterday", icon: CreditCard, iconClass: "text-[#7c5cff]", read: true },
+  { title: "Payment Failed", description: "Your subscription payment could not be processed.", time: "5:22 PM", group: "Yesterday", icon: CircleAlert, iconClass: "text-[#fb5570]", read: true },
+  { title: "Promo Code Applied", description: "The promo code LEAD10 has been successfully applied to your recent order.", time: "10:00 PM", group: "Yesterday", icon: BadgePercent, iconClass: "text-[#087ce1]", read: true },
+  { title: "Account Balance Updated", description: "Your account balance is now $500", time: "11:56 PM", group: "Yesterday", icon: WalletCards, iconClass: "text-[#a4b61b]", read: true },
+  { title: "Saved search updated", description: "Your saved search “Riverside Country” has been updated.", time: "27 Sep, 2026", group: "Previous", icon: FileText, iconClass: "text-[#9b5de5]", read: true },
+  { title: "Order completed", description: "Your order has been completed successfully.", time: "27 Sep, 2026", group: "Previous", icon: ShoppingCart, iconClass: "text-[#10a44c]", read: true },
 ];
 
-const DashboardNotificationPanel = ({ onClose }: { onClose: () => void }) => <div className="fixed inset-0 z-40 bg-black/60" onClick={onClose}>
-  <aside className="absolute right-0 top-0 h-full w-full max-w-[560px] overflow-y-auto bg-white px-6 py-7 shadow-2xl" onClick={(event) => event.stopPropagation()}>
-    <div className="flex items-center justify-between"><h2 className="text-[22px] font-bold text-[#101828]">Notifications</h2><button onClick={onClose} aria-label="Close notifications"><X className="text-[#667085]" /></button></div>
-    <div className="mt-5 flex gap-5 border-b border-[#e4e7ec] text-sm"><button className="border-b-2 border-[#087cf0] pb-2 text-[#087cf0]">All</button><button className="pb-2 text-[#98a2b3]">Read</button><button className="pb-2 text-[#98a2b3]">Unread <span className="rounded-full bg-[#ed2532] px-1 text-[9px] text-white">1</span></button></div>
-    <p className="mt-5 text-xs font-semibold text-[#667085]">Today</p>{notifications.map(([title, description, time], index) => <div key={title} className="flex gap-3 border-b border-[#e4e7ec] py-5"><span className={`mt-1 size-2 rounded-full ${index === 0 ? "bg-[#0073df]" : "bg-[#8b5cf6]"}`} /><div className="min-w-0 flex-1"><div className="flex justify-between gap-4"><p className="font-semibold text-[#101828]">{title}</p><time className="whitespace-nowrap text-xs text-[#98a2b3]">{time}</time></div><p className="mt-1 text-sm text-[#667085]">{description}</p></div></div>)}
-  </aside>
-</div>;
+const DashboardNotificationPanel = ({ onClose }: { onClose: () => void }) => {
+  const [activeTab, setActiveTab] = useState<"all" | "read" | "unread">("all");
+  const visibleNotifications = useMemo(() => notifications.filter((notification) => activeTab === "all" || (activeTab === "read" ? notification.read : !notification.read)), [activeTab]);
+  const unreadCount = notifications.filter((notification) => !notification.read).length;
+
+  return <div className="fixed inset-0 z-[60] bg-[#141936]/80" onClick={onClose}>
+    <aside data-lenis-prevent className="absolute right-0 top-0 flex h-full w-full max-w-[547px] flex-col bg-white shadow-[-2px_0_3px_rgba(0,0,0,0.1)]" onClick={(event) => event.stopPropagation()} aria-label="Notifications">
+      <div className="px-6 pt-6">
+        <div className="flex items-center justify-between gap-5"><h2 className="text-[32px] font-bold leading-tight text-[#0e1224]">Notifications</h2><button type="button" onClick={onClose} aria-label="Close notifications" className="grid size-9 place-items-center rounded-md text-[#77839a] transition hover:bg-[#f3f6fa] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df]"><X size={20} strokeWidth={1.8} /></button></div>
+        <div className="mt-6 flex gap-6 border-b border-[#edf1f5] text-sm">
+          {(["all", "read", "unread"] as const).map((tab) => <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`relative pb-3 capitalize transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] ${activeTab === tab ? "border-b-2 border-[#087ce1] text-[#087ce1]" : "text-[#9aa5b4] hover:text-[#475467]"}`}>{tab}{tab === "unread" && unreadCount > 0 && <span className="ml-1 inline-grid size-3 place-items-center rounded-full bg-[#e31b23] text-[8px] text-white">{unreadCount}</span>}</button>)}
+        </div>
+      </div>
+      <div className="dashboard-summary-scroll min-h-0 flex-1 overflow-y-auto px-6 pb-7 pt-6" data-lenis-prevent>
+        {(["Today", "Yesterday", "Previous"] as const).map((group) => {
+          const groupNotifications = visibleNotifications.filter((notification) => notification.group === group);
+          if (!groupNotifications.length) return null;
+          return <section key={group} className="mb-7 last:mb-0"><h3 className="text-base font-medium text-[#0e1224]">{group}</h3><div className="mt-5 space-y-4">{groupNotifications.map(({ title, description, time, icon: Icon, iconClass }) => <article key={`${title}-${time}`} className="flex gap-4 border-b border-[#bfbfbf] pb-4"><Icon className={`mt-0.5 shrink-0 ${iconClass}`} size={29} strokeWidth={1.6} /><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><h4 className="text-[20px] font-medium leading-6 text-black">{title}</h4><time className="shrink-0 pt-1 text-sm text-[#7c7c7c]">{time}</time></div><p className="mt-1.5 text-sm leading-5 text-[#7c7c7c]">{description}</p></div></article>)}</div></section>;
+        })}
+      </div>
+    </aside>
+  </div>;
+};
 
 export default DashboardNotificationPanel;
