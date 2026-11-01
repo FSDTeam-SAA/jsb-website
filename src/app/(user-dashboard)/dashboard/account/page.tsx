@@ -1,9 +1,5 @@
-import AccountContainer from './_components/account-container'
+import { redirect } from "next/navigation";
 
-const AccountPage = () => {
-  return (
-    <AccountContainer/>
-  )
-}
+const AccountPage = () => redirect("/dashboard/account/profile");
 
-export default AccountPage
+export default AccountPage;

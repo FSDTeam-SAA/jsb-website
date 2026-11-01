@@ -52,6 +52,59 @@ body{
   font-family: Arial, Helvetica, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* Lenis owns document scrolling while active; native smoothing would otherwise
+   animate every Lenis frame and cause visible stutter. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+html.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* A contained panel should feel like part of the page, without the oversized
+   platform scrollbar or scroll chaining into the lead table behind it. */
+.dashboard-summary-scroll {
+  scrollbar-color: #aab7c6 transparent;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  touch-action: pan-y;
+}
+
+.dashboard-summary-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboard-summary-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-summary-scroll::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: #aab7c6;
+}
+
+.dashboard-summary-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #7f91a5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 
 
 @layer base {

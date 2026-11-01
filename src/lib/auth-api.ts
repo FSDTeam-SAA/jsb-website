@@ -64,6 +64,18 @@ export const resetPassword = (
     resetToken,
   });
 
+export const changePassword = (
+  accessToken: string,
+  oldPassword: string,
+  newPassword: string,
+) =>
+  jsonRequest<{ message: string }>(
+    "/auth/change-password",
+    "POST",
+    { oldPassword, newPassword },
+    accessToken,
+  );
+
 export const updateLeadInterests = (
   accessToken: string,
   payload: {
@@ -77,6 +89,32 @@ export const getCurrentUserProfile = (accessToken: string) =>
   apiRequest<PublicUser>("/user/profile", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
+
+export type UpdateUserProfileInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  photo?: File | null;
+};
+
+export const updateCurrentUserProfile = (
+  accessToken: string,
+  { firstName, lastName, email, phoneNumber, photo }: UpdateUserProfileInput,
+) => {
+  const formData = new FormData();
+  formData.append("firstName", firstName);
+  formData.append("lastName", lastName);
+  formData.append("email", email);
+  formData.append("phoneNumber", phoneNumber);
+  if (photo) formData.append("photo", photo);
+
+  return apiRequest<PublicUser>("/user/profile", {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: formData,
+  });
+};
 
 export const logoutUser = () => apiRequest("/auth/logout", { method: "POST" });
 
