@@ -124,7 +124,7 @@ const CartContainer = () => {
       <div className="mx-auto flex min-h-[calc(100vh-75px)] max-w-[1800px] flex-col xl:flex-row">
         <section className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8" aria-labelledby="cart-heading">
           <div className="mx-auto max-w-[1280px]">
-            <h1 id="cart-heading" className="text-[24px] font-bold leading-tight text-[#0e1224]">
+            <h1 id="cart-heading" className="text-xl font-bold leading-tight text-[#0e1224]">
               Cart
             </h1>
             <p className="mt-2 text-sm text-[#545454] sm:text-base">

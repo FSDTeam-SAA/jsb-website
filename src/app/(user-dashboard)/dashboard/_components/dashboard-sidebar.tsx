@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { signOut } from "next-auth/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { signOut, useSession } from "next-auth/react";
 import {
   FileText,
   Headphones,
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import LogoutModal from "@/components/modals/LogoutModal";
 import { logoutUser } from "@/lib/auth-api";
+import { getWalletBalance } from "@/lib/wallet-api";
 import AddFundsModal from "./add-funds-modal";
 
 const navigation = [
@@ -29,6 +30,8 @@ const navigation = [
 
 const DashboardSidebar = () => {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const accessToken = session?.user.accessToken;
   const queryClient = useQueryClient();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [addFundsOpen, setAddFundsOpen] = useState(false);
@@ -40,24 +43,31 @@ const DashboardSidebar = () => {
       await signOut({ callbackUrl: "/" });
     },
   });
+  const walletBalanceQuery = useQuery({
+    queryKey: ["wallet", "balance", accessToken],
+    queryFn: () => getWalletBalance(accessToken!),
+    enabled: status === "authenticated" && Boolean(accessToken),
+    staleTime: 30_000,
+  });
+  const formattedBalance = walletBalanceQuery.data?.data.formattedBalance;
 
   return (
-    <aside data-lenis-prevent className="sticky top-0 hidden h-screen w-[264px] shrink-0 flex-col overflow-y-auto border-r border-[#dce6f0] bg-white lg:flex">
+    <aside data-lenis-prevent className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col overflow-y-auto border-r border-[#dbecff] bg-white lg:flex">
       <Link
         href="/"
-        className="flex h-[75px] shrink-0 items-center border-b border-[#dce6f0] px-[18px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#104170]"
+        className="flex h-[75px] shrink-0 items-center border-b border-[#dbecff] px-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#104170]"
         aria-label="Go to home page"
       >
         <Image
           src="/images/footer_logo.png"
           alt="Foreclosure Gold"
-          width={228}
-          height={58}
-          className="h-auto w-[196px]"
+          width={165}
+          height={42}
+          className="h-auto w-[165px]"
           priority
         />
       </Link>
-      <nav className="space-y-2 px-[17px] pt-5" aria-label="Dashboard navigation">
+      <nav className="space-y-2 px-4 pt-4" aria-label="Dashboard navigation">
         {navigation.map(({ label, href, icon: Icon }) => {
           const active =
             label === "Dashboard"
@@ -67,9 +77,9 @@ const DashboardSidebar = () => {
             <Link
               key={label}
               href={href}
-              className={`flex h-[50px] items-center gap-4 rounded-[8px] px-4 text-[18px] font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2 ${active ? "bg-[#dfefff] text-[#0073df]" : "text-[#656565] hover:bg-[#f4f8fc] hover:text-[#104170]"}`}
+              className={`flex h-10 items-center gap-3 rounded-[8px] px-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2 ${active ? "bg-[#dfefff] text-[#0073df]" : "text-[#545454] hover:bg-[#f4f8fc] hover:text-[#104170]"}`}
             >
-              <Icon size={20} strokeWidth={1.8} />
+              <Icon size={16} strokeWidth={1.8} />
               {label}
             </Link>
           );
@@ -77,32 +87,34 @@ const DashboardSidebar = () => {
         <button
           type="button"
           onClick={() => setIsLogoutModalOpen(true)}
-          className="mt-1 flex h-[50px] w-full items-center gap-4 rounded-[8px] px-4 text-[18px] font-medium text-[#ed2532] transition hover:bg-[#fff1f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2532] focus-visible:ring-offset-2"
+          className="mt-1 flex h-10 w-full items-center gap-3 rounded-[8px] px-3 text-sm font-medium text-[#ed2532] transition hover:bg-[#fff1f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ed2532] focus-visible:ring-offset-2"
         >
-          <LogOut size={20} strokeWidth={1.9} />
+          <LogOut size={16} strokeWidth={1.9} />
           Logout
         </button>
       </nav>
       <button
         type="button"
         onClick={() => setAddFundsOpen(true)}
-        className="group mx-[17px] mt-6 rounded-[18px] border border-[#e4edf5] bg-white px-5 py-4 text-left shadow-[0_3px_8px_rgba(42,83,120,0.12)] transition hover:-translate-y-0.5 hover:border-[#b9d9f6] hover:shadow-[0_7px_16px_rgba(42,83,120,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2"
+        className="group mx-4 mt-4 rounded-2xl border border-[#e4edf5] bg-white px-4 py-3 text-left shadow-[0_3px_8px_rgba(42,83,120,0.12)] transition hover:-translate-y-0.5 hover:border-[#b9d9f6] hover:shadow-[0_7px_16px_rgba(42,83,120,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2"
         aria-label="Add funds to your account balance"
       >
-        <p className="text-[14px] font-medium text-[#737b84]">Account Balance</p>
+        <p className="text-xs font-medium text-[#737b84]">Account Balance</p>
         <div className="mt-1 flex items-center justify-between">
-          <p className="text-[24px] font-bold leading-none text-[#00a77a]">$425.00</p>
-          <span className="grid size-9 place-items-center rounded-full bg-[#08b988] text-white transition group-hover:bg-[#079a72]">
-            <Plus aria-hidden="true" size={24} strokeWidth={2.5} />
+          <p className="text-xl font-bold leading-none text-[#00a77a]" aria-live="polite">
+            {walletBalanceQuery.isLoading ? <span className="inline-block h-6 w-20 animate-pulse rounded bg-[#d9f4eb]" /> : formattedBalance ?? "—"}
+          </p>
+          <span className="grid size-8 place-items-center rounded-full bg-[#08b988] text-white transition group-hover:bg-[#079a72]">
+            <Plus aria-hidden="true" size={20} strokeWidth={2.5} />
           </span>
         </div>
       </button>
-      <div className="mx-[17px] mb-4 mt-auto flex items-center gap-4 rounded-[18px] border border-[#e4edf5] bg-[#f5f8ff] p-5 shadow-[0_3px_8px_rgba(42,83,120,0.1)]">
-        <Headphones className="shrink-0 text-[#0073df]" size={39} strokeWidth={1.8} />
+      <div className="mx-4 mb-4 mt-auto flex items-center gap-3 rounded-2xl border border-[#e4edf5] bg-[#f5f8ff] p-3 shadow-[0_3px_8px_rgba(42,83,120,0.1)]">
+        <Headphones className="shrink-0 text-[#0073df]" size={32} strokeWidth={1.8} />
         <div className="min-w-0">
-          <p className="text-[14px] font-bold leading-none text-[#252f3a]">Need Help?</p>
-          <Link href="/dashboard/account/contact-support" className="mt-2 block text-[12px] leading-normal text-[#0073df] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df]">
-            Support Center Contact Us
+          <p className="text-xs font-bold leading-none text-[#252f3a]">Need Help?</p>
+          <Link href="/dashboard/account/contact-support" className="mt-1 block text-[10px] leading-normal text-[#0073df] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df]">
+            Support Center<br />Contact Us
           </Link>
         </div>
       </div>

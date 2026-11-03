@@ -1,19 +1,24 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
+import { apiRequest } from "@/lib/api";
 
 type FooterGroup = {
   title: string;
   links: string[];
-  href?: string;
   hrefs?: string[];
 };
 
+type Category = {
+  id: string;
+  name: string;
+};
+
+const getCategories = () => apiRequest<Category[]>("/categories");
+
 const footerGroups: FooterGroup[] = [
-  {
-    title: "Lead Types",
-    links: ["Probate Leads", "Debt Settlement", "REO / Bank-Owned", "Tax Lien Leads", "Bankruptcy Leads", "Mortgage Leads", "Pre-Foreclosure", "Foreclosure Leads"],
-    href: "#lead-types",
-  },
   {
     title: "Company",
     links: ["Home", "How It Works", "Pricing", "FAQ"],
@@ -26,7 +31,41 @@ const footerGroups: FooterGroup[] = [
   },
 ];
 
+const LeadTypesSkeleton = () => (
+  <ul aria-label="Loading lead types" className="mt-3 space-y-3">
+    {Array.from({ length: 5 }, (_, index) => (
+      <li key={index} aria-hidden="true" className="h-3 w-24 animate-pulse rounded bg-[#e8edf4]" />
+    ))}
+  </ul>
+);
+
+const LeadTypesError = ({ retry }: { retry: () => void }) => (
+  <div role="alert" className="mt-3 max-w-[150px] rounded-md border border-[#f1c5c5] bg-[#fff7f7] p-3">
+    <p className="text-xs leading-snug text-[#8c311e]">Lead types could not be loaded.</p>
+    <button
+      type="button"
+      onClick={retry}
+      className="mt-2 text-xs font-bold text-[#104170] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d]"
+    >
+      Try again
+    </button>
+  </div>
+);
+
+const LeadTypesNotFound = () => (
+  <div className="mt-3 max-w-[150px] rounded-md border border-dashed border-[#b7c9dc] bg-[#f7fbff] p-3">
+    <p className="text-xs leading-snug text-[#38526e]">No lead types are available right now.</p>
+  </div>
+);
+
 const Footer = () => {
+  const categoriesQuery = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+    staleTime: 5 * 60 * 1000,
+  });
+  const categories = categoriesQuery.data?.data ?? [];
+
   return (
     <footer className="bg-white text-black">
       <div className="container mx-auto px-4 pt-9 pb-8 lg:min-h-[318px] lg:px-0 lg:pb-0 lg:pt-10">
@@ -38,6 +77,27 @@ const Footer = () => {
             <p className="mt-4 text-base font-medium leading-none text-black lg:mt-2 lg:text-xs">Online marketplace for real estate leads.</p>
           </section>
 
+          <nav aria-label="Lead Types">
+            <h2 className="text-base font-bold leading-none tracking-[-0.035em] text-[#104170] lg:text-xl lg:font-medium">Lead Types</h2>
+            {categoriesQuery.isLoading && <LeadTypesSkeleton />}
+            {categoriesQuery.isError && <LeadTypesError retry={() => categoriesQuery.refetch()} />}
+            {!categoriesQuery.isLoading && !categoriesQuery.isError && categories.length === 0 && <LeadTypesNotFound />}
+            {!categoriesQuery.isLoading && !categoriesQuery.isError && categories.length > 0 && (
+              <ul className="mt-3 space-y-3">
+                {categories.map((category) => (
+                  <li key={category.id} className="leading-none">
+                    <Link
+                      href="#lead-types"
+                      className="text-xs font-medium leading-none text-black transition hover:text-[#104170] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2"
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </nav>
+
           {footerGroups.map((group) => (
             <nav key={group.title} aria-label={group.title}>
               <h2 className="text-base font-bold leading-none tracking-[-0.035em] text-[#104170] lg:text-xl lg:font-medium">{group.title}</h2>
@@ -45,7 +105,7 @@ const Footer = () => {
                 {group.links.map((link, index) => (
                   <li key={link} className="leading-none">
                     <Link
-                      href={group.hrefs?.[index] ?? group.href ?? "#lead-types"}
+                      href={group.hrefs?.[index] ?? "#lead-types"}
                       className="text-xs font-medium leading-none text-black transition hover:text-[#104170] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2"
                     >
                       {link}
