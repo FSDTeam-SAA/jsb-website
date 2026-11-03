@@ -61,7 +61,7 @@ const DashboardSummary = () => {
         {metrics.map(({ label, value, detail, icon: Icon, iconClass }) => (
           <article
             key={label}
-            className="flex h-[100px] items-center justify-between rounded-[8px] bg-white px-4 shadow-[0_2px_10px_rgba(31,61,96,0.04)]"
+            className={`flex h-[100px] items-center justify-between rounded-[8px] border px-4 ${label === "Current Membership" ? "border-[#f8e5c1] bg-[#fffcf5]" : "border-[#ebf4ff] bg-[#fefefe]"}`}
           >
             <div className="flex items-center gap-4">
               <span
@@ -70,12 +70,12 @@ const DashboardSummary = () => {
                 <Icon size={29} />
               </span>
               <div>
-                <p className="text-[11px] text-[#667085]">{label}</p>
-                <p className="mt-0.5 text-[17px] font-bold text-[#101828]">
+                <p className="text-xs font-medium text-[#333]">{label}</p>
+                <p className="mt-1 text-xl font-bold leading-none text-black">
                   {value}
                 </p>
                 {detail && (
-                  <p className="text-[10px] text-[#d79411]">{detail}</p>
+                  <p className="mt-1 text-xs font-medium leading-none text-[#734300]">{detail}</p>
                 )}
               </div>
             </div>
@@ -88,7 +88,7 @@ const DashboardSummary = () => {
           <Link
             key={label}
             href={href}
-            className={`flex h-20 items-center justify-between rounded-[8px] px-4 shadow-[0_2px_10px_rgba(31,61,96,0.04)] transition hover:-translate-y-0.5 ${className}`}
+            className={`flex h-20 items-center justify-between rounded-[8px] px-4 transition hover:-translate-y-0.5 ${className}`}
           >
             <div className="flex items-center gap-3">
               <span
@@ -97,9 +97,9 @@ const DashboardSummary = () => {
                 <Icon size={20} />
               </span>
               <div>
-                <p className="text-[16px] font-bold">{label}</p>
+                <p className="text-xl font-bold leading-none">{label}</p>
                 <p
-                  className={`text-[11px] ${label === "Find Leads" ? "text-white" : "text-[#475467]"}`}
+                  className={`mt-1 text-xs ${label === "Find Leads" ? "text-white" : "text-[#333]"}`}
                 >
                   {detail}
                 </p>
@@ -110,15 +110,15 @@ const DashboardSummary = () => {
         ))}
         <button
           onClick={() => setAddFundsOpen(true)}
-          className="flex h-20 items-center justify-between rounded-[8px] bg-gradient-to-r from-[#03a87b] to-[#08bf91] px-4 text-left text-white shadow-[0_2px_10px_rgba(31,61,96,0.04)] transition hover:-translate-y-0.5"
+          className="flex h-20 items-center justify-between rounded-[8px] bg-gradient-to-r from-[#03a87b] to-[#08bf91] px-4 text-left text-white transition hover:-translate-y-0.5"
         >
           <div className="flex items-center gap-3">
             <span className="grid size-12 place-items-center rounded-full bg-white/20">
               <Plus size={25} />
             </span>
             <div>
-              <p className="text-[16px] font-bold">Add Funds</p>
-              <p className="text-[11px]">Add money to your account balance</p>
+              <p className="text-xl font-bold leading-none">Add Funds</p>
+              <p className="mt-1 text-xs">Add money to your account balance</p>
             </div>
           </div>
           <ArrowRight size={18} />

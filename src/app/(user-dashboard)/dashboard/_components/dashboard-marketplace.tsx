@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronDown, Filter, Search, SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, Filter, Goal, Search, SlidersHorizontal } from "lucide-react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 const leads = [
   ["Foreclosure", "Orange County, CA 928xx", "Single Family", "$665,000", "$240,000", "3 days ago", "Shared", "$25.00"],
@@ -15,14 +15,124 @@ const leads = [
 ];
 const tags: Record<string, string> = { Foreclosure: "bg-[#ffe9ed] text-[#fb5570]", "Pre-Foreclosure": "bg-[#fff2dd] text-[#ca8a04]", "Tax Lien": "bg-[#f4e9ff] text-[#a855f7]", Bankruptcy: "bg-[#dff8f7] text-[#09a6a0]", "REO/Bank-Owned": "bg-[#eee8ff] text-[#6d42d8]" };
 
+type FilterSection =
+  | "leadType"
+  | "geography"
+  | "availability"
+  | "freshness"
+  | "propertyFilters"
+  | "contactData"
+  | "price";
+
+const sortOptions = [
+  "Newest Leads",
+  "Oldest",
+  "Price Low → High",
+  "Price High → Low",
+  "Location",
+  "Shared / Exclusive",
+] as const;
+
+type SortOption = (typeof sortOptions)[number];
+
+const asPrice = (value: string) => Number(value.replace(/[^0-9.]/g, ""));
+
+const FilterAccordion = ({
+  id,
+  title,
+  open,
+  onToggle,
+  children,
+}: {
+  id: FilterSection;
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) => (
+  <section className="border-t border-[#edf1f5] py-3">
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={open}
+      aria-controls={`${id}-filter-content`}
+      className="flex w-full items-center justify-between rounded text-left text-xs font-bold text-[#344054] outline-none transition hover:text-[#0073df] focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2"
+    >
+      {title}
+      <ChevronDown
+        size={14}
+        className={`transition-transform duration-200 ${open ? "" : "-rotate-90"}`}
+        aria-hidden="true"
+      />
+    </button>
+    <div id={`${id}-filter-content`} hidden={!open}>
+      {children}
+    </div>
+  </section>
+);
+
 const DashboardMarketplace = () => {
   const [search, setSearch] = useState("");
+  const [sortOption, setSortOption] = useState<SortOption>("Newest Leads");
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
+  const [openFilters, setOpenFilters] = useState<Record<FilterSection, boolean>>({
+    leadType: true,
+    geography: true,
+    availability: true,
+    freshness: true,
+    propertyFilters: true,
+    contactData: true,
+    price: true,
+  });
   const filteredLeads = leads.filter((lead) => lead.join(" ").toLowerCase().includes(search.toLowerCase()));
-  return <section className="mt-4 overflow-hidden rounded-[8px] bg-white p-3 shadow-[0_2px_10px_rgba(31,61,96,0.04)]">
-    <div className="flex flex-col justify-between gap-3 border-b border-[#edf1f5] pb-3 lg:flex-row lg:items-center"><div><div className="flex items-center gap-2"><span className="grid size-8 place-items-center rounded-full bg-[#e7f2ff] text-[#087ce7]"><Search size={18} /></span><h2 className="text-[16px] font-bold text-[#17212e]">Find Leads Marketplace</h2></div><p className="mt-1 text-[10px] text-[#667085]">Search and filter thousands of foreclosure and distressed property leads nationwide.</p></div><button className="h-8 rounded-[5px] border border-[#0073df] px-4 text-[11px] text-[#0073df]">⌑ &nbsp; Save Search</button></div>
-    <div className="mt-3 grid gap-3 lg:grid-cols-[226px_1fr]"><aside className="hidden border-r border-[#edf1f5] pr-3 lg:block"><div className="flex items-center justify-between"><h3 className="text-[12px] font-bold">Filter</h3><button className="text-[10px] text-[#0073df]">Clear All</button></div>{["Lead Type", "Geography", "Availability", "Freshness", "Property Filters", "Contact Data", "Price"].map((label, index) => <div key={label} className="border-b border-[#edf1f5] py-3"><div className="flex justify-between text-[11px] font-medium text-[#344054]">{label}<ChevronDown size={13} /></div>{index < 3 && <div className="mt-2 space-y-1.5 text-[10px] text-[#667085]">{index === 0 ? ["Foreclosure", "Pre-Foreclosure", "Mortgage", "Bankruptcy", "Tax Lien", "REO / Bank-Owned"].map((item, itemIndex) => <label key={item} className="flex gap-1.5"><input defaultChecked={itemIndex === 0} type="checkbox" className="accent-[#0073df]" />{item}</label>) : <><select className="h-7 w-full rounded border border-[#d0d5dd] px-1 text-[9px]"><option>{index === 1 ? "California (CA)" : "Shared"}</option></select><select className="h-7 w-full rounded border border-[#d0d5dd] px-1 text-[9px]"><option>{index === 1 ? "Orange County" : "Exclusive"}</option></select></>}</div>}</div>)}<button className="h-8 w-full rounded-[4px] bg-[#087ce7] text-[11px] text-white">Apply</button></aside>
-      <div className="min-w-0"><div className="flex gap-2"><div className="relative flex-1"><Search size={14} className="absolute left-2 top-2 text-[#98a2b3]" /><input value={search} onChange={(event) => setSearch(event.target.value)} className="h-8 w-full rounded-[5px] border border-[#d0d5dd] pl-7 pr-2 text-[10px] outline-none focus:border-[#0073df]" placeholder="Search city, county or zip..." /></div><button className="flex h-8 items-center gap-1 rounded-[5px] border border-[#d0d5dd] px-2 text-[10px]"><SlidersHorizontal size={12} />Newest Leads<ChevronDown size={12} /></button><button className="lg:hidden grid size-8 place-items-center rounded border border-[#d0d5dd]"><Filter size={14} /></button></div>
-        <div className="mt-3 overflow-x-auto"><table className="w-full min-w-[760px] text-left text-[9px]"><thead className="bg-[#fafcff] text-[#98a2b3]"><tr>{["", "Lead Type", "Location", "Property Type", "Est. Value", "Est. Equity", "Added", "Availability", "Price", "Action"].map((head) => <th key={head} className="px-2 py-3 font-medium">{head}</th>)}</tr></thead><tbody>{filteredLeads.concat(filteredLeads).slice(0, 18).map((lead, index) => <tr key={`${lead[0]}-${index}`} className="border-b border-[#f0f2f5] text-[#475467]"><td className="px-2 py-2.5"><input type="checkbox" /></td><td className="px-2 py-2.5"><span className={`rounded px-1.5 py-1 ${tags[lead[0]]}`}>{lead[0]}</span></td>{lead.slice(1, 7).map((value, cell) => <td key={cell} className="max-w-[86px] px-2 py-2.5">{value}</td>)}<td className="px-2 py-2.5"><span className={`rounded px-1.5 py-1 ${lead[7] === "Exclusive" ? "bg-[#ddf9e8] text-[#10a44c]" : "bg-[#e4f4ff] text-[#087ce7]"}`}>{lead[7]}</span></td><td className="px-2 py-2.5">{lead[8]}</td><td className="px-2 py-2.5"><button className="rounded border border-[#8dc7ff] px-1.5 py-1 text-[#087ce7]">View Lead</button></td></tr>)}</tbody></table></div></div></div>
+  const sortedLeads = [...filteredLeads].sort((first, second) => {
+    if (sortOption === "Oldest") return leads.indexOf(second) - leads.indexOf(first);
+    if (sortOption === "Price Low → High") return asPrice(first[7]) - asPrice(second[7]);
+    if (sortOption === "Price High → Low") return asPrice(second[7]) - asPrice(first[7]);
+    if (sortOption === "Location") return first[1].localeCompare(second[1]);
+    if (sortOption === "Shared / Exclusive") {
+      if (first[6] === second[6]) return 0;
+      return first[6] === "Shared" ? -1 : 1;
+    }
+    return 0;
+  });
+  const displayedLeads = Array.from(
+    { length: sortedLeads.length ? 25 : 0 },
+    (_, index) => sortedLeads[index % sortedLeads.length],
+  );
+  const toggleFilter = (filter: FilterSection) => {
+    setOpenFilters((current) => ({ ...current, [filter]: !current[filter] }));
+  };
+
+  useEffect(() => {
+    const closeSortOnOutsideClick = (event: MouseEvent) => {
+      if (!sortRef.current?.contains(event.target as Node)) setSortOpen(false);
+    };
+    const closeSortOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSortOpen(false);
+    };
+
+    document.addEventListener("mousedown", closeSortOnOutsideClick);
+    document.addEventListener("keydown", closeSortOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeSortOnOutsideClick);
+      document.removeEventListener("keydown", closeSortOnEscape);
+    };
+  }, []);
+
+  return <section className="mt-4 overflow-hidden rounded-2xl border border-[#ebf4ff] bg-white shadow-[0_2px_10px_rgba(31,61,96,0.04)]">
+    <div className="flex flex-col justify-between gap-3 border-b border-[#edf1f5] px-4 py-3 lg:flex-row lg:items-center"><div><div className="flex items-center gap-3"><Goal size={32} className="shrink-0 text-[#087ce7]" strokeWidth={2.25} /><h2 className="text-2xl font-bold text-[#17212e]">Find Leads Marketplace</h2></div><p className="mt-1 text-xs text-[#333]">Search and filter thousands of foreclosure, pre foreclosure and distressed property leads nationwide.</p></div><button className="h-8 rounded-[5px] border border-[#0073df] px-3 text-xs text-[#0073df]">⌑ &nbsp; Save Search</button></div>
+    <div className="grid lg:grid-cols-[288px_minmax(0,1fr)]"><aside className="hidden border-r border-[#edf1f5] p-4 lg:block"><div className="flex items-center justify-between pb-3"><h3 className="text-sm font-bold">Filter</h3><button className="text-xs text-[#0073df]">Clear All</button></div>
+      <FilterAccordion id="leadType" title="Lead Type" open={openFilters.leadType} onToggle={() => toggleFilter("leadType")}><div className="mt-2 space-y-1.5 text-xs text-[#667085]">{["Foreclosure", "Pre-Foreclosure", "Mortgage", "Bankruptcy", "Tax Lien", "REO / Bank-Owned", "Debt Settlement", "Probate"].map((item, index) => <label key={item} className="flex items-center gap-1.5"><input defaultChecked={index === 0} type="checkbox" className="accent-[#0073df]" />{item}</label>)}</div></FilterAccordion>
+      <FilterAccordion id="geography" title="Geography" open={openFilters.geography} onToggle={() => toggleFilter("geography")}><div className="mt-3 space-y-2 text-[11px] text-[#667085]"><label className="block">State<select className="mt-1 h-8 w-full rounded border border-[#98a2b3] px-2 text-xs text-black"><option>California (CA)</option></select></label><label className="block">Country<select className="mt-1 h-8 w-full rounded border border-[#98a2b3] px-2 text-xs text-black"><option>Orange County</option></select></label><label className="block">City<select className="mt-1 h-8 w-full rounded border border-[#98a2b3] px-2 text-xs text-black"><option>Any City</option></select></label><label className="block">ZIP<select className="mt-1 h-8 w-full rounded border border-[#98a2b3] px-2 text-xs text-[#98a2b3]"><option>e.g. 928XXX</option></select></label><button type="button" className="h-8 w-full rounded bg-[#e7f2ff] text-xs text-[#0073df]">Add More Geography</button></div></FilterAccordion>
+      <FilterAccordion id="availability" title="Availability" open={openFilters.availability} onToggle={() => toggleFilter("availability")}><div className="mt-2 space-y-1.5 text-xs text-[#667085]">{["Shared", "Exclusive", "Both"].map((item, index) => <label key={item} className="flex items-center gap-1.5"><input defaultChecked={index === 0} type="checkbox" className="accent-[#0073df]" />{item}</label>)}</div></FilterAccordion>
+      <FilterAccordion id="freshness" title="Freshness" open={openFilters.freshness} onToggle={() => toggleFilter("freshness")}><div className="mt-2 space-y-1.5 text-xs text-[#667085]">{["Today", "Last 7 Days", "Last 30 Days", "Custom"].map((item, index) => <label key={item} className="flex items-center gap-1.5"><input defaultChecked={index === 0} type="checkbox" className="accent-[#0073df]" />{item}</label>)}</div></FilterAccordion>
+      <FilterAccordion id="propertyFilters" title="Property Filters" open={openFilters.propertyFilters} onToggle={() => toggleFilter("propertyFilters")}><div className="mt-3 space-y-2 text-[11px] text-[#667085]"><label className="block">Property type<select className="mt-1 h-8 w-full rounded border border-[#98a2b3] px-2 text-xs text-black"><option>California (CA)</option></select></label>{["Estimated value", "Estimated equity", "Mortgage balance"].map((label) => <label key={label} className="block">{label}<span className="mt-1 grid grid-cols-2 gap-2"><input className="h-8 min-w-0 rounded border border-[#98a2b3] px-2 text-xs" placeholder="Min" /><input className="h-8 min-w-0 rounded border border-[#98a2b3] px-2 text-xs" placeholder="Max" /></span></label>)}</div></FilterAccordion>
+      <FilterAccordion id="contactData" title="Contact Data" open={openFilters.contactData} onToggle={() => toggleFilter("contactData")}><div className="mt-2 space-y-1.5 text-xs text-[#667085]">{["Has phone", "Has email", "Has both"].map((item, index) => <label key={item} className="flex items-center gap-1.5"><input defaultChecked={index === 0} type="checkbox" className="accent-[#0073df]" />{item}</label>)}</div></FilterAccordion>
+      <FilterAccordion id="price" title="Price" open={openFilters.price} onToggle={() => toggleFilter("price")}><div className="mt-2 grid grid-cols-2 gap-2"><input className="h-8 min-w-0 rounded border border-[#98a2b3] px-2 text-xs" placeholder="Min" /><input className="h-8 min-w-0 rounded border border-[#98a2b3] px-2 text-xs" placeholder="Max" /></div></FilterAccordion><button className="mt-4 h-9 w-full rounded-[4px] bg-[#087ce7] text-sm text-white">Apply</button></aside>
+      <div className="min-w-0 p-4"><div className="flex flex-wrap items-center gap-3"><div className="relative w-full lg:w-[306px]"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98a2b3]" /><input value={search} onChange={(event) => setSearch(event.target.value)} className="h-9 w-full rounded-[5px] border border-[#d0d5dd] pl-9 pr-2 text-xs outline-none focus:border-[#0073df]" placeholder="Search city, county or zip..." /></div><div ref={sortRef} className="relative"><button type="button" onClick={() => setSortOpen((open) => !open)} aria-haspopup="listbox" aria-expanded={sortOpen} className="flex h-9 items-center gap-2 rounded-[5px] border border-[#d0d5dd] px-3 text-xs outline-none transition hover:border-[#0073df] focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2"><SlidersHorizontal size={14} />{sortOption}<ChevronDown size={14} className={`transition-transform ${sortOpen ? "rotate-180" : ""}`} /></button>{sortOpen && <div role="listbox" aria-label="Sort leads" className="absolute left-0 z-30 mt-2 w-[137px] rounded-[10px] bg-white py-2 shadow-[0_12px_30px_rgba(16,24,40,0.2)] ring-1 ring-black/5">{sortOptions.slice(1).map((option) => <button key={option} type="button" role="option" aria-selected={sortOption === option} onClick={() => { setSortOption(option); setSortOpen(false); }} className={`flex w-full px-[18px] py-2 text-left text-sm transition hover:bg-[#f4f8fc] focus-visible:bg-[#e7f2ff] focus-visible:outline-none ${sortOption === option ? "bg-[#e7f2ff] text-[#0073df]" : "text-[#545454]"}`}>{option}</button>)}</div>}</div><div className="ml-auto flex items-center gap-4"><div className="flex h-8 overflow-hidden rounded border border-[#edf1f5] text-[11px]"><button className="w-9 border-r border-[#8dc7ff] bg-[#e7f2ff] text-[#0073df]">25</button><button className="w-9 border-r border-[#edf1f5]">50</button><button className="w-10">100</button></div><span className="hidden text-[10px] text-[#333] xl:block">Showing 1-25 of 4,827 Matching Leads</span></div><button className="lg:hidden grid size-9 place-items-center rounded border border-[#d0d5dd]"><Filter size={16} /></button></div>
+        <div className="mt-3 overflow-x-auto"><table className="w-full min-w-[850px] text-left text-xs"><thead className="bg-[#fafcff] text-[#667085]"><tr>{["", "Lead Type", "Location", "Property Type", "Est. Value", "Est. Equity", "Added", "Availability", "Price", "Action"].map((head) => <th key={head} className="px-3 py-3 font-medium">{head}</th>)}</tr></thead><tbody>{displayedLeads.map((lead, index) => <tr key={`${lead[0]}-${index}`} className="border-b border-[#f0f2f5] text-[#141936]"><td className="px-3 py-2"><input type="checkbox" /></td><td className="px-3 py-2"><span className={`rounded px-2 py-1 ${tags[lead[0]]}`}>{lead[0]}</span></td>{lead.slice(1, 7).map((value, cell) => <td key={cell} className="max-w-[110px] px-3 py-2">{value}</td>)}<td className="px-3 py-2"><span className={`rounded px-2 py-1 ${lead[7] === "Exclusive" ? "bg-[#ddf9e8] text-[#10a44c]" : "bg-[#e4f4ff] text-[#087ce7]"}`}>{lead[7]}</span></td><td className="px-3 py-2">{lead[8]}</td><td className="px-3 py-2"><button className="rounded border border-[#8dc7ff] px-2 py-1 text-[#087ce7]">View Lead</button></td></tr>)}</tbody></table></div></div></div>
   </section>;
 };
 

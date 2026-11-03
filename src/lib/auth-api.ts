@@ -149,3 +149,50 @@ export const createSubscriptionPayment = (
     accessToken,
   );
 
+export type AddFundsResult = {
+  requestId: string;
+  paymentId: string;
+  status: "PENDING" | string;
+  amount: number;
+  currency: string;
+  checkoutUrl: string | null;
+};
+
+export const addFunds = (accessToken: string, amount: number) =>
+  jsonRequest<AddFundsResult>(
+    "/wallet/add-funds",
+    "POST",
+    { amount },
+    accessToken,
+  );
+
+export type ContactUsInput = {
+  subject: string;
+  message: string;
+};
+
+export type ContactTicket = {
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string | null;
+  subject: string;
+  message: string;
+  status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | string;
+  adminReply: string | null;
+  resolvedAt: string | null;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const submitContactMessage = (
+  accessToken: string,
+  input: ContactUsInput,
+) => jsonRequest<ContactTicket>("/contact-us", "POST", input, accessToken);
+
+export const getMyContactMessages = (accessToken: string) =>
+  apiRequest<ContactTicket[]>("/contact-us/my", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
