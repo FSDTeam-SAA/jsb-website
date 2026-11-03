@@ -136,7 +136,17 @@ const LeadPreview = ({
   };
 
   return (
-    <aside data-lenis-prevent className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-[556px] flex-col overflow-hidden border-l border-[#edf2f7] bg-white shadow-[-2px_0_3px_rgba(0,0,0,0.1)]" aria-label="Lead Preview">
+    <div
+      className="fixed inset-0 z-50"
+      onClick={onClose}
+      role="presentation"
+    >
+    <aside
+      data-lenis-prevent
+      className="absolute right-0 top-0 flex h-dvh w-full max-w-[556px] flex-col overflow-hidden border-l border-[#edf2f7] bg-white shadow-[-2px_0_3px_rgba(0,0,0,0.1)]"
+      aria-label="Lead Preview"
+      onClick={(event) => event.stopPropagation()}
+    >
       <header className="flex h-[75px] shrink-0 items-center justify-between border-b border-[rgba(219,236,255,0.7)] px-4">
         <h2 className="text-xl font-bold text-[#0f1839]">Lead Preview</h2>
         <button type="button" onClick={onClose} aria-label="Close lead preview" className="grid size-9 place-items-center rounded-md text-[#77839a] transition hover:bg-[#f3f6fa] hover:text-[#334155] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df]">
@@ -168,6 +178,7 @@ const LeadPreview = ({
         </section>
       </div>
     </aside>
+    </div>
   );
 };
 

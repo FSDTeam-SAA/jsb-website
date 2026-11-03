@@ -52,7 +52,7 @@ const DashboardHeader = () => {
           width={150}
           height={43}
         />
-        <h1 className="hidden text-[32px] font-bold leading-none text-[#0e1224] sm:block">
+        <h1 className="hidden text-[28px] font-bold leading-none text-[#0e1224] sm:block">
           Dashboard
         </h1>
       </div>

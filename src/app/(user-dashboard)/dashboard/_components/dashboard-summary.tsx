@@ -71,7 +71,7 @@ const DashboardSummary = () => {
               </span>
               <div>
                 <p className="text-xs font-medium text-[#333]">{label}</p>
-                <p className="mt-1 text-xl font-bold leading-none text-black">
+                <p className="mt-1 text-lg font-bold leading-none text-black">
                   {value}
                 </p>
                 {detail && (
@@ -97,7 +97,7 @@ const DashboardSummary = () => {
                 <Icon size={20} />
               </span>
               <div>
-                <p className="text-xl font-bold leading-none">{label}</p>
+                <p className="text-lg font-bold leading-none">{label}</p>
                 <p
                   className={`mt-1 text-xs ${label === "Find Leads" ? "text-white" : "text-[#333]"}`}
                 >
@@ -117,7 +117,7 @@ const DashboardSummary = () => {
               <Plus size={25} />
             </span>
             <div>
-              <p className="text-xl font-bold leading-none">Add Funds</p>
+            <p className="text-lg font-bold leading-none">Add Funds</p>
               <p className="mt-1 text-xs">Add money to your account balance</p>
             </div>
           </div>
