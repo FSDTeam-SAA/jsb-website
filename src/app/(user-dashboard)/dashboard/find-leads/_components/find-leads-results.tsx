@@ -6,6 +6,9 @@ import { ChevronDown, Search, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { addMultipleToCart } from "@/lib/cart-api";
+import { createSavedSearch } from "@/lib/saved-search-api";
+import { getSavedSearchResults } from "@/lib/saved-search-api";
+import type { SavedSearchResultsResponse } from "@/lib/saved-search-api";
 import {
   getMarketplaceLeads,
   type MarketplaceFilters,
@@ -101,11 +104,17 @@ const MarketplaceEmpty = () => (
 
 const FindLeadsResults = ({
   filters,
+  savedSearchId,
+  savedSearchRequestKey,
+  savedSearchResults,
   onFiltersChange,
   onBulkOrder,
   onViewLead,
 }: {
   filters: MarketplaceFilters;
+  savedSearchId?: string | null;
+  savedSearchRequestKey?: number;
+  savedSearchResults?: SavedSearchResultsResponse | null;
   onFiltersChange: (filters: MarketplaceFilters) => void;
   onBulkOrder: () => void;
   onViewLead: (lead: MarketplaceLead) => void;
@@ -116,10 +125,10 @@ const FindLeadsResults = ({
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm ?? "");
   const [selected, setSelected] = useState<string[]>([]);
   const marketplaceQuery = useQuery({
-    queryKey: ["marketplace", accessToken, filters],
-    queryFn: () => getMarketplaceLeads(accessToken!, filters),
-    enabled: status === "authenticated" && Boolean(accessToken),
-    staleTime: 60_000,
+    queryKey: ["marketplace", accessToken, filters, savedSearchId, savedSearchRequestKey],
+    queryFn: () => savedSearchId ? getSavedSearchResults(accessToken!, savedSearchId) : getMarketplaceLeads(accessToken!, filters),
+    enabled: status === "authenticated" && Boolean(accessToken) && !savedSearchResults,
+    staleTime: savedSearchId ? 0 : 60_000,
   });
   const addMultipleToCartMutation = useMutation({
     mutationFn: (leadsToAdd: MarketplaceLead[]) => {
@@ -144,15 +153,45 @@ const FindLeadsResults = ({
       );
     },
   });
+  const saveSearchMutation = useMutation({
+    mutationFn: (input: { title: string; filters: MarketplaceFilters }) => {
+      if (!accessToken) throw new Error("Please sign in to save a search.");
+      return createSavedSearch(accessToken, input);
+    },
+    onSuccess: (response) => {
+      void queryClient.invalidateQueries({ queryKey: ["saved-searches"] });
+      toast.success(response.message || "Search saved successfully.");
+    },
+    onError: (error) => toast.error(error instanceof Error ? error.message : "Unable to save this search."),
+  });
 
-  const leads = marketplaceQuery.data?.data ?? emptyLeads;
-  const meta = marketplaceQuery.data?.meta;
+  const leads = savedSearchResults?.data ?? marketplaceQuery.data?.data ?? emptyLeads;
+  const meta = savedSearchResults?.meta ?? marketplaceQuery.data?.meta;
   const total = typeof meta?.total === "number" ? meta.total : leads.length;
   const results = leads;
 
   useEffect(() => {
     setSelected([]);
   }, [filters]);
+
+  useEffect(() => {
+    setSearchTerm(filters.searchTerm ?? "");
+  }, [filters.searchTerm]);
+
+  useEffect(() => {
+    const normalizedSearchTerm = searchTerm.trim();
+    if (normalizedSearchTerm === (filters.searchTerm ?? "")) return;
+
+    const timer = window.setTimeout(() => {
+      onFiltersChange({
+        ...filters,
+        page: 1,
+        searchTerm: normalizedSearchTerm || undefined,
+      });
+    }, 400);
+
+    return () => window.clearTimeout(timer);
+  }, [filters, onFiltersChange, searchTerm]);
 
   const toggle = (id: string) =>
     setSelected((current) =>
@@ -179,7 +218,7 @@ const FindLeadsResults = ({
     addMultipleToCartMutation.mutate(leadsToAdd);
   };
 
-  const isLoading = status === "loading" || marketplaceQuery.isLoading;
+  const isLoading = status === "loading" || (!savedSearchResults && marketplaceQuery.isLoading);
   const needsAuthentication = status === "unauthenticated" || !accessToken;
   const applySearch = () => {
     onFiltersChange({ ...filters, page: 1, searchTerm: searchTerm.trim() || undefined });
@@ -187,6 +226,18 @@ const FindLeadsResults = ({
   const changeSort = (value: string) => {
     const [sortBy, sortOrder] = value.split(":") as [MarketplaceFilters["sortBy"], MarketplaceFilters["sortOrder"]];
     onFiltersChange({ ...filters, page: 1, sortBy, sortOrder });
+  };
+  const saveSearch = () => {
+    if (status !== "authenticated" || !accessToken) {
+      toast.error("Your session has expired. Please sign in again.");
+      return;
+    }
+    const appliedSearchTerm = filters.searchTerm;
+    const savedFilters = Object.fromEntries(
+      Object.entries(filters).filter(([key]) => !["searchTerm", "page", "limit", "sortBy", "sortOrder"].includes(key)),
+    ) as MarketplaceFilters;
+    const title = searchTerm.trim() || appliedSearchTerm?.trim() || "Saved Search";
+    saveSearchMutation.mutate({ title, filters: savedFilters });
   };
 
   return (
@@ -215,7 +266,7 @@ const FindLeadsResults = ({
           <ChevronDown size={12} className="pointer-events-none -ml-4" />
         </label>
         <div className="ml-auto flex gap-2">
-          <button type="button" className="h-8 rounded-[4px] border border-[#087ce7] px-3 text-[10px] text-[#087ce7]">⌑ &nbsp; Save Search</button>
+          <button type="button" onClick={saveSearch} disabled={saveSearchMutation.isPending} className="h-8 rounded-[4px] border border-[#087ce7] px-3 text-[10px] text-[#087ce7] disabled:cursor-not-allowed disabled:opacity-60">{saveSearchMutation.isPending ? "Saving..." : "⌑   Save Search"}</button>
           <button type="button" onClick={onBulkOrder} className="h-8 rounded-[4px] border border-[#00aa7a] px-3 text-[10px] text-[#00a77a]">＋ &nbsp; Make Bulk Order</button>
         </div>
       </div>

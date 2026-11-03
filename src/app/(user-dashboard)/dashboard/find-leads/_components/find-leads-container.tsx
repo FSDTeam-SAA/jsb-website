@@ -7,11 +7,17 @@ import FindLeadsFilter from "./find-leads-filter";
 import FindLeadsResults from "./find-leads-results";
 import SavedSearches from "./saved-searches";
 import type { MarketplaceFilters, MarketplaceLead } from "@/lib/marketplace-api";
+import type { SavedSearch, SavedSearchResultsResponse } from "@/lib/saved-search-api";
 
 const FindLeadsContainer = () => {
   const [activeTab, setActiveTab] = useState<"search" | "saved">("search");
   const [bulkOrderOpen, setBulkOrderOpen] = useState(false);
   const [previewLead, setPreviewLead] = useState<MarketplaceLead | null>(null);
+  const [activeSavedSearch, setActiveSavedSearch] = useState<{
+    id: string;
+    requestKey: number;
+  } | null>(null);
+  const [savedSearchResults, setSavedSearchResults] = useState<SavedSearchResultsResponse | null>(null);
   const [filters, setFilters] = useState<MarketplaceFilters>({
     sortBy: "createdAt",
     sortOrder: "desc",
@@ -43,23 +49,41 @@ const FindLeadsContainer = () => {
             <div className="mt-3 flex gap-3">
               <FindLeadsFilter
                 onApply={(nextFilters) =>
-                  setFilters({
-                    ...nextFilters,
-                    sortBy: filters.sortBy ?? "createdAt",
-                    sortOrder: filters.sortOrder ?? "desc",
-                  })
+                  {
+                    setActiveSavedSearch(null);
+                    setSavedSearchResults(null);
+                    setFilters({
+                      ...nextFilters,
+                      sortBy: filters.sortBy ?? "createdAt",
+                      sortOrder: filters.sortOrder ?? "desc",
+                    });
+                  }
                 }
               />
               <FindLeadsResults
                 filters={filters}
-                onFiltersChange={setFilters}
+                savedSearchId={activeSavedSearch?.id}
+                savedSearchRequestKey={activeSavedSearch?.requestKey}
+                savedSearchResults={savedSearchResults}
+                onFiltersChange={(nextFilters) => {
+                  setActiveSavedSearch(null);
+                  setSavedSearchResults(null);
+                  setFilters(nextFilters);
+                }}
                 onBulkOrder={() => setBulkOrderOpen(true)}
                 onViewLead={setPreviewLead}
               />
             </div>
           ) : (
             <div className="mt-4">
-              <SavedSearches />
+              <SavedSearches
+                onViewResults={(savedSearch: SavedSearch, results: SavedSearchResultsResponse) => {
+                  setFilters(savedSearch.filters);
+                  setActiveSavedSearch({ id: savedSearch.id, requestKey: Date.now() });
+                  setSavedSearchResults(results);
+                  setActiveTab("search");
+                }}
+              />
             </div>
           )}
         </div>

@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { signOut } from "next-auth/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { signOut, useSession } from "next-auth/react";
 import {
   FileText,
   Headphones,
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import LogoutModal from "@/components/modals/LogoutModal";
 import { logoutUser } from "@/lib/auth-api";
+import { getWalletBalance } from "@/lib/wallet-api";
 import AddFundsModal from "./add-funds-modal";
 
 const navigation = [
@@ -29,6 +30,8 @@ const navigation = [
 
 const DashboardSidebar = () => {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const accessToken = session?.user.accessToken;
   const queryClient = useQueryClient();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [addFundsOpen, setAddFundsOpen] = useState(false);
@@ -40,6 +43,13 @@ const DashboardSidebar = () => {
       await signOut({ callbackUrl: "/" });
     },
   });
+  const walletBalanceQuery = useQuery({
+    queryKey: ["wallet", "balance", accessToken],
+    queryFn: () => getWalletBalance(accessToken!),
+    enabled: status === "authenticated" && Boolean(accessToken),
+    staleTime: 30_000,
+  });
+  const formattedBalance = walletBalanceQuery.data?.data.formattedBalance;
 
   return (
     <aside data-lenis-prevent className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col overflow-y-auto border-r border-[#dbecff] bg-white lg:flex">
@@ -91,7 +101,9 @@ const DashboardSidebar = () => {
       >
         <p className="text-xs font-medium text-[#737b84]">Account Balance</p>
         <div className="mt-1 flex items-center justify-between">
-          <p className="text-xl font-bold leading-none text-[#00a77a]">$425.00</p>
+          <p className="text-xl font-bold leading-none text-[#00a77a]" aria-live="polite">
+            {walletBalanceQuery.isLoading ? <span className="inline-block h-6 w-20 animate-pulse rounded bg-[#d9f4eb]" /> : formattedBalance ?? "—"}
+          </p>
           <span className="grid size-8 place-items-center rounded-full bg-[#08b988] text-white transition group-hover:bg-[#079a72]">
             <Plus aria-hidden="true" size={20} strokeWidth={2.5} />
           </span>
