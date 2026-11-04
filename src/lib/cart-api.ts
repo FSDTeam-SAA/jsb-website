@@ -46,12 +46,48 @@ export type CartSummary = {
   subscriptionName: string | null;
 };
 
+export type CartItem = {
+  cartItemId: string;
+  leadId: string;
+  leadNumber: number;
+  location: string;
+  propertyType: string | null;
+  stage: string | null;
+  categoryName: string;
+  priceType: "SHARED" | "EXCLUSIVE" | string;
+  originalPrice: number | string;
+  discount: number | string;
+  finalPrice: number | string;
+  available: boolean;
+  currency: string;
+  addedAt: string;
+};
+
 export type CartResponse = {
   summary: CartSummary;
-  items: unknown[];
+  items: CartItem[];
+};
+
+export type CheckoutCartInput = {
+  cartItemIds: string[];
+  useWallet: boolean;
+};
+
+export type CheckoutResult = {
+  message: string;
+  orderId: string;
+  orderNumber: string;
+  checkoutUrl: string | null;
+  totalAmount: number;
+  walletUsed: number;
+  cardPaid: number;
+  itemsCount: number;
 };
 
 export const getCart = (accessToken: string) =>
   apiRequest<CartResponse>("/cart", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
+
+export const checkoutCart = (accessToken: string, input: CheckoutCartInput) =>
+  jsonRequest<CheckoutResult>("/order/checkout", "POST", input, accessToken);

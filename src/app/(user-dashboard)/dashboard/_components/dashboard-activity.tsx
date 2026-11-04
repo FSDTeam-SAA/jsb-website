@@ -1,16 +1,13 @@
-import Link from "next/link";
-import { Bell, Bookmark, Crown, SearchCheck } from "lucide-react";
+import MembershipInformationCard from "./membership-information-card";
+import RecentOrdersCard from "./recent-orders-card";
+import SavedSearchesCard from "./saved-searches-card";
 
-const orders = [["#FG-10482", "25 leads", "Feb 2, 2026", "$625.00"], ["#FG-10481", "50 leads", "Jan 28, 2026", "$1,250.00"], ["#FG-10480", "25 leads", "Jan 16, 2026", "$625.00"]];
-const searches = [["California Pre-Foreclosure", "2,847 matches"], ["Texas Tax Liens", "1,156 matches"], ["Florida Foreclosures", "892 matches"]];
-
-const PanelTitle = ({ icon: Icon, title }: { icon: typeof SearchCheck; title: string }) => <div className="flex h-[52px] items-center justify-between border-b-2 border-[#f1f4f9] px-3"><div className="flex items-center gap-1"><Icon size={24} className="text-[#087ce7]" /><h2 className="text-sm font-bold text-black">{title}</h2></div><Link href="#" className="text-xs font-semibold text-[#1779fe]">View All</Link></div>;
-
-const DashboardActivity = () => <section className="mt-4 grid gap-4 xl:grid-cols-[2.47fr_1.04fr_1.25fr_1fr]">
-  <article className="overflow-hidden rounded-2xl border border-[#ebf4ff] bg-white"><PanelTitle icon={SearchCheck} title="Recent Orders" /><div className="px-3">{orders.map((order) => <div key={order[0]} className="grid grid-cols-4 border-b border-[#eaeaea] py-4 text-xs text-[#878a9b] last:border-0"><span className="font-medium text-[#141936]">{order[0]}</span><span className="text-center">{order[1]}</span><span className="text-center">{order[2]}</span><span className="text-right font-semibold text-[#141936]">{order[3]}</span></div>)}</div></article>
-  <article className="overflow-hidden rounded-2xl border border-[#ebf4ff] bg-white"><PanelTitle icon={Bookmark} title="Saved Searches" /><div className="space-y-2 px-3 py-2">{searches.map(([name, matches]) => <div key={name} className="flex min-h-10 items-center justify-between gap-2 rounded-lg border border-[#eaeaea] px-2 text-xs"><span className="truncate text-[#141936]">{name}</span><span className="shrink-0 text-[#878a9b]">{matches}</span></div>)}</div></article>
-  <article className="overflow-hidden rounded-2xl border border-[#ebf4ff] bg-white"><PanelTitle icon={Bell} title="New Leads Matching Saved Searches" /><div className="space-y-2 px-3 py-2">{searches.map(([name], index) => <div key={name} className="flex min-h-10 items-center justify-between gap-2 rounded-lg border border-[#eaeaea] px-2 text-xs"><span className="truncate text-[#141936]">{name}</span><span className="shrink-0 font-medium text-[#00a77a]">+{[124, 67, 43][index]}&nbsp; ›</span></div>)}</div></article>
-  <article className="overflow-hidden rounded-2xl border border-[#ebf4ff] bg-white"><PanelTitle icon={Crown} title="Membership Information" /><div className="space-y-3 px-3 py-4 text-xs"><p className="flex justify-between text-[#878a9b]"><span>Membership Plan</span><b className="text-black">Gold</b></p><p className="flex justify-between text-[#878a9b]"><span>Lead Discount</span><b className="text-black">10%</b></p><p className="flex justify-between text-[#878a9b]"><span>Member Since</span><b className="text-black">Jan 12, 2025</b></p><p className="flex justify-between text-[#878a9b]"><span>Next Billing Date</span><b className="text-black">Mar 12, 2026</b></p><Link href="#" className="mt-2 block rounded-[5px] bg-[#e7f2ff] py-2 text-center text-base font-medium text-[#0073df]">Manage Membership</Link></div></article>
-</section>;
+const DashboardActivity = () => (
+  <section className="mt-4 grid gap-4 xl:grid-cols-[2.47fr_1.645fr_1.645fr]">
+    <RecentOrdersCard />
+    <SavedSearchesCard />
+    <MembershipInformationCard />
+  </section>
+);
 
 export default DashboardActivity;
