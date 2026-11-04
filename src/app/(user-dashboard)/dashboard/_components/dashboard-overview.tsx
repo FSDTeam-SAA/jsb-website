@@ -1,7 +1,6 @@
 import DashboardActivity from "./dashboard-activity";
 import DashboardMarketplace from "./dashboard-marketplace";
 import DashboardSummary from "./dashboard-summary";
-import LeadPreviewController from "./lead-preview-controller";
 
 const DashboardOverview = () => {
   return (
@@ -21,7 +20,6 @@ const DashboardOverview = () => {
         </div>
         <DashboardActivity />
         <DashboardMarketplace />
-        <LeadPreviewController />
       </section>
     </main>
   );

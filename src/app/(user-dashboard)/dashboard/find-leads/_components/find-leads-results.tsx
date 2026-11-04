@@ -2,7 +2,15 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { ChevronDown, Search, ShoppingCart } from "lucide-react";
+import {
+  ChevronDown,
+  Plus,
+  Save,
+  Search,
+  ShoppingCart,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { addMultipleToCart } from "@/lib/cart-api";
@@ -23,6 +31,7 @@ const leadTag: Record<string, string> = {
   "Short Sale": "bg-[#dff8f7] text-[#0ca59f]",
 };
 const emptyLeads: MarketplaceLead[] = [];
+const pageSizes = [10, 25, 50] as const;
 
 const currency = (value: number | null, code = "USD") =>
   value === null
@@ -169,6 +178,10 @@ const FindLeadsResults = ({
   const meta = savedSearchResults?.meta ?? marketplaceQuery.data?.meta;
   const total = typeof meta?.total === "number" ? meta.total : leads.length;
   const results = leads;
+  const page = typeof meta?.page === "number" ? meta.page : filters.page ?? 1;
+  const limit = typeof meta?.limit === "number" ? meta.limit : filters.limit ?? results.length;
+  const totalPage = typeof meta?.totalPage === "number" ? meta.totalPage : 1;
+  const canPaginate = !savedSearchResults && Boolean(meta);
 
   useEffect(() => {
     setSelected([]);
@@ -227,6 +240,12 @@ const FindLeadsResults = ({
     const [sortBy, sortOrder] = value.split(":") as [MarketplaceFilters["sortBy"], MarketplaceFilters["sortOrder"]];
     onFiltersChange({ ...filters, page: 1, sortBy, sortOrder });
   };
+  const changePage = (nextPage: number) => {
+    onFiltersChange({ ...filters, page: nextPage });
+  };
+  const changeLimit = (nextLimit: number) => {
+    onFiltersChange({ ...filters, page: 1, limit: nextLimit });
+  };
   const saveSearch = () => {
     if (status !== "authenticated" || !accessToken) {
       toast.error("Your session has expired. Please sign in again.");
@@ -242,32 +261,73 @@ const FindLeadsResults = ({
 
   return (
     <div className="min-w-0 flex-1">
-      <div className="mt-4 flex flex-wrap gap-2">
-        <form className="relative min-w-[230px] max-w-[335px] flex-1" onSubmit={(event) => { event.preventDefault(); applySearch(); }}>
-          <Search size={13} className="absolute left-2 top-2 text-[#98a2b3]" />
+      <div className="mt-4 flex flex-col gap-3 xl:flex-row xl:items-center">
+        <form
+          className="relative w-full xl:max-w-[400px]"
+          onSubmit={(event) => {
+            event.preventDefault();
+            applySearch();
+          }}
+        >
+          <Search
+            size={17}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#667085]"
+          />
           <input
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search city, county or zip..."
-            className="h-8 w-full rounded-[4px] border border-[#d0d5dd] pl-7 pr-2 text-[9px] outline-none focus:border-[#087ce7]"
+            aria-label="Search marketplace leads"
+            className="h-11 w-full rounded-xl border border-[#cfd9e5] bg-white pl-10 pr-10 text-sm text-[#344054] outline-none transition placeholder:text-[#98a2b3] hover:border-[#9ab9d9] focus:border-[#087ce7] focus:ring-4 focus:ring-[#087ce7]/10"
           />
+          {searchTerm ? (
+            <button
+              type="button"
+              onClick={() => setSearchTerm("")}
+              aria-label="Clear search"
+              className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-lg text-[#667085] transition hover:bg-[#edf4fb] hover:text-[#087ce7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087ce7]"
+            >
+              <X size={16} />
+            </button>
+          ) : null}
         </form>
-        <label className="flex h-8 items-center gap-1 rounded-[4px] border border-[#d0d5dd] px-2 text-[9px]">
-          <span className="grid size-3 grid-cols-2 gap-px">
-            {Array.from({ length: 4 }, (_, index) => <i key={index} className="bg-[#98a2b3]" />)}
-          </span>
-          <select value={`${filters.sortBy ?? "createdAt"}:${filters.sortOrder ?? "desc"}`} onChange={(event) => changeSort(event.target.value)} className="appearance-none bg-transparent pr-3 outline-none">
+        <label className="relative flex h-11 shrink-0 items-center rounded-xl border border-[#cfd9e5] bg-white pl-3 pr-9 text-sm text-[#344054] transition hover:border-[#9ab9d9] focus-within:border-[#087ce7] focus-within:ring-4 focus-within:ring-[#087ce7]/10">
+          <SlidersHorizontal size={16} className="mr-2 shrink-0 text-[#087ce7]" />
+          <select
+            value={`${filters.sortBy ?? "createdAt"}:${filters.sortOrder ?? "desc"}`}
+            onChange={(event) => changeSort(event.target.value)}
+            aria-label="Sort marketplace leads"
+            className="h-full min-w-[150px] appearance-none bg-transparent pr-2 outline-none"
+          >
             <option value="createdAt:desc">Newest Leads</option>
             <option value="createdAt:asc">Oldest Leads</option>
             <option value="estValue:desc">Highest Value</option>
             <option value="estValue:asc">Lowest Value</option>
             <option value="estEquity:desc">Highest Equity</option>
           </select>
-          <ChevronDown size={12} className="pointer-events-none -ml-4" />
+          <ChevronDown
+            size={16}
+            className="pointer-events-none absolute right-3 text-[#667085]"
+          />
         </label>
-        <div className="ml-auto flex gap-2">
-          <button type="button" onClick={saveSearch} disabled={saveSearchMutation.isPending} className="h-8 rounded-[4px] border border-[#087ce7] px-3 text-[10px] text-[#087ce7] disabled:cursor-not-allowed disabled:opacity-60">{saveSearchMutation.isPending ? "Saving..." : "⌑   Save Search"}</button>
-          <button type="button" onClick={onBulkOrder} className="h-8 rounded-[4px] border border-[#00aa7a] px-3 text-[10px] text-[#00a77a]">＋ &nbsp; Make Bulk Order</button>
+        <div className="flex w-full flex-col gap-2 sm:flex-row xl:ml-auto xl:w-auto">
+          <button
+            type="button"
+            onClick={saveSearch}
+            disabled={saveSearchMutation.isPending}
+            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[#087ce7] bg-white px-4 text-sm font-semibold text-[#087ce7] transition hover:bg-[#eef7ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087ce7] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 xl:flex-none"
+          >
+            <Save size={16} aria-hidden="true" />
+            {saveSearchMutation.isPending ? "Saving search..." : "Save Search"}
+          </button>
+          <button
+            type="button"
+            onClick={onBulkOrder}
+            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#00a77a] px-4 text-sm font-semibold text-white transition hover:bg-[#008b66] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a77a] focus-visible:ring-offset-2 xl:flex-none"
+          >
+            <Plus size={17} aria-hidden="true" />
+            Make Bulk Order
+          </button>
         </div>
       </div>
 
@@ -312,7 +372,7 @@ const FindLeadsResults = ({
                     </td>
                     <td className="px-2 py-2">{currency(priceFor(lead), lead.currency)}</td>
                     <td className="px-2 py-2">
-                      <button type="button" onClick={() => onViewLead(lead)} className="rounded border border-[#8dc7ff] px-1.5 py-1 text-[#087ce7]">View Lead</button>
+                      <button type="button" onClick={() => onViewLead(lead)} className="rounded-lg border border-[#8dc7ff] px-1.5 py-1 text-[#087ce7]">View Lead</button>
                     </td>
                   </tr>
                 ))}
@@ -324,15 +384,48 @@ const FindLeadsResults = ({
             <div className="sticky bottom-3 mt-3 flex items-center justify-between rounded-[10px] border border-[#d5dce5] bg-white p-3 shadow-lg">
               <p className="text-[16px] font-medium text-[#344054]">{selected.length} Leads Selected</p>
               <p className="hidden text-[10px] text-[#0073df] sm:block">{selected.filter((id) => leads.find((lead) => lead.id === id)?.availability === "SHARED").length} Shared Lead &nbsp;•&nbsp; {selected.filter((id) => leads.find((lead) => lead.id === id)?.availability === "EXCLUSIVE").length} Exclusive Lead</p>
-              <button type="button" onClick={addSelectedLeads} disabled={addMultipleToCartMutation.isPending} className="flex h-8 items-center gap-2 rounded-[4px] bg-[#087ce7] px-8 text-[10px] text-white disabled:cursor-not-allowed disabled:opacity-60">{addMultipleToCartMutation.isPending ? "Adding..." : "Add to Cart"} <ShoppingCart size={13} /></button>
+              <button type="button" onClick={addSelectedLeads} disabled={addMultipleToCartMutation.isPending} className="flex h-8 items-center gap-2 rounded-lg bg-[#087ce7] px-8 text-[10px] text-white disabled:cursor-not-allowed disabled:opacity-60">{addMultipleToCartMutation.isPending ? "Adding..." : "Add to Cart"} <ShoppingCart size={13} /></button>
             </div>
           )}
 
-          <div className="mt-3 flex items-center justify-between text-[9px] text-[#98a2b3]">
-            <span>Showing {results.length} of {total.toLocaleString()} Matching Leads</span>
-            <div className="flex gap-2">
-              <button type="button" className="rounded border border-[#8dc7ff] px-2 py-1 text-[#087ce7]">{typeof meta?.limit === "number" ? meta.limit : results.length}</button>
-            </div>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[9px] text-[#98a2b3]">
+            <span>
+              Showing {results.length ? (page - 1) * limit + 1 : 0}-
+              {Math.min(page * limit, total)} of {total.toLocaleString()} Matching Leads
+            </span>
+            {canPaginate ? (
+              <div className="flex items-center gap-2">
+                <div className="flex overflow-hidden rounded-lg border border-[#d0d5dd]">
+                  {pageSizes.map((pageSize) => (
+                    <button
+                      key={pageSize}
+                      type="button"
+                      onClick={() => changeLimit(pageSize)}
+                      className={`min-w-8 px-2 py-1 ${limit === pageSize ? "bg-[#e7f2ff] font-medium text-[#087ce7]" : "text-[#667085]"}`}
+                    >
+                      {pageSize}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => changePage(Math.max(1, page - 1))}
+                  disabled={page === 1 || marketplaceQuery.isFetching}
+                  className="rounded-lg px-2 py-1 text-[#667085] transition hover:bg-[#f2f7fc] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="whitespace-nowrap">Page {page} of {totalPage}</span>
+                <button
+                  type="button"
+                  onClick={() => changePage(page + 1)}
+                  disabled={page >= totalPage || marketplaceQuery.isFetching}
+                  className="rounded-lg px-2 py-1 text-[#667085] transition hover:bg-[#f2f7fc] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            ) : null}
           </div>
         </>
       )}
