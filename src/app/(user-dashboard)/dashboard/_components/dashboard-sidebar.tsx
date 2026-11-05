@@ -102,7 +102,7 @@ const DashboardSidebar = () => {
         <p className="text-xs font-medium text-[#737b84]">Account Balance</p>
         <div className="mt-1 flex items-center justify-between">
           <p className="text-xl font-bold leading-none text-[#00a77a]" aria-live="polite">
-            {walletBalanceQuery.isLoading ? <span className="inline-block h-6 w-20 animate-pulse rounded bg-[#d9f4eb]" /> : formattedBalance ?? "—"}
+            {walletBalanceQuery.isLoading ? <span className="inline-block h-6 w-20 animate-pulse rounded bg-[#d9f4eb]" /> : walletBalanceQuery.isError ? <span className="text-sm text-[#b42318]">Unavailable</span> : formattedBalance ?? "—"}
           </p>
           <span className="grid size-8 place-items-center rounded-full bg-[#08b988] text-white transition group-hover:bg-[#079a72]">
             <Plus aria-hidden="true" size={20} strokeWidth={2.5} />

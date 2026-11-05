@@ -16,11 +16,11 @@ const AccountContainer = ({ children }: { children: React.ReactNode }) => {
             Manage your membership and get support.
           </p>
         </header>
-        <div className="mt-6 flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
+        <div className="mt-6 flex flex-col items-stretch gap-6 lg:flex-row lg:items-start lg:gap-8">
           <AccountSettingsNav
             onDelete={() => setDeleteOpen(true)}
           />
-          <div className="min-w-0 flex-1">{children}</div>
+          <div className="min-w-0 w-full flex-1">{children}</div>
         </div>
       </section>
       <DeleteAccountModal

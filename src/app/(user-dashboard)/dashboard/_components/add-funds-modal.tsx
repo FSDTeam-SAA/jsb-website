@@ -90,7 +90,7 @@ const AddFundsModal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-funds-title"
-        className="w-full max-w-[650px] rounded-[14px] bg-white p-6 shadow-2xl sm:p-8"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-[650px] overflow-y-auto rounded-[14px] bg-white p-4 shadow-2xl sm:p-8"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between">

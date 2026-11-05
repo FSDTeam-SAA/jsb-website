@@ -16,6 +16,7 @@ type MyLeadsTableProps = {
   isLoading: boolean;
   isError: boolean;
   isAuthenticated: boolean;
+  onRetry: () => void;
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
   onViewLead: (lead: PurchasedLead) => void;
@@ -51,6 +52,7 @@ const MyLeadsTable = ({
   isLoading,
   isError,
   isAuthenticated,
+  onRetry,
   onPageChange,
   onLimitChange,
   onViewLead,
@@ -114,15 +116,16 @@ const MyLeadsTable = ({
           </thead>
           <tbody>
             {isLoading ? (
-              <tr>
-                <td colSpan={7} className="px-2 py-8 text-center text-[#667085]">
-                  Loading purchased leads...
-                </td>
-              </tr>
+              Array.from({ length: 5 }, (_, row) => (
+                <tr key={row} className="border-b border-[#eff2f5]" aria-hidden="true">
+                  {Array.from({ length: 7 }, (_, cell) => <td key={cell} className="px-2 py-3"><span className="block h-3 animate-pulse rounded bg-[#edf2f7]" /></td>)}
+                </tr>
+              ))
             ) : isError ? (
               <tr>
                 <td colSpan={7} className="px-2 py-8 text-center text-[#d92d20]">
-                  Unable to load your purchased leads. Please try again.
+                  <p>Unable to load your purchased leads.</p>
+                  <button type="button" onClick={onRetry} className="mt-2 rounded border border-[#f0a4a4] px-2 py-1 text-xs font-semibold">Try again</button>
                 </td>
               </tr>
             ) : !isAuthenticated ? (
@@ -197,11 +200,11 @@ const MyLeadsTable = ({
         </table>
       </div>
 
-      <div className="mt-3 flex justify-between text-[9px] text-[#98a2b3]">
+      <div className="mt-3 flex flex-col gap-2 text-[9px] text-[#98a2b3] sm:flex-row sm:items-center sm:justify-between">
         <span>
           Showing {firstResult}-{lastResult} of {meta?.total ?? 0} purchased leads
         </span>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {pageSizes.map((pageSize) => (
             <button
               key={pageSize}

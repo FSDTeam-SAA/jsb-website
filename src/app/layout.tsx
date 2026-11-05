@@ -6,6 +6,7 @@ import ScrollToTopComponent from "@/components/providers/ScrollToTop";
 import { Nunito_Sans, Crimson_Text, Fredoka } from "next/font/google";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AppProvider from "@/components/providers/AppProvider";
+import InitialPageLoader from "@/components/providers/InitialPageLoader";
 import { Toaster } from "@/components/ui/sonner";
 
 const nunitoSans = Nunito_Sans({
@@ -46,9 +47,10 @@ export default function RootLayout({
         <SmoothScrollProvider>
           <AuthProvider>
           <AppProvider>
-            {children}
-
-            <Toaster />
+            <InitialPageLoader>
+              {children}
+              <Toaster />
+            </InitialPageLoader>
           </AppProvider>
         </AuthProvider>
           <ScrollToTopComponent />

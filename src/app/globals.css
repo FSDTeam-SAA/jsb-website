@@ -12,6 +12,31 @@
 body{
   @apply bg-[#FFFFFF];
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: clip;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* The Figma Select Plan desktop composition is designed to fit in one viewport.
+ * On shorter laptop displays, preserve the composition without creating a
+ * document scrollbar; phone layouts remain naturally scrollable and readable. */
+@media (min-width: 768px) and (max-height: 899px) {
+  .select-plan-layout {
+    --tw-scale-x: 0.84;
+    --tw-scale-y: 0.84;
+  }
 }
 
 /*
@@ -75,6 +100,15 @@ html.lenis.lenis-smooth {
 
 .dashboard-summary-scroll::-webkit-scrollbar-thumb:hover {
   background-color: #7f91a5;
+}
+
+@media (max-width: 639px) {
+  .dashboard-typography .text-\[9px\],
+  .dashboard-typography .text-\[10px\],
+  .dashboard-typography .text-\[11px\] {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

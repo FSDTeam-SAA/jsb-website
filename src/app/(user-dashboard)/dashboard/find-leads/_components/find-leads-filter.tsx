@@ -77,12 +77,13 @@ const FindLeadsFilter = ({ onApply }: { onApply: (filters: MarketplaceFilters) =
   const rangeInput = (key: keyof MarketplaceFilters, placeholder: string) => <Input inputMode="decimal" value={(filters[key] as string | undefined) ?? ""} onChange={(event) => update(key, event.target.value)} placeholder={placeholder} className="h-[34px] rounded-lg border-[#949494] px-2 text-xs placeholder:text-[#949494] focus-visible:border-[#087ce1] focus-visible:ring-[#087ce1]/20" />;
 
   return (
-    <aside className="hidden w-[300px] shrink-0 self-stretch border-r border-[#ebf4ff] bg-white p-3 lg:block">
+    <aside className="w-full shrink-0 self-stretch rounded-lg border border-[#ebf4ff] bg-white p-3 lg:w-[300px] lg:rounded-none lg:border-y-0 lg:border-l-0 lg:border-r">
       <div className="flex items-center justify-between border-b-2 border-[#f1f4f9] py-2"><h2 className="text-base font-bold text-black">Filter</h2><button type="button" onClick={clearAll} className="text-xs font-medium text-[#1779fe]">Clear All</button></div>
       <FilterSection title="Lead Type" isOpen={openSections.includes("Lead Type")} onToggle={() => toggleSection("Lead Type")}>
-        {categoriesQuery.isLoading && <p className="text-xs text-[#667085]">Loading lead types…</p>}
-        {categoriesQuery.isError && <p className="text-xs text-[#b42318]">Lead types could not be loaded.</p>}
-        {!categoriesQuery.isLoading && !categoriesQuery.isError && <CheckboxList options={categories.map((category) => ({ label: category.name, value: category.id }))} selected={filters.categoryId ?? []} onChange={(value) => toggleMulti("categoryId", value)} />}
+        {categoriesQuery.isLoading && <div className="space-y-2" aria-label="Loading lead types">{[1, 2, 3].map((item) => <span key={item} className="block h-4 animate-pulse rounded bg-[#edf2f7]" />)}</div>}
+        {categoriesQuery.isError && <div className="rounded-lg bg-[#fff7f7] p-2 text-xs text-[#b42318]">Lead types could not be loaded.<button type="button" onClick={() => categoriesQuery.refetch()} className="ml-1 font-semibold underline">Retry</button></div>}
+        {!categoriesQuery.isLoading && !categoriesQuery.isError && categories.length === 0 && <p className="text-xs text-[#667085]">No lead types are available.</p>}
+        {!categoriesQuery.isLoading && !categoriesQuery.isError && categories.length > 0 && <CheckboxList options={categories.map((category) => ({ label: category.name, value: category.id }))} selected={filters.categoryId ?? []} onChange={(value) => toggleMulti("categoryId", value)} />}
       </FilterSection>
       <FilterSection title="Geography" isOpen={openSections.includes("Geography")} onToggle={() => toggleSection("Geography")}><div className="space-y-2"><TextField label="State" value={filters.state} onChange={(value) => update("state", value)} placeholder="Any state" /><TextField label="County" value={filters.county} onChange={(value) => update("county", value)} placeholder="Any county" /><TextField label="City" value={filters.city} onChange={(value) => update("city", value)} placeholder="Any city" /><TextField label="ZIP" value={filters.zipcode} onChange={(value) => update("zipcode", value)} placeholder="e.g. 92801" /></div></FilterSection>
       <FilterSection title="Availability" isOpen={openSections.includes("Availability")} onToggle={() => toggleSection("Availability")}><CheckboxList options={availabilityOptions} selected={filters.availability ?? []} onChange={(value) => toggleMulti("availability", value)} /></FilterSection>

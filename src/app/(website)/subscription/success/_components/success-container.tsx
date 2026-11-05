@@ -3,7 +3,6 @@ import {
   ArrowRight,
   BadgeCheck,
   Check,
-  LayoutDashboard,
   ShieldCheck,
 } from "lucide-react";
 
@@ -50,11 +49,8 @@ const SuccessContainer = () => {
         </div>
 
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link href="/dashboard" className="inline-flex h-12 items-center justify-center gap-2 rounded-[9px] bg-[#104170] px-6 text-sm font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
-            <LayoutDashboard aria-hidden="true" size={18} /> Go to dashboard
-          </Link>
-          <Link href="/dashboard/find-leads" className="inline-flex h-12 items-center justify-center gap-2 rounded-[9px] border border-[#b9ccdd] bg-white px-6 text-sm font-bold text-[#104170] transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
-            Explore leads <ArrowRight aria-hidden="true" size={18} />
+          <Link href="/lead-interests" className="inline-flex h-12 items-center justify-center gap-2 rounded-[9px] bg-[#104170] px-6 text-sm font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2">
+            Set lead interests <ArrowRight aria-hidden="true" size={18} />
           </Link>
         </div>
 

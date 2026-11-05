@@ -46,7 +46,7 @@ const FindLeadsContainer = () => {
             </button>
           </div>
           {activeTab === "search" ? (
-            <div className="mt-3 flex gap-3">
+            <div className="mt-3 flex flex-col gap-3 lg:flex-row">
               <FindLeadsFilter
                 onApply={(nextFilters) =>
                   {
