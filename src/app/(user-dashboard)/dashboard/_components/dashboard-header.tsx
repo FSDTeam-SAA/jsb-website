@@ -8,9 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { getCurrentUserProfile } from "@/lib/auth-api";
 import { getCart } from "@/lib/cart-api";
-import DashboardNotificationPanel, {
-  unreadNotificationCount,
-} from "./dashboard-notification-panel";
+import { getUnreadNotificationCount } from "@/lib/notification-api";
+import DashboardNotificationPanel from "./dashboard-notification-panel";
 
 const displayCount = (count: number) => (count > 99 ? "99+" : String(count));
 
@@ -31,6 +30,13 @@ const DashboardHeader = () => {
     staleTime: 30_000,
     refetchInterval: 30_000,
   });
+  const unreadNotificationsQuery = useQuery({
+    queryKey: ["notifications", "unread-count", accessToken],
+    queryFn: () => getUnreadNotificationCount(accessToken!),
+    enabled: status === "authenticated" && Boolean(accessToken),
+    staleTime: 30_000,
+    refetchInterval: 30_000,
+  });
   const user = profileQuery.data?.data ?? session?.user;
   const fullName =
     `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() || "Account";
@@ -38,6 +44,8 @@ const DashboardHeader = () => {
     `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase() ||
     "U";
   const cartCount = cartQuery.data?.data.summary.totalItems ?? 0;
+  const unreadNotificationCount =
+    unreadNotificationsQuery.data?.data.unreadCount ?? 0;
 
   return (
     <header className="sticky top-0 z-30 flex h-[75px] shrink-0 items-center justify-between border-b border-[#dbecff] bg-white px-4 md:px-6">
@@ -101,6 +109,8 @@ const DashboardHeader = () => {
       </div>
       {notificationsOpen && (
         <DashboardNotificationPanel
+          accessToken={accessToken}
+          unreadCount={unreadNotificationCount}
           onClose={() => setNotificationsOpen(false)}
         />
       )}
