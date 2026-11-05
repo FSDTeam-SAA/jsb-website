@@ -20,6 +20,8 @@ import {
   getCart,
   type CartItem,
   type CartSummary,
+  validatePromoCode,
+  type ValidatePromoCodeResult,
 } from "@/lib/cart-api";
 
 const leadTypeClasses: Record<string, string> = {
@@ -50,6 +52,9 @@ const CartContainer = () => {
   const queryClient = useQueryClient();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [useCredit, setUseCredit] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] =
+    useState<ValidatePromoCodeResult | null>(null);
   const cartQuery = useQuery({
     queryKey: ["cart", accessToken],
     queryFn: () => getCart(accessToken!),
@@ -69,9 +74,22 @@ const CartContainer = () => {
     );
   }, [cartQuery.data]);
 
+  const totalBeforePromo = selectedTotal(items, selectedIds, apiSummary);
+  const activePromo =
+    appliedPromo && Math.abs(appliedPromo.subtotal - totalBeforePromo) < 0.01
+      ? appliedPromo
+      : null;
+
   const summary = useMemo(
-    () => calculateSummary(items, selectedIds, useCredit, apiSummary),
-    [apiSummary, items, selectedIds, useCredit],
+    () =>
+      calculateSummary(
+        items,
+        selectedIds,
+        useCredit,
+        apiSummary,
+        activePromo?.discountAmount,
+      ),
+    [activePromo?.discountAmount, apiSummary, items, selectedIds, useCredit],
   );
   const availableItems = items.filter((item) => item.available);
   const selectedAll =
@@ -83,6 +101,7 @@ const CartContainer = () => {
       return checkoutCart(accessToken, {
         cartItemIds: summary.selectedItems.map((item) => item.cartItemId),
         useWallet: useCredit,
+        ...(activePromo ? { promoCode: activePromo.code } : {}),
       });
     },
     onSuccess: (response) => {
@@ -107,6 +126,32 @@ const CartContainer = () => {
     },
   });
 
+  const promoMutation = useMutation({
+    mutationFn: () => {
+      if (!accessToken) throw new Error("Please sign in before applying a promo code.");
+      if (!summary.selectedItems.length || summary.totalBeforeCredit <= 0) {
+        throw new Error("Select at least one available lead before applying a promo code.");
+      }
+
+      return validatePromoCode(accessToken, {
+        code: promoCode.trim(),
+        subtotal: summary.totalBeforeCredit,
+      });
+    },
+    onSuccess: (response) => {
+      setAppliedPromo(response.data);
+      setPromoCode(response.data.code);
+      toast.success(response.data.message || "Promo code applied.");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "We could not apply that promo code. Please try again.",
+      );
+    },
+  });
+
   const toggleLead = (cartItemId: string) => {
     setSelectedIds((current) =>
       current.includes(cartItemId)
@@ -122,6 +167,15 @@ const CartContainer = () => {
     }
 
     checkoutMutation.mutate();
+  };
+
+  const applyPromoCode = () => {
+    if (!promoCode.trim()) {
+      toast.error("Enter a promo code first.");
+      return;
+    }
+
+    promoMutation.mutate();
   };
 
   const handleCartWheel = (event: WheelEvent<HTMLElement>) => {
@@ -345,6 +399,43 @@ const CartContainer = () => {
                 <SummaryRow label="Exclusive leads" value={summary.exclusiveQuantity.toString()} />
               </SummarySection>
 
+              <section>
+                <div className="flex items-center gap-2 text-sm font-semibold text-[#334155]">
+                  <span className="grid size-5 place-items-center rounded-full bg-[#e6fbfa] text-[#06a9a0]">
+                    <Percent size={13} strokeWidth={2.4} aria-hidden="true" />
+                  </span>
+                  Apply promo code
+                </div>
+                <div className="mt-3 grid grid-cols-[minmax(0,1fr)_76px] gap-2">
+                  <input
+                    value={promoCode}
+                    onChange={(event) => {
+                      setPromoCode(event.target.value);
+                      setAppliedPromo(null);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") applyPromoCode();
+                    }}
+                    placeholder="Enter promo code"
+                    aria-label="Enter promo code"
+                    className="h-11 min-w-0 rounded-xl border border-[#949494] px-3 text-sm text-[#141936] outline-none transition placeholder:text-[#949494] focus:border-[#0073df] focus:ring-2 focus:ring-[#0073df]/15"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyPromoCode}
+                    disabled={promoMutation.isPending}
+                    className="h-11 rounded-xl border border-[#0073df] text-sm font-semibold text-[#0073df] transition hover:bg-[#eaf4ff] disabled:cursor-not-allowed disabled:border-[#aebdce] disabled:text-[#aebdce] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2"
+                  >
+                    {promoMutation.isPending ? "Checking" : "Apply"}
+                  </button>
+                </div>
+                {activePromo ? (
+                  <p className="mt-2 text-xs font-medium text-[#078654]">
+                    {activePromo.code} applied — {formatCurrency(activePromo.discountAmount, summary.currency)} off.
+                  </p>
+                ) : null}
+              </section>
+
               <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-transparent p-2 transition hover:bg-[#fafbfd]">
                 <input
                   type="checkbox"
@@ -388,6 +479,15 @@ const CartContainer = () => {
                       : formatCurrency(0, summary.currency)
                   }
                   accent={Boolean(summary.credit)}
+                />
+                <SummaryRow
+                  label="Promo code discount"
+                  value={
+                    summary.promoDiscount
+                      ? "-" + formatCurrency(summary.promoDiscount, summary.currency)
+                      : formatCurrency(0, summary.currency)
+                  }
+                  accent={Boolean(summary.promoDiscount)}
                 />
                 <SummaryRow
                   label="Amount charged to card"
@@ -459,6 +559,7 @@ const calculateSummary = (
   selectedIds: string[],
   useCredit: boolean,
   apiSummary?: CartSummary,
+  promoDiscount = 0,
 ) => {
   const selectedItems = items.filter(
     (item) => item.available && selectedIds.includes(item.cartItemId),
@@ -478,7 +579,9 @@ const calculateSummary = (
     ? toAmount(apiSummary?.total)
     : selectedItems.reduce((total, item) => total + toAmount(item.finalPrice), 0);
   const walletBalance = toAmount(apiSummary?.walletBalance);
-  const credit = useCredit ? Math.min(walletBalance, totalBeforeCredit) : 0;
+  const validPromoDiscount = Math.min(Math.max(0, promoDiscount), totalBeforeCredit);
+  const totalAfterPromo = Math.max(0, totalBeforeCredit - validPromoDiscount);
+  const credit = useCredit ? Math.min(walletBalance, totalAfterPromo) : 0;
 
   return {
     selectedItems,
@@ -487,12 +590,31 @@ const calculateSummary = (
     exclusiveQuantity: selectedItems.filter((item) => item.priceType === "EXCLUSIVE").length,
     subtotal,
     discount,
+    promoDiscount: validPromoDiscount,
     walletBalance,
     credit,
-    amountDue: Math.max(0, totalBeforeCredit - credit),
+    totalBeforeCredit,
+    amountDue: Math.max(0, totalAfterPromo - credit),
     currency,
     subscriptionName: apiSummary?.subscriptionName,
   };
+};
+
+const selectedTotal = (
+  items: CartItem[],
+  selectedIds: string[],
+  apiSummary?: CartSummary,
+) => {
+  const selectedItems = items.filter(
+    (item) => item.available && selectedIds.includes(item.cartItemId),
+  );
+  const availableItemCount = items.filter((item) => item.available).length;
+  const allAvailableSelected =
+    availableItemCount > 0 && availableItemCount === selectedItems.length;
+
+  return allAvailableSelected && apiSummary
+    ? toAmount(apiSummary.total)
+    : selectedItems.reduce((total, item) => total + toAmount(item.finalPrice), 0);
 };
 
 const CartLoadingState = () => (

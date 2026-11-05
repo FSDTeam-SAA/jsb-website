@@ -72,7 +72,7 @@ const OurPlan = () => {
       }
 
       toast.success(response.message || "Free subscription activated successfully.");
-      router.push("/dashboard");
+      router.replace("/lead-interests");
       router.refresh();
     },
     onError: (error: Error) => toast.error(error.message),

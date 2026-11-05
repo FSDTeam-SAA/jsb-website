@@ -166,7 +166,7 @@ const LeadPreview = ({
 
         <section className="mt-4 px-4">
           <div className="relative h-[172px] overflow-hidden rounded-lg bg-[#e6edf5]"><Image src="/images/figma/lead-preview-property.png" alt={`${propertyType} property preview`} fill sizes="556px" className="object-cover" priority /></div>
-          <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 py-1 text-xs font-medium">
+          <dl className="mt-3 grid gap-x-3 gap-y-3 py-1 text-xs font-medium sm:grid-cols-2">
             {previewDetails.map(([label, value]) => <div key={label} className="contents"><dt className="text-[#878a9b]">{label}</dt><dd className="text-black">{value}</dd></div>)}
           </dl>
         </section>

@@ -51,7 +51,7 @@ export default function LeadInterestsPage() {
     },
     onSuccess: (data) => {
       toast.success(data.message || "Interests saved successfully.");
-      router.push("/select-plan");
+      router.replace("/dashboard");
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -64,7 +64,7 @@ export default function LeadInterestsPage() {
     );
   };
 
-  const continueWithoutSaving = () => router.push("/select-plan");
+  const continueWithoutSaving = () => router.replace("/dashboard");
 
   if (status === "unauthenticated") return null;
 
@@ -94,7 +94,7 @@ export default function LeadInterestsPage() {
           })}
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="text-sm">
             States of interest
             <input value={states} onChange={(event) => setStates(event.target.value)} placeholder="Florida, Texas" className="mt-2 h-11 w-full rounded-[6px] border px-3" />

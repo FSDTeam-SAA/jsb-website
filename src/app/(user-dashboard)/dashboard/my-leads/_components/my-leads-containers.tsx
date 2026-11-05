@@ -57,6 +57,7 @@ const MyLeadsContainers = () => {
               isLoading={purchasedLeadsQuery.isLoading || status === "loading"}
               isError={purchasedLeadsQuery.isError}
               isAuthenticated={status === "authenticated" && Boolean(accessToken)}
+              onRetry={() => purchasedLeadsQuery.refetch()}
               onPageChange={setPage}
               onLimitChange={(nextLimit) => {
                 setLimit(nextLimit);

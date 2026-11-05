@@ -71,6 +71,7 @@ export type CartResponse = {
 export type CheckoutCartInput = {
   cartItemIds: string[];
   useWallet: boolean;
+  promoCode?: string;
 };
 
 export type CheckoutResult = {
@@ -84,6 +85,22 @@ export type CheckoutResult = {
   itemsCount: number;
 };
 
+export type ValidatePromoCodeInput = {
+  code: string;
+  subtotal: number;
+};
+
+export type ValidatePromoCodeResult = {
+  valid: true;
+  promoCodeId: string;
+  code: string;
+  discount: number;
+  discountAmount: number;
+  subtotal: number;
+  finalAmount: number;
+  message: string;
+};
+
 export const getCart = (accessToken: string) =>
   apiRequest<CartResponse>("/cart", {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -91,3 +108,14 @@ export const getCart = (accessToken: string) =>
 
 export const checkoutCart = (accessToken: string, input: CheckoutCartInput) =>
   jsonRequest<CheckoutResult>("/order/checkout", "POST", input, accessToken);
+
+export const validatePromoCode = (
+  accessToken: string,
+  input: ValidatePromoCodeInput,
+) =>
+  jsonRequest<ValidatePromoCodeResult>(
+    "/promo-code/validate",
+    "POST",
+    input,
+    accessToken,
+  );

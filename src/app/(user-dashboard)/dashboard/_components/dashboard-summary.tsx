@@ -63,14 +63,14 @@ const DashboardSummary = () => {
             key={label}
             className={`flex h-[100px] items-center justify-between rounded-[8px] border px-4 ${label === "Current Membership" ? "border-[#f8e5c1] bg-[#fffcf5]" : "border-[#ebf4ff] bg-[#fefefe]"}`}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex min-w-0 items-center gap-4">
               <span
                 className={`grid size-[68px] place-items-center rounded-full ${iconClass}`}
               >
                 <Icon size={29} />
               </span>
-              <div>
-                <p className="text-xs font-medium text-[#333]">{label}</p>
+              <div className="min-w-0">
+                <p className="truncate text-xs font-medium text-[#333]">{label}</p>
                 <p className="mt-1 text-lg font-bold leading-none text-black">
                   {value}
                 </p>
@@ -90,14 +90,14 @@ const DashboardSummary = () => {
             href={href}
             className={`flex h-20 items-center justify-between rounded-[8px] px-4 transition hover:-translate-y-0.5 ${className}`}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               <span
                 className={`grid size-12 place-items-center rounded-full ${label === "Find Leads" ? "bg-white/20" : "bg-[#e7f2ff] text-[#0073df]"}`}
               >
                 <Icon size={20} />
               </span>
-              <div>
-                <p className="text-lg font-bold leading-none">{label}</p>
+              <div className="min-w-0">
+                <p className="truncate text-lg font-bold leading-none">{label}</p>
                 <p
                   className={`mt-1 text-xs ${label === "Find Leads" ? "text-white" : "text-[#333]"}`}
                 >

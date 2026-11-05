@@ -65,11 +65,34 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 const HistoryTable = ({ tickets }: { tickets: ContactTicket[] }) => (
-  <section className="overflow-x-auto rounded-2xl bg-white p-6">
+  <section className="overflow-hidden rounded-2xl bg-white p-4 sm:overflow-x-auto sm:p-6">
     <h3 className="border-b border-[#f5f7ff] pb-2 text-xl font-bold text-[#0e1224]">
       History
     </h3>
-    <div className="min-w-[660px] ">
+    <div className="space-y-3 pt-4 sm:hidden">
+      {tickets.map((ticket) => (
+        <article
+          key={ticket.id}
+          className="rounded-xl border border-[#edf1f5] bg-[#fafcff] p-3"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-[#1b1b3a]">
+                {ticket.subject}
+              </p>
+              <p className="mt-1 truncate text-xs text-[#667085]">
+                #{ticket.id}
+              </p>
+            </div>
+            <StatusBadge status={ticket.status} />
+          </div>
+          <p className="mt-3 text-xs text-[#667085]">
+            {formatTicketDate(ticket.createdAt)}
+          </p>
+        </article>
+      ))}
+    </div>
+    <div className="hidden min-w-[660px] sm:block">
       <div className="grid grid-cols-4 border-b border-[#f5f7ff] pb-4 pt-4 text-sm font-medium text-[#0e1224]">
         <span>Ticket ID</span>
         <span>Date</span>
@@ -105,7 +128,7 @@ const SupportHistorySkeleton = () => (
       {Array.from({ length: 4 }, (_, index) => (
         <div
           key={index}
-          className="grid grid-cols-4 items-center gap-6 py-2.5"
+          className="grid grid-cols-2 gap-3 py-2.5 sm:grid-cols-4 sm:gap-6"
           aria-hidden="true"
         >
           <div className="h-4 w-36 animate-pulse rounded bg-[#e8eff7] motion-reduce:animate-none" />
@@ -235,11 +258,11 @@ const SupportPanel = () => {
   };
 
   return (
-    <div className="pb-16 ">
+    <div className="min-w-0 pb-8 sm:pb-16">
       <form
         onSubmit={submitSupportRequest}
         noValidate
-        className="rounded-[8px] border border-[#f8e5c1] bg-white p-4"
+        className="min-w-0 overflow-visible rounded-[8px] border border-[#f8e5c1] bg-white p-3 sm:p-4"
       >
         <div className="relative" ref={categoryRef}>
           <span className="block text-sm font-medium text-[#585858]">
@@ -314,7 +337,7 @@ const SupportPanel = () => {
         <button
           type="submit"
           disabled={contactMutation.isPending}
-          className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[6px] bg-[#0073df] px-4 text-base font-medium text-white transition hover:bg-[#0067c7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-[6px] bg-[#0073df] px-4 text-base font-medium text-white transition hover:bg-[#0067c7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 sm:h-9 sm:w-auto"
         >
           {contactMutation.isPending ? (
             <Loader2 className="size-4 animate-spin" />

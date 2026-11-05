@@ -51,7 +51,7 @@ export default function OtpForm() {
     onSuccess: ({ resetToken }) => {
       if (flow === "registration") {
         toast.success("Email verified. Please log in to continue.");
-        router.replace("/login?callbackUrl=/lead-interests");
+        router.replace("/login?callbackUrl=/select-plan");
         return;
       }
 

@@ -20,7 +20,7 @@ const DeleteAccountModal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-account-title"
-        className="w-full max-w-[520px] rounded-[12px] bg-white shadow-2xl"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-[520px] overflow-y-auto rounded-[12px] bg-white shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         <header className="flex items-center justify-between border-b border-[#e4eaf8] p-5">

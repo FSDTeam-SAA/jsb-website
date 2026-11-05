@@ -68,7 +68,7 @@ const availabilityLabel = (availability: MarketplaceLead["availability"]) =>
   availability.charAt(0) + availability.slice(1).toLowerCase();
 
 const MarketplaceTableSkeleton = () => (
-  <div className="mt-3 overflow-x-auto">
+  <div className="mt-3 hidden overflow-x-auto sm:block">
     <table className="w-full min-w-[820px] text-left text-[9px]">
       <thead className="bg-[#fafcff] text-[#98a2b3]">
         <tr>
@@ -91,6 +91,20 @@ const MarketplaceTableSkeleton = () => (
         ))}
       </tbody>
     </table>
+  </div>
+);
+
+const MarketplaceCardsSkeleton = () => (
+  <div className="mt-3 space-y-3 sm:hidden">
+    {Array.from({ length: 5 }, (_, index) => (
+      <div key={index} className="rounded-xl border border-[#edf1f5] bg-white p-4">
+        <div className="h-4 w-28 animate-pulse rounded bg-[#e7edf4]" />
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="h-8 animate-pulse rounded bg-[#edf1f6]" />
+          <div className="h-8 animate-pulse rounded bg-[#edf1f6]" />
+        </div>
+      </div>
+    ))}
   </div>
 );
 
@@ -251,11 +265,14 @@ const FindLeadsResults = ({
       toast.error("Your session has expired. Please sign in again.");
       return;
     }
-    const appliedSearchTerm = filters.searchTerm;
+    const appliedSearchTerm = searchTerm.trim() || filters.searchTerm?.trim();
     const savedFilters = Object.fromEntries(
-      Object.entries(filters).filter(([key]) => !["searchTerm", "page", "limit", "sortBy", "sortOrder"].includes(key)),
+      Object.entries({
+        ...filters,
+        searchTerm: appliedSearchTerm || undefined,
+      }).filter(([key]) => !["page", "limit", "sortBy", "sortOrder"].includes(key)),
     ) as MarketplaceFilters;
-    const title = searchTerm.trim() || appliedSearchTerm?.trim() || "Saved Search";
+    const title = appliedSearchTerm || "Saved Search";
     saveSearchMutation.mutate({ title, filters: savedFilters });
   };
 
@@ -310,12 +327,12 @@ const FindLeadsResults = ({
             className="pointer-events-none absolute right-3 text-[#667085]"
           />
         </label>
-        <div className="flex w-full flex-col gap-2 sm:flex-row xl:ml-auto xl:w-auto">
+        <div className="grid w-full grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:ml-auto xl:flex xl:w-auto">
           <button
             type="button"
             onClick={saveSearch}
             disabled={saveSearchMutation.isPending}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-[#087ce7] bg-white px-4 text-sm font-semibold text-[#087ce7] transition hover:bg-[#eef7ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087ce7] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 xl:flex-none"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#087ce7] bg-white px-3 text-sm font-semibold text-[#087ce7] transition hover:bg-[#eef7ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087ce7] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 xl:w-auto"
           >
             <Save size={16} aria-hidden="true" />
             {saveSearchMutation.isPending ? "Saving search..." : "Save Search"}
@@ -323,7 +340,7 @@ const FindLeadsResults = ({
           <button
             type="button"
             onClick={onBulkOrder}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#00a77a] px-4 text-sm font-semibold text-white transition hover:bg-[#008b66] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a77a] focus-visible:ring-offset-2 xl:flex-none"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#00a77a] px-3 text-sm font-semibold text-white transition hover:bg-[#008b66] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a77a] focus-visible:ring-offset-2 xl:w-auto"
           >
             <Plus size={17} aria-hidden="true" />
             Make Bulk Order
@@ -331,7 +348,7 @@ const FindLeadsResults = ({
         </div>
       </div>
 
-      {isLoading && <MarketplaceTableSkeleton />}
+      {isLoading && <><MarketplaceTableSkeleton /><MarketplaceCardsSkeleton /></>}
 
       {!isLoading && (needsAuthentication || marketplaceQuery.isError) && (
         <MarketplaceError onRetry={() => marketplaceQuery.refetch()} />
@@ -341,7 +358,7 @@ const FindLeadsResults = ({
 
       {!isLoading && !marketplaceQuery.isError && !needsAuthentication && results.length > 0 && (
         <>
-          <div className="mt-3 overflow-x-auto">
+          <div className="mt-3 hidden overflow-x-auto sm:block">
             <table className="w-full min-w-[820px] text-left text-[9px]">
               <thead className="bg-[#fafcff] text-[#98a2b3]">
                 <tr>
@@ -380,11 +397,64 @@ const FindLeadsResults = ({
             </table>
           </div>
 
+          <div className="mt-3 space-y-3 sm:hidden">
+            {results.map((lead) => {
+              const isSelected = selected.includes(lead.id);
+
+              return (
+                <article
+                  key={lead.id}
+                  className={`rounded-xl border p-4 transition ${isSelected ? "border-[#8dc7ff] bg-[#f4f9ff]" : "border-[#e4edf5] bg-white"}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggle(lead.id)}
+                      className="mt-1 size-4 shrink-0 accent-[#087ce7]"
+                      aria-label={`Select lead ${lead.leadNumber}`}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <span className={`w-fit rounded px-2 py-1 text-xs font-medium ${leadTag[lead.category.name] ?? "bg-[#edf2f7] text-[#475467]"}`}>
+                          {lead.category.name}
+                        </span>
+                        <span className="shrink-0 text-sm font-bold text-[#17212e]">
+                          {currency(priceFor(lead), lead.currency)}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm font-semibold text-[#344054]">
+                        {location(lead)}
+                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#667085]">
+                        <span>{lead.propertyType ?? "Property type unavailable"}</span>
+                        <span aria-hidden="true">•</span>
+                        <span>{age(lead.createdAt)}</span>
+                      </div>
+                      <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#edf1f5] pt-3">
+                        <span className={`rounded px-2 py-1 text-xs font-medium ${lead.availability === "EXCLUSIVE" ? "bg-[#ddf9e8] text-[#10a44c]" : lead.availability === "BOTH" ? "bg-[#f3eaff] text-[#6d42d8]" : "bg-[#e4f4ff] text-[#087ce7]"}`}>
+                          {availabilityLabel(lead.availability)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => onViewLead(lead)}
+                          className="rounded-lg border border-[#8dc7ff] px-3 py-1.5 text-xs font-semibold text-[#087ce7]"
+                        >
+                          View Lead
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
           {selected.length > 0 && (
-            <div className="sticky bottom-3 mt-3 flex items-center justify-between rounded-[10px] border border-[#d5dce5] bg-white p-3 shadow-lg">
+            <div className="sticky bottom-3 mt-3 flex flex-col gap-3 rounded-[10px] border border-[#d5dce5] bg-white p-3 shadow-lg sm:flex-row sm:items-center sm:justify-between">
               <p className="text-[16px] font-medium text-[#344054]">{selected.length} Leads Selected</p>
               <p className="hidden text-[10px] text-[#0073df] sm:block">{selected.filter((id) => leads.find((lead) => lead.id === id)?.availability === "SHARED").length} Shared Lead &nbsp;•&nbsp; {selected.filter((id) => leads.find((lead) => lead.id === id)?.availability === "EXCLUSIVE").length} Exclusive Lead</p>
-              <button type="button" onClick={addSelectedLeads} disabled={addMultipleToCartMutation.isPending} className="flex h-8 items-center gap-2 rounded-lg bg-[#087ce7] px-8 text-[10px] text-white disabled:cursor-not-allowed disabled:opacity-60">{addMultipleToCartMutation.isPending ? "Adding..." : "Add to Cart"} <ShoppingCart size={13} /></button>
+              <button type="button" onClick={addSelectedLeads} disabled={addMultipleToCartMutation.isPending} className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#087ce7] px-5 text-xs text-white disabled:cursor-not-allowed disabled:opacity-60 sm:h-8 sm:w-auto sm:px-8 sm:text-[10px]">{addMultipleToCartMutation.isPending ? "Adding..." : "Add to Cart"} <ShoppingCart size={13} /></button>
             </div>
           )}
 
@@ -394,7 +464,7 @@ const FindLeadsResults = ({
               {Math.min(page * limit, total)} of {total.toLocaleString()} Matching Leads
             </span>
             {canPaginate ? (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <div className="flex overflow-hidden rounded-lg border border-[#d0d5dd]">
                   {pageSizes.map((pageSize) => (
                     <button

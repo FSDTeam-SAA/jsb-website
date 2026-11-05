@@ -59,14 +59,14 @@ const BulkOrderModal = ({ open, onClose }: { open: boolean; onClose: () => void 
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4"
-      onClick={onClose}
+      className="fixed inset-0 z-50 grid overflow-y-auto bg-black/40 p-4 sm:place-items-center"
+      onClick={() => !bulkOrderMutation.isPending && onClose()}
     >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="bulk-order-title"
-        className="w-full max-w-[520px] rounded-[8px] bg-white p-5 shadow-2xl"
+        className="my-auto w-full max-w-[520px] rounded-[8px] bg-white p-4 shadow-2xl sm:p-5"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between">

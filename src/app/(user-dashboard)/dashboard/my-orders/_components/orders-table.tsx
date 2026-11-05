@@ -95,15 +95,16 @@ const OrdersTable = ({
           </thead>
           <tbody>
             {ordersQuery.isLoading || status === "loading" ? (
-              <tr>
-                <td colSpan={9} className="px-2 py-8 text-center text-[#667085]">
-                  Loading orders...
-                </td>
-              </tr>
+              Array.from({ length: 5 }, (_, row) => (
+                <tr key={row} className="border-b border-[#edf1f5]" aria-hidden="true">
+                  {Array.from({ length: 9 }, (_, cell) => <td key={cell} className="px-2 py-3"><span className="block h-3 animate-pulse rounded bg-[#edf2f7]" /></td>)}
+                </tr>
+              ))
             ) : ordersQuery.isError ? (
               <tr>
                 <td colSpan={9} className="px-2 py-8 text-center text-[#d92d20]">
-                  Unable to load orders. Please try again.
+                  <p>Unable to load orders.</p>
+                  <button type="button" onClick={() => ordersQuery.refetch()} className="mt-2 rounded border border-[#f0a4a4] px-2 py-1 text-xs font-semibold">Try again</button>
                 </td>
               </tr>
             ) : status !== "authenticated" || !accessToken ? (
@@ -157,11 +158,11 @@ const OrdersTable = ({
           </tbody>
         </table>
       </div>
-      <div className="mt-3 flex justify-between text-[9px] text-[#98a2b3]">
+      <div className="mt-3 flex flex-col gap-2 text-[9px] text-[#98a2b3] sm:flex-row sm:items-center sm:justify-between">
         <span>
           Showing {firstResult}-{lastResult} of {meta?.total ?? 0}
         </span>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {pageSizes.map((pageSize) => (
             <button
               key={pageSize}

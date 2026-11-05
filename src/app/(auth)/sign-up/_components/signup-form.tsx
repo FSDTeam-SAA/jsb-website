@@ -271,18 +271,18 @@ const SignupForm = () => {
             control={form.control}
             name="agreeToTerms"
             render={({ field }) => (
-              <FormItem className="flex items-start gap-2 space-y-0 pt-0.5">
+              <FormItem className="flex items-center gap-2.5 space-y-0">
                 <FormControl>
                   <Checkbox
-                    className="mt-0.5 size-4 rounded-[3px]"
+                    className="size-4 shrink-0 rounded-[3px]"
                     checked={field.value}
                     onCheckedChange={(checked) =>
                       field.onChange(checked === true)
                     }
                   />
                 </FormControl>
-                <div>
-                  <label className="text-sm leading-5 text-[#1c1c1c]">
+                <div className="min-w-0">
+                  <label className="block text-sm leading-5 text-[#1c1c1c]">
                     I agree to the Foreclosure Gold{" "}
                     <Link
                       className="font-semibold"

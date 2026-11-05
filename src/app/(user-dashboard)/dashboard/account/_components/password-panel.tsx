@@ -97,7 +97,7 @@ const PasswordPanel = () => {
           type="submit"
           form="change-password-form"
           disabled={changePasswordMutation.isPending}
-          className="flex h-12 min-w-[180px] items-center justify-center gap-2 rounded-[6px] bg-[#0073df] px-4 text-base font-medium text-white transition hover:bg-[#0067c7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-[6px] bg-[#0073df] px-4 text-base font-medium text-white transition hover:bg-[#0067c7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0073df] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 sm:min-w-[180px] sm:w-auto"
         >
           {changePasswordMutation.isPending && (
             <Loader2 className="size-4 animate-spin" />

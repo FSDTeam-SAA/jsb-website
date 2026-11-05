@@ -86,7 +86,7 @@ const OrderDetailsScreen = ({ order, onBack }: OrderDetailsScreenProps) => {
               </p>
             </div>
 
-            <div className="rounded-xl border border-white/20 bg-white/10 px-5 py-4 backdrop-blur-sm lg:min-w-[230px]">
+            <div className="w-full rounded-xl border border-white/20 bg-white/10 px-5 py-4 backdrop-blur-sm sm:w-auto lg:min-w-[230px]">
               <p className="text-xs font-medium uppercase tracking-[0.12em] text-blue-100">
                 Total paid
               </p>
