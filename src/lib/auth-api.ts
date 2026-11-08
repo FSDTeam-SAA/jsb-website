@@ -1,4 +1,18 @@
-import { apiRequest, jsonRequest } from "@/lib/api";
+import { apiRequest, jsonRequest, type ApiEnvelope } from "@/lib/api";
+
+export type ActiveSubscription = {
+  id: string;
+  subscribeId: string;
+  title: string;
+  planName: string;
+  subTitle: string;
+  price: number;
+  discount: number;
+  currency: string;
+  status: string;
+  startDate: string;
+  endDate: string;
+};
 
 export type PublicUser = {
   id: string;
@@ -12,6 +26,10 @@ export type PublicUser = {
   leadTypes: string[];
   interestedStates: string[];
   interestedCities: string[];
+  permissions?: string[];
+  walletBalance?: number;
+  activeSubscribe?: ActiveSubscription | null;
+  activeSubscription?: ActiveSubscription | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -149,6 +167,20 @@ export const createSubscriptionPayment = (
     accessToken,
   );
 
+export type SubscriptionCheckoutSession = {
+  status: string;
+  plan: SubscriptionPlan;
+};
+
+export const getSubscriptionCheckoutSession = (
+  accessToken: string,
+  sessionId: string,
+) =>
+  apiRequest<SubscriptionCheckoutSession>(
+    `/subscription/checkout-session/${encodeURIComponent(sessionId)}`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+
 export type CurrentMembership = {
   planName: string;
   planTitle: string;
@@ -171,6 +203,53 @@ export const getMyMembership = (accessToken: string) =>
   apiRequest<CurrentMembership>("/subscription/my-membership", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
+
+export type SubscriptionInvoice = {
+  id: string;
+  planName: string;
+  subTitle: string;
+  date: string;
+  fullDate: string;
+  amount: number;
+  currency: string;
+  status: string;
+  receiptUrl: string | null;
+  stripePaymentIntentId: string | null;
+};
+
+export type SubscriptionInvoicesMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPage: number;
+};
+
+export type SubscriptionInvoicesResponse = Omit<
+  ApiEnvelope<SubscriptionInvoice[]>,
+  "meta"
+> & {
+  meta?: SubscriptionInvoicesMeta;
+};
+
+export const getMyInvoices = (
+  accessToken: string,
+  { page = 1, limit = 10, sortBy = "createdAt" }: {
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+  } = {},
+) => {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    sortBy,
+  });
+
+  return apiRequest<SubscriptionInvoice[]>(
+    `/subscription/my-invoices?${params.toString()}`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  ) as Promise<SubscriptionInvoicesResponse>;
+};
 
 export type CancelMembershipResult = {
   message: string;

@@ -68,12 +68,17 @@ const DashboardHeader = () => {
     staleTime: 30_000,
     refetchInterval: 30_000,
   });
-  const user = profileQuery.data?.data ?? session?.user;
+  const profile = profileQuery.data?.data;
+  const user = profile ?? session?.user;
   const fullName =
     `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() || "Account";
   const initials =
     `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase() ||
     "U";
+  const membershipLabel =
+    profile?.activeSubscription?.planName ??
+    profile?.activeSubscribe?.planName ??
+    "Free Member";
   const cartCount = cartQuery.data?.data.summary.totalItems ?? 0;
   const unreadNotificationCount =
     unreadNotificationsQuery.data?.data.unreadCount ?? 0;
@@ -140,7 +145,9 @@ const DashboardHeader = () => {
             <p className="max-w-[120px] truncate text-sm font-medium text-[#0e1224]">
               {fullName}
             </p>
-            <p className="text-xs text-[#b58400]">Gold Member</p>
+            <p className="max-w-[120px] truncate text-xs text-[#b58400]">
+              {membershipLabel}
+            </p>
           </div>
           <ChevronDown className="hidden text-[#0e1224] sm:block" size={16} strokeWidth={1.8} />
         </div>
