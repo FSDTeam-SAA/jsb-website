@@ -149,6 +149,45 @@ export const createSubscriptionPayment = (
     accessToken,
   );
 
+export type CurrentMembership = {
+  planName: string;
+  planTitle: string;
+  planId: string | null;
+  subTitle: string;
+  discountPercentage: number;
+  price: number;
+  currency: string;
+  status: string;
+  startDate: string | null;
+  endDate: string | null;
+  nextBillingDate: string | null;
+  canCancel: boolean;
+  isCancelled: boolean;
+  isFree: boolean;
+  notice: string;
+};
+
+export const getMyMembership = (accessToken: string) =>
+  apiRequest<CurrentMembership>("/subscription/my-membership", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+export type CancelMembershipResult = {
+  message: string;
+  data: {
+    status: string;
+    endDate: string;
+    cancelledAt: string;
+    planName: string;
+  };
+};
+
+export const cancelMembership = (accessToken: string) =>
+  apiRequest<CancelMembershipResult>("/subscription/cancel-membership", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
 export type AddFundsResult = {
   requestId: string;
   paymentId: string;

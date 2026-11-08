@@ -1,27 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import LeadPreviewController from "../../_components/lead-preview-controller";
 import BulkOrderModal from "./bulk-order-modal";
 import FindLeadsFilter from "./find-leads-filter";
 import FindLeadsResults from "./find-leads-results";
 import SavedSearches from "./saved-searches";
 import type { MarketplaceFilters, MarketplaceLead } from "@/lib/marketplace-api";
-import type { SavedSearch, SavedSearchResultsResponse } from "@/lib/saved-search-api";
+import type { SavedSearch } from "@/lib/saved-search-api";
 
 const FindLeadsContainer = () => {
+  const searchParams = useSearchParams();
+  const categoryIdParam = searchParams.get("categoryId") ?? "";
+  const categoryIds = useMemo(
+    () => categoryIdParam.split(",").filter(Boolean),
+    [categoryIdParam],
+  );
   const [activeTab, setActiveTab] = useState<"search" | "saved">("search");
   const [bulkOrderOpen, setBulkOrderOpen] = useState(false);
   const [previewLead, setPreviewLead] = useState<MarketplaceLead | null>(null);
-  const [activeSavedSearch, setActiveSavedSearch] = useState<{
-    id: string;
-    requestKey: number;
-  } | null>(null);
-  const [savedSearchResults, setSavedSearchResults] = useState<SavedSearchResultsResponse | null>(null);
   const [filters, setFilters] = useState<MarketplaceFilters>({
+    ...(categoryIds.length ? { categoryId: categoryIds } : {}),
     sortBy: "createdAt",
     sortOrder: "desc",
   });
+
+  useEffect(() => {
+    setFilters((current) => ({
+      ...current,
+      categoryId: categoryIds.length ? categoryIds : undefined,
+      page: 1,
+    }));
+  }, [categoryIds]);
   return (
     <main className="min-w-0 flex-1 bg-[#f6f9fd] px-4 py-5 md:px-6">
       <section className="mx-auto max-w-[1640px]">
@@ -48,10 +59,9 @@ const FindLeadsContainer = () => {
           {activeTab === "search" ? (
             <div className="mt-3 flex flex-col gap-3 lg:flex-row">
               <FindLeadsFilter
+                appliedFilters={filters}
                 onApply={(nextFilters) =>
                   {
-                    setActiveSavedSearch(null);
-                    setSavedSearchResults(null);
                     setFilters({
                       ...nextFilters,
                       sortBy: filters.sortBy ?? "createdAt",
@@ -62,12 +72,7 @@ const FindLeadsContainer = () => {
               />
               <FindLeadsResults
                 filters={filters}
-                savedSearchId={activeSavedSearch?.id}
-                savedSearchRequestKey={activeSavedSearch?.requestKey}
-                savedSearchResults={savedSearchResults}
                 onFiltersChange={(nextFilters) => {
-                  setActiveSavedSearch(null);
-                  setSavedSearchResults(null);
                   setFilters(nextFilters);
                 }}
                 onBulkOrder={() => setBulkOrderOpen(true)}
@@ -77,10 +82,13 @@ const FindLeadsContainer = () => {
           ) : (
             <div className="mt-4">
               <SavedSearches
-                onViewResults={(savedSearch: SavedSearch, results: SavedSearchResultsResponse) => {
-                  setFilters(savedSearch.filters);
-                  setActiveSavedSearch({ id: savedSearch.id, requestKey: Date.now() });
-                  setSavedSearchResults(results);
+                onViewResults={(savedSearch: SavedSearch) => {
+                  setFilters({
+                    ...savedSearch.filters,
+                    page: 1,
+                    sortBy: savedSearch.filters.sortBy ?? "createdAt",
+                    sortOrder: savedSearch.filters.sortOrder ?? "desc",
+                  });
                   setActiveTab("search");
                 }}
               />
