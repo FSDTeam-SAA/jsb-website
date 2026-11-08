@@ -64,7 +64,6 @@ const CategoriesNotFound = () => (
 const ExploreLeadTypes = () => {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const { status } = useSession();
-  const findLeadsHref = status === "authenticated" ? "/dashboard/find-leads" : "/login";
   const categoriesQuery = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
@@ -121,7 +120,7 @@ const ExploreLeadTypes = () => {
                       {category.description || "Explore lead opportunities in this category."}
                     </p>
                     <Link
-                      href={findLeadsHref}
+                      href={status === "authenticated" ? `/dashboard/find-leads?categoryId=${encodeURIComponent(category.id)}` : "/login"}
                       className="mt-auto inline-flex h-9 w-fit items-center justify-center rounded-[8px] bg-[#104170] px-3 text-sm font-bold text-white transition hover:bg-[#0b3b65] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
                     >
                       Find Leads

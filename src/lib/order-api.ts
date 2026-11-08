@@ -39,6 +39,29 @@ export type MyOrdersResponse = Omit<ApiEnvelope<Order[]>, "meta"> & {
   meta?: OrdersMeta;
 };
 
+export type MyOrderSummary = {
+  summaryCards: {
+    totalOrder: number;
+    totalPurchasedLeads: number;
+    totalSpent: number;
+    walletBalance: number;
+  };
+  financialBreakdown: {
+    totalSpent: number;
+    walletSpent: number;
+    cardSpent: number;
+    promoSavings: number;
+    currency: string;
+  };
+  orderStats: {
+    total: number;
+    completed: number;
+    pending: number;
+    failed: number;
+  };
+  recentOrders: Array<Pick<Order, "id" | "orderNumber" | "totalAmount" | "walletUsed" | "cardPaid" | "status" | "itemsCount" | "createdAt">>;
+};
+
 export const getMyOrders = async (
   accessToken: string,
   { page = 1, limit = 10 }: Partial<Pick<OrdersMeta, "page" | "limit">> = {},
@@ -52,3 +75,8 @@ export const getMyOrders = async (
     headers: { Authorization: `Bearer ${accessToken}` },
   }) as Promise<MyOrdersResponse>;
 };
+
+export const getMyOrderSummary = (accessToken: string) =>
+  apiRequest<MyOrderSummary>("/order/my-orders/summary", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });

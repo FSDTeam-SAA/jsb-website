@@ -10,32 +10,12 @@ import {
   Plus,
   Search,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { getUserDashboardOverview } from "@/lib/dashboard-api";
 import AddFundsModal from "./add-funds-modal";
 
-const metrics = [
-  {
-    label: "Current Membership",
-    value: "Gold Member",
-    detail: "10% Lead Discount",
-    icon: Crown,
-    iconClass: "bg-[#fff5dd] text-[#d69b00]",
-  },
-  {
-    label: "Account Balance",
-    value: "$425.00",
-    detail: "",
-    icon: BriefcaseBusiness,
-    iconClass: "bg-[#e7f2ff] text-[#0073df]",
-  },
-  {
-    label: "Purchased Leads",
-    value: "57",
-    detail: "",
-    icon: CircleDollarSign,
-    iconClass: "bg-[#e7fbf2] text-[#00a77a]",
-  },
-];
 const actions = [
   {
     label: "Find Leads",
@@ -55,6 +35,41 @@ const actions = [
 
 const DashboardSummary = () => {
   const [addFundsOpen, setAddFundsOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const accessToken = session?.user.accessToken;
+  const overviewQuery = useQuery({
+    queryKey: ["dashboard", "user-overview", accessToken],
+    queryFn: () => getUserDashboardOverview(accessToken!),
+    enabled: status === "authenticated" && Boolean(accessToken),
+    staleTime: 30_000,
+  });
+  const overviewCards = overviewQuery.data?.data.overviewCards;
+  const currency = overviewCards?.accountBalance.currency ?? "USD";
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
+  const metrics = [
+    {
+      label: "Current Membership",
+      value: overviewCards?.membership.planName ?? "—",
+      detail: overviewCards ? `${overviewCards.membership.discountPercentage}% Lead Discount` : "",
+      icon: Crown,
+      iconClass: "bg-[#fff5dd] text-[#d69b00]",
+    },
+    {
+      label: "Account Balance",
+      value: overviewCards ? formatCurrency(overviewCards.accountBalance.currentBalance) : "—",
+      detail: "",
+      icon: BriefcaseBusiness,
+      iconClass: "bg-[#e7f2ff] text-[#0073df]",
+    },
+    {
+      label: "Purchased Leads",
+      value: overviewCards?.leads.totalPurchased.toLocaleString() ?? "—",
+      detail: "",
+      icon: CircleDollarSign,
+      iconClass: "bg-[#e7fbf2] text-[#00a77a]",
+    },
+  ];
   return (
     <>
       <section className="grid gap-3 lg:grid-cols-3">
@@ -70,12 +85,14 @@ const DashboardSummary = () => {
                 <Icon size={29} />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-xs font-medium text-[#333]">{label}</p>
-                <p className="mt-1 text-lg font-bold leading-none text-black">
-                  {value}
+                <p className="truncate text-xs font-medium text-[#333]">
+                  {label}
                 </p>
+                {status === "loading" || overviewQuery.isLoading ? <span className="mt-1 block h-5 w-20 animate-pulse rounded bg-[#edf2f7]" /> : <p className="mt-1 text-lg font-bold leading-none text-black">{value}</p>}
                 {detail && (
-                  <p className="mt-1 text-xs font-medium leading-none text-[#734300]">{detail}</p>
+                  <p className="mt-1 text-xs font-medium leading-none text-[#734300]">
+                    {detail}
+                  </p>
                 )}
               </div>
             </div>
@@ -83,6 +100,7 @@ const DashboardSummary = () => {
           </article>
         ))}
       </section>
+      {overviewQuery.isError && <p role="alert" className="mt-2 text-xs text-[#d92d20]">Dashboard summary could not be loaded. <button type="button" onClick={() => overviewQuery.refetch()} className="font-semibold underline">Try again</button></p>}
       <section className="mt-3 grid gap-3 lg:grid-cols-3">
         {actions.map(({ label, detail, icon: Icon, href, className }) => (
           <Link
@@ -97,7 +115,9 @@ const DashboardSummary = () => {
                 <Icon size={20} />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-lg font-bold leading-none">{label}</p>
+                <p className="truncate text-lg font-bold leading-none">
+                  {label}
+                </p>
                 <p
                   className={`mt-1 text-xs ${label === "Find Leads" ? "text-white" : "text-[#333]"}`}
                 >
@@ -117,7 +137,7 @@ const DashboardSummary = () => {
               <Plus size={25} />
             </span>
             <div>
-            <p className="text-lg font-bold leading-none">Add Funds</p>
+              <p className="text-lg font-bold leading-none">Add Funds</p>
               <p className="mt-1 text-xs">Add money to your account balance</p>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { apiRequest } from "@/lib/api";
@@ -59,11 +59,28 @@ const TextField = ({ label, value, onChange, placeholder }: { label: string; val
   </label>
 );
 
-const FindLeadsFilter = ({ onApply }: { onApply: (filters: MarketplaceFilters) => void }) => {
-  const [openSections, setOpenSections] = useState<string[]>([]);
-  const [filters, setFilters] = useState<MarketplaceFilters>(emptyFilters);
+const FindLeadsFilter = ({ onApply, appliedFilters }: { onApply: (filters: MarketplaceFilters) => void; appliedFilters: MarketplaceFilters }) => {
+  const appliedCategoryIds = useMemo(
+    () => appliedFilters.categoryId ?? [],
+    [appliedFilters.categoryId],
+  );
+  const [openSections, setOpenSections] = useState<string[]>(() => appliedCategoryIds.length ? ["Lead Type"] : []);
+  const [filters, setFilters] = useState<MarketplaceFilters>(() => ({
+    ...emptyFilters,
+    ...(appliedCategoryIds.length ? { categoryId: appliedCategoryIds } : {}),
+  }));
   const categoriesQuery = useQuery({ queryKey: ["categories"], queryFn: getCategories, staleTime: 5 * 60 * 1000 });
   const categories = categoriesQuery.data?.data ?? [];
+
+  useEffect(() => {
+    setFilters((current) => ({
+      ...current,
+      categoryId: appliedCategoryIds.length ? appliedCategoryIds : undefined,
+    }));
+    if (appliedCategoryIds.length) {
+      setOpenSections((current) => current.includes("Lead Type") ? current : [...current, "Lead Type"]);
+    }
+  }, [appliedCategoryIds]);
 
   const update = <K extends keyof MarketplaceFilters>(key: K, value: MarketplaceFilters[K]) => setFilters((current) => ({ ...current, [key]: value }));
   const toggleSection = (title: string) => setOpenSections((current) => current.includes(title) ? current.filter((section) => section !== title) : [...current, title]);

@@ -15,8 +15,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { addMultipleToCart } from "@/lib/cart-api";
 import { createSavedSearch } from "@/lib/saved-search-api";
-import { getSavedSearchResults } from "@/lib/saved-search-api";
-import type { SavedSearchResultsResponse } from "@/lib/saved-search-api";
 import {
   getMarketplaceLeads,
   type MarketplaceFilters,
@@ -127,17 +125,11 @@ const MarketplaceEmpty = () => (
 
 const FindLeadsResults = ({
   filters,
-  savedSearchId,
-  savedSearchRequestKey,
-  savedSearchResults,
   onFiltersChange,
   onBulkOrder,
   onViewLead,
 }: {
   filters: MarketplaceFilters;
-  savedSearchId?: string | null;
-  savedSearchRequestKey?: number;
-  savedSearchResults?: SavedSearchResultsResponse | null;
   onFiltersChange: (filters: MarketplaceFilters) => void;
   onBulkOrder: () => void;
   onViewLead: (lead: MarketplaceLead) => void;
@@ -148,10 +140,10 @@ const FindLeadsResults = ({
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm ?? "");
   const [selected, setSelected] = useState<string[]>([]);
   const marketplaceQuery = useQuery({
-    queryKey: ["marketplace", accessToken, filters, savedSearchId, savedSearchRequestKey],
-    queryFn: () => savedSearchId ? getSavedSearchResults(accessToken!, savedSearchId) : getMarketplaceLeads(accessToken!, filters),
-    enabled: status === "authenticated" && Boolean(accessToken) && !savedSearchResults,
-    staleTime: savedSearchId ? 0 : 60_000,
+    queryKey: ["marketplace", accessToken, filters],
+    queryFn: () => getMarketplaceLeads(accessToken!, filters),
+    enabled: status === "authenticated" && Boolean(accessToken),
+    staleTime: 60_000,
   });
   const addMultipleToCartMutation = useMutation({
     mutationFn: (leadsToAdd: MarketplaceLead[]) => {
@@ -188,14 +180,14 @@ const FindLeadsResults = ({
     onError: (error) => toast.error(error instanceof Error ? error.message : "Unable to save this search."),
   });
 
-  const leads = savedSearchResults?.data ?? marketplaceQuery.data?.data ?? emptyLeads;
-  const meta = savedSearchResults?.meta ?? marketplaceQuery.data?.meta;
+  const leads = marketplaceQuery.data?.data ?? emptyLeads;
+  const meta = marketplaceQuery.data?.meta;
   const total = typeof meta?.total === "number" ? meta.total : leads.length;
   const results = leads;
   const page = typeof meta?.page === "number" ? meta.page : filters.page ?? 1;
   const limit = typeof meta?.limit === "number" ? meta.limit : filters.limit ?? results.length;
   const totalPage = typeof meta?.totalPage === "number" ? meta.totalPage : 1;
-  const canPaginate = !savedSearchResults && Boolean(meta);
+  const canPaginate = Boolean(meta);
 
   useEffect(() => {
     setSelected([]);
@@ -245,7 +237,7 @@ const FindLeadsResults = ({
     addMultipleToCartMutation.mutate(leadsToAdd);
   };
 
-  const isLoading = status === "loading" || (!savedSearchResults && marketplaceQuery.isLoading);
+  const isLoading = status === "loading" || marketplaceQuery.isLoading;
   const needsAuthentication = status === "unauthenticated" || !accessToken;
   const applySearch = () => {
     onFiltersChange({ ...filters, page: 1, searchTerm: searchTerm.trim() || undefined });

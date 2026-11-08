@@ -1,10 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
   BadgeCheck,
   Check,
   ShieldCheck,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { getSubscriptionCheckoutSession } from "@/lib/auth-api";
 
 const nextSteps = [
   "Your membership selection is being activated.",
@@ -13,6 +19,17 @@ const nextSteps = [
 ];
 
 const SuccessContainer = () => {
+  const { data: session, status } = useSession();
+  const sessionId = useSearchParams().get("session_id");
+  const accessToken = session?.user.accessToken;
+  const checkoutSessionQuery = useQuery({
+    queryKey: ["subscription", "checkout-session", sessionId, accessToken],
+    queryFn: () => getSubscriptionCheckoutSession(accessToken!, sessionId!),
+    enabled: status === "authenticated" && Boolean(accessToken && sessionId),
+    staleTime: 5 * 60 * 1000,
+  });
+  const planTitle = checkoutSessionQuery.data?.data.plan.title ?? "Foreclosure Gold";
+
   return (
     <main className="relative isolate min-h-[calc(100svh-260px)] overflow-hidden bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_58%)] px-4 pb-16 pt-32 sm:pb-20 sm:pt-36 lg:pt-32">
       <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-10 z-0 size-[420px] -translate-x-1/2 rounded-full bg-[#d9ebfb]/70 blur-3xl" />
@@ -27,7 +44,7 @@ const SuccessContainer = () => {
           <ShieldCheck aria-hidden="true" size={15} /> Secure checkout complete
         </p>
         <h1 id="subscription-success-heading" className="mt-4 text-3xl font-bold tracking-[-0.04em] text-[#0f2c4f] sm:text-[42px]">
-          Welcome to Foreclosure Gold!
+          Welcome to {planTitle}!
         </h1>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-[#4c6175] sm:text-base">
           Thank you for your membership selection. We&apos;re activating your account benefits now, and they&apos;ll be ready shortly.
