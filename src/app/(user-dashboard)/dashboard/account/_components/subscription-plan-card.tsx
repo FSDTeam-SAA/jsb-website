@@ -34,6 +34,7 @@ const SubscriptionPlanCard = () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["subscription", "my-membership"] }),
         queryClient.invalidateQueries({ queryKey: ["dashboard", "user-overview"] }),
+        queryClient.invalidateQueries({ queryKey: ["user", "profile"] }),
       ]);
       toast.success(response.data.message || response.message || "Membership cancelled successfully.");
     },

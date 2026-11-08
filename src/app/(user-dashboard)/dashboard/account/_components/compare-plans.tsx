@@ -3,7 +3,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { createSubscriptionPayment, getActivePlans, type SubscriptionPlan } from "@/lib/auth-api";
+import {
+  createSubscriptionPayment,
+  getActivePlans,
+  getCurrentUserProfile,
+  type SubscriptionPlan,
+} from "@/lib/auth-api";
 
 const formatPrice = (plan: SubscriptionPlan) =>
   new Intl.NumberFormat("en-US", {
@@ -21,7 +26,16 @@ const ComparePlans = () => {
     queryFn: getActivePlans,
     staleTime: 5 * 60 * 1000,
   });
+  const profileQuery = useQuery({
+    queryKey: ["user", "profile", accessToken],
+    queryFn: () => getCurrentUserProfile(accessToken!),
+    enabled: status === "authenticated" && Boolean(accessToken),
+    staleTime: 5 * 60 * 1000,
+  });
   const plans = plansQuery.data?.data ?? [];
+  const activeSubscription =
+    profileQuery.data?.data.activeSubscription ??
+    profileQuery.data?.data.activeSubscribe;
   const paymentMutation = useMutation({
     mutationKey: ["subscription", "create-payment"],
     mutationFn: (subscribeId: string) => {
@@ -35,13 +49,19 @@ const ComparePlans = () => {
         return;
       }
 
-      await queryClient.invalidateQueries({ queryKey: ["dashboard", "user-overview"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["dashboard", "user-overview"] }),
+        queryClient.invalidateQueries({ queryKey: ["user", "profile"] }),
+        queryClient.invalidateQueries({ queryKey: ["subscription", "my-membership"] }),
+      ]);
       toast.success(response.message || "Subscription activated successfully.");
     },
     onError: (error) => toast.error(error instanceof Error ? error.message : "Unable to start subscription checkout."),
   });
 
   const selectPlan = (plan: SubscriptionPlan) => {
+    if (paymentMutation.isPending) return;
+
     if (status !== "authenticated" || !accessToken) {
       toast.error("Your session has expired. Please sign in again.");
       return;
@@ -68,14 +88,37 @@ const ComparePlans = () => {
         {plans.map((plan) => {
           const isPending = paymentMutation.isPending && paymentMutation.variables === plan.id;
           const isFree = Number(plan.price) === 0;
+          const isCurrentPlan =
+            activeSubscription?.status === "ACTIVE" &&
+            activeSubscription.subscribeId === plan.id;
 
           return (
-            <article key={plan.id} className={`rounded-[8px] border p-4 text-center ${plan.title === "Gold" ? "border-[#0073df] ring-1 ring-[#0073df]" : "border-[#d9dde5]"}`}>
+            <article
+              key={plan.id}
+              aria-current={isCurrentPlan ? "true" : undefined}
+              className={`relative rounded-[8px] border p-4 text-center ${isCurrentPlan ? "border-[#0073df] ring-1 ring-[#0073df]" : "border-[#d9dde5]"}`}
+            >
+              {isCurrentPlan && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#0073df] px-3 py-1 text-xs font-semibold text-white">
+                  Current Plan
+                </span>
+              )}
               <h4 className="text-xl font-bold">{plan.title}</h4>
               <p className="mt-2 min-h-10 text-sm text-[#545454]">{plan.subTitle}</p>
               <p className="mt-3 text-4xl font-bold">{formatPrice(plan)}<span className="text-sm">/month</span></p>
               <div className="mt-5 rounded-[8px] bg-[#f5f7ff] py-3 text-[#104170]"><b className="text-lg">{plan.discount}%</b><p className="mt-1 text-sm">Lead Discount</p></div>
-              <button type="button" onClick={() => selectPlan(plan)} disabled={paymentMutation.isPending} className="mt-4 h-12 rounded-[6px] bg-[#104170] px-4 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60">{isPending ? (isFree ? "Activating..." : "Opening checkout...") : "Choose Plan"}</button>
+              <button
+                type="button"
+                onClick={() => selectPlan(plan)}
+                disabled={isPending || isCurrentPlan}
+                className="mt-4 h-12 rounded-[6px] bg-[#104170] px-4 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isCurrentPlan
+                  ? "Current Plan"
+                  : isPending
+                    ? (isFree ? "Activating..." : "Opening checkout...")
+                    : "Choose Plan"}
+              </button>
             </article>
           );
         })}
