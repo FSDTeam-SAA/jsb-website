@@ -103,6 +103,23 @@ export const updateLeadInterests = (
   },
 ) => jsonRequest<PublicUser>("/user/interests", "PATCH", payload, accessToken);
 
+export type DeleteAccountResult = {
+  message: string;
+  deleted?: boolean;
+  deactivated?: boolean;
+};
+
+export const deleteCurrentUserAccount = (
+  accessToken: string,
+  input: { password: string; reason?: string },
+) =>
+  jsonRequest<DeleteAccountResult>(
+    "/user/account",
+    "DELETE",
+    input,
+    accessToken,
+  );
+
 export const getCurrentUserProfile = (accessToken: string) =>
   apiRequest<PublicUser>("/user/profile", {
     headers: { Authorization: `Bearer ${accessToken}` },

@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import AuthShell from "@/components/auth/auth-shell";
+import AuthBackLink from "@/components/auth/auth-back-link";
 import {
   createSubscriptionPayment,
   getActivePlans,
@@ -59,14 +59,7 @@ export default function SelectPlanPage() {
   return (
     <AuthShell variant="select-plan">
       <div className="select-plan-layout w-full max-w-[644px] transform-gpu min-[1400px]:translate-x-[34px]">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="mb-9 inline-flex h-6 items-center gap-3 font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,'Segoe_UI',sans-serif] text-base font-medium leading-none text-[#0e1224] transition-colors hover:text-[#104170] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
-        >
-          <Image src="/images/figma/arrow-left.svg" alt="" width={24} height={24} aria-hidden="true" />
-          Back
-        </button>
+        <AuthBackLink href="/dashboard" label="Back to dashboard" />
 
         <div className="mx-auto w-full">
           <h1 className="font-['SF_Pro_Display',-apple-system,BlinkMacSystemFont,'Segoe_UI',sans-serif] text-center text-3xl font-bold leading-none text-black sm:text-4xl">

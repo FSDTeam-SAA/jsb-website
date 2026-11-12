@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import AuthBackLink from "@/components/auth/auth-back-link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -96,12 +97,7 @@ const SignupForm = () => {
 
   return (
     <div className="w-full max-w-[520px] bg-white">
-      <Link
-        href="/"
-        className="mb-7 inline-flex items-center gap-2 text-sm text-[#111b2b] transition hover:text-[#174d7e]"
-      >
-        <ArrowLeft size={17} strokeWidth={1.5} /> Back
-      </Link>
+      <AuthBackLink href="/" label="Back to home" />
       <h1 className="text-center text-[30px] font-bold leading-tight text-black sm:text-[32px]">
         Create Account
       </h1>

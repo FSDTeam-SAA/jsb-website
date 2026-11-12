@@ -55,7 +55,7 @@ export async function apiRequest<T>(
 
 export function jsonRequest<T>(
   path: string,
-  method: "POST" | "PATCH",
+  method: "POST" | "PATCH" | "DELETE",
   body: unknown,
   accessToken?: string,
 ) {

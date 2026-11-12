@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import SuccessfullyApprovedModal from "@/components/modals/successfully-approved-modal";
 import { resetPassword } from "@/lib/auth-api";
+import AuthBackLink from "@/components/auth/auth-back-link";
 
 const formSchema = z
   .object({
@@ -104,6 +105,11 @@ const ResetPasswordForm = () => {
           <Image src="/assets/images/logo.png" alt="auth logo" width={500} height={500} className="w-[174px] h-[174px] object-contain" />
         </Link>
       </div>
+
+      <AuthBackLink
+        href={`/forgot-password/otp?email=${encodeURIComponent(decodedEmail)}`}
+        label="Back to verification"
+      />
 
       <h3 className="text-2xl md:text-[32px] lg:text-[40px] font-bold text-[#131313] text-center leading-[120%] ">
         Reset Password
