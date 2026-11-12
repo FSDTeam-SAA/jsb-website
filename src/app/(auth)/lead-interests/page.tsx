@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import AuthShell from "@/components/auth/auth-shell";
+import AuthBackLink from "@/components/auth/auth-back-link";
 import { updateLeadInterests } from "@/lib/auth-api";
 
 const leadTypes = [
@@ -71,9 +72,7 @@ export default function LeadInterestsPage() {
   return (
     <AuthShell>
       <div className="w-full max-w-[600px]">
-        <button onClick={() => router.back()} className="mb-8 text-sm text-[#0f2c4f]">
-          ← &nbsp; Back
-        </button>
+        <AuthBackLink href="/select-plan" label="Back to plans" />
         <h1 className="text-center text-3xl font-bold">What Leads Interest You?</h1>
         <p className="mt-2 text-center text-sm">Optional. We&apos;ll use this to personalize saved searches and daily alerts.</p>
 

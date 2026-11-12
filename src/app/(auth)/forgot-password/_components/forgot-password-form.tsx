@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { toast } from "sonner";
+import AuthBackLink from "@/components/auth/auth-back-link";
 import { useRouter } from "next/navigation";
 import { requestPasswordReset } from "@/lib/auth-api";
 
@@ -61,7 +62,7 @@ const ForgotPasswordForm = () => {
           </Link>
         </div>
 
-        <Link href="/login" className="mb-7 inline-block text-sm text-[#0f2c4f]">← &nbsp; Back</Link>
+        <AuthBackLink href="/login" label="Back to sign in" />
         <h3 className="text-2xl font-bold text-black text-center leading-[120%] ">
           Forgot Password?
         </h3>

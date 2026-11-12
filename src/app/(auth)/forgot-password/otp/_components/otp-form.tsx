@@ -19,6 +19,7 @@ import {
   verifyPasswordResetOtp,
   verifyRegistrationOtp,
 } from "@/lib/auth-api";
+import AuthBackLink from "@/components/auth/auth-back-link";
 
 type OtpFlow = "registration" | "password-reset";
 
@@ -127,6 +128,11 @@ export default function OtpForm() {
           <Image src="/assets/images/logo.png" alt="auth logo" width={500} height={500} className="h-[174px] w-[174px] object-contain" />
         </Link>
       </div>
+
+      <AuthBackLink
+        href={isRegistration ? "/sign-up" : "/forgot-password"}
+        label={isRegistration ? "Back to sign up" : "Back to password reset"}
+      />
 
       <h3 className="text-center text-2xl font-bold leading-[120%] text-[#131313] md:text-[32px] lg:text-[40px]">
         {heading}

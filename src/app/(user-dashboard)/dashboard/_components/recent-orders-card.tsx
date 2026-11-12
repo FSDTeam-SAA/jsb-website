@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { SearchCheck } from "lucide-react";
+import { ArrowRight, SearchCheck, ShoppingBag } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import { getMyOrders } from "@/lib/order-api";
@@ -46,7 +46,7 @@ const RecentOrdersCard = () => {
             onAction={() => ordersQuery.refetch()}
           />
         ) : orders.length === 0 ? (
-          <CardMessage message="No orders yet." />
+          <EmptyOrdersState />
         ) : (
           orders.map((order) => (
             <div
@@ -79,6 +79,25 @@ const CardHeader = () => (
     </div>
     <Link href="/dashboard/my-orders" className="text-xs font-semibold text-[#1779fe]">
       View All
+    </Link>
+  </div>
+);
+
+const EmptyOrdersState = () => (
+  <div className="flex flex-col items-center px-4 py-9 text-center">
+    <span className="grid size-11 place-items-center rounded-full bg-[#edf7ff] text-[#087ce7]">
+      <ShoppingBag aria-hidden="true" size={21} />
+    </span>
+    <h3 className="mt-3 text-sm font-bold text-[#141936]">No orders yet</h3>
+    <p className="mt-1 max-w-[260px] text-xs leading-5 text-[#667085]">
+      Your recent lead purchases will appear here.
+    </p>
+    <Link
+      href="/dashboard/find-leads"
+      className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#087ce7] px-3 text-xs font-semibold text-white transition-colors hover:bg-[#066bc4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087ce7] focus-visible:ring-offset-2"
+    >
+      Browse leads
+      <ArrowRight aria-hidden="true" size={14} />
     </Link>
   </div>
 );

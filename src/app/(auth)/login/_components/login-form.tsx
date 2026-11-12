@@ -23,6 +23,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import AuthBackLink from "@/components/auth/auth-back-link";
 import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
@@ -85,7 +86,7 @@ const LoginForm = () => {
           </Link>
         </div>
 
-        <Link href="/" className="mb-7 inline-block text-sm text-[#0f2c4f]">← &nbsp; Back</Link>
+        <AuthBackLink href="/" label="Back to home" />
         <h3 className="text-2xl font-bold text-black text-center leading-[120%] ">
           Welcome Back!
         </h3>

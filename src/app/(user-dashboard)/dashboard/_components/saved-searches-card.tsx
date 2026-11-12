@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Bookmark } from "lucide-react";
+import { ArrowRight, Bookmark, BookmarkPlus } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 
@@ -45,7 +45,7 @@ const SavedSearchesCard = () => {
             onAction={() => savedSearchesQuery.refetch()}
           />
         ) : searches.length === 0 ? (
-          <CardMessage message="No saved searches yet." />
+          <EmptySavedSearchesState />
         ) : (
           searches.map((search) => (
             <Link
@@ -73,6 +73,25 @@ const CardHeader = () => (
     </div>
     <Link href="/dashboard/find-leads" className="text-xs font-semibold text-[#1779fe]">
       View All
+    </Link>
+  </div>
+);
+
+const EmptySavedSearchesState = () => (
+  <div className="flex flex-col items-center px-4 py-7 text-center">
+    <span className="grid size-11 place-items-center rounded-full bg-[#edf7ff] text-[#087ce7]">
+      <BookmarkPlus aria-hidden="true" size={21} />
+    </span>
+    <h3 className="mt-3 text-sm font-bold text-[#141936]">No saved searches yet</h3>
+    <p className="mt-1 max-w-[270px] text-xs leading-5 text-[#667085]">
+      Apply filters to find the right leads, then save a search to revisit it anytime.
+    </p>
+    <Link
+      href="/dashboard/find-leads"
+      className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#087ce7] px-3 text-xs font-semibold text-white transition-colors hover:bg-[#066bc4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087ce7] focus-visible:ring-offset-2"
+    >
+      Find leads
+      <ArrowRight aria-hidden="true" size={14} />
     </Link>
   </div>
 );
