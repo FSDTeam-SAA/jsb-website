@@ -4,15 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";
-import { getCurrentUserProfile, logoutUser } from "@/lib/auth-api";
+import { logoutUser } from "@/lib/auth-api";
 
 const navigation = [
   { label: "HOME", href: "/" },
-  { label: "HOW IT WORKS", href: "#how-it-works" },
-  { label: "PRICING", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
+  // { label: "HOW IT WORKS", href: "#how-it-works" },
+  // { label: "PRICING", href: "#pricing" },
+  // { label: "FAQ", href: "#faq" },
+  { label: "Lead Types", href: "#lead-types" },
+  { label: "About", href: "#about" },
+  { label: "Contact Us", href: "#contact" },
+  { label: "Support", href: "#support" },
 ];
 
 const Navbar = () => {
@@ -20,18 +24,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const queryClient = useQueryClient();
-  const { data: session, status } = useSession();
-  const accessToken = session?.user.accessToken;
-  const profileQuery = useQuery({
-    queryKey: ["user", "profile", accessToken],
-    queryFn: () => getCurrentUserProfile(accessToken!),
-    enabled: status === "authenticated" && Boolean(accessToken),
-    staleTime: 5 * 60 * 1000,
-  });
-  const user = profileQuery.data?.data ?? session?.user;
-  const initials =
-    `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase() ||
-    "U";
+  const { status } = useSession();
   const isAuthenticated = status === "authenticated";
 
   const handleLogout = async () => {
@@ -98,7 +91,7 @@ const Navbar = () => {
               width={198}
               height={42}
               priority
-              className="hidden h-auto w-[122px] lg:block"
+              className="hidden h-auto w-[190px] lg:block"
             />
           </Link>
 
@@ -120,21 +113,10 @@ const Navbar = () => {
           <div className="hidden items-center gap-3 lg:flex">
             {isAuthenticated ? (
               <Link
-                href="/dashboard/account"
-                aria-label={`Open ${user?.firstName ?? "your"} profile`}
-                className="flex size-[34px] items-center justify-center overflow-hidden rounded-full bg-[#104170] text-[12px] font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
+                href="/dashboard"
+                className="inline-flex h-[34px] items-center justify-center rounded-[5px] bg-[#104170] px-3.5 text-[12px] font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
               >
-                {user?.photo ? (
-                  // Backend photo URLs may originate from a configurable image host.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={user.photo}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  initials
-                )}
+                My Account
               </Link>
             ) : (
               <>
@@ -174,20 +156,9 @@ const Navbar = () => {
             {isAuthenticated && (
               <Link
                 href="/dashboard/account"
-                aria-label={`Open ${user?.firstName ?? "your"} profile`}
-                className="flex size-11 items-center justify-center overflow-hidden rounded-full bg-[#104170] text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
+                className="inline-flex h-11 items-center justify-center rounded-[5px] bg-[#104170] px-3.5 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
               >
-                {user?.photo ? (
-                  // Backend photo URLs may originate from a configurable image host.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={user.photo}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  initials
-                )}
+                My Account
               </Link>
             )}
           </div>

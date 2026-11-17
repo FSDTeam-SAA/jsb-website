@@ -55,7 +55,7 @@ const Faq = () => {
               Common Questions About
               <br className="hidden lg:block" /> Our Coverage &amp; Services
             </h2>
-            <p className="mt-5 max-w-[450px] text-[11px] font-normal leading-relaxed text-black lg:text-xs">
+            <p className="mt-5 max-w-[450px] text-xs font-normal leading-relaxed text-black lg:text-sm">
               We&apos;ve answered the most common questions to make choosing and
               managing your Leads.
             </p>

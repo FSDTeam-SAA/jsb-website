@@ -19,7 +19,6 @@ import {
 } from "@/lib/auth-api";
 
 const categories = [
-  "Bad Leads",
   "Account / Billing",
   "Lead Purchase",
   "Technical Issue",
