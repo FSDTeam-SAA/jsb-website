@@ -3,7 +3,7 @@ import "./globals.css";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 import ScrollToTopComponent from "@/components/providers/ScrollToTop";
 
-import { Nunito_Sans, Crimson_Text, Fredoka } from "next/font/google";
+import { Barlow_Condensed, Nunito_Sans, Crimson_Text, Fredoka } from "next/font/google";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AppProvider from "@/components/providers/AppProvider";
 import InitialPageLoader from "@/components/providers/InitialPageLoader";
@@ -29,6 +29,13 @@ const fredoka = Fredoka({
   display: "swap",
 });
 
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["800"],
+  variable: "--font-barlow-condensed",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "FORECLOSURE GOLD",
   description: "Premium Foreclosure Leads",
@@ -42,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${nunitoSans.variable} ${crimsonText.variable} ${fredoka.variable}`}
+        className={`${nunitoSans.variable} ${crimsonText.variable} ${fredoka.variable} ${barlowCondensed.variable}`}
       >
         <SmoothScrollProvider>
           <AuthProvider>

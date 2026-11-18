@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { logoutUser } from "@/lib/auth-api";
 
@@ -13,19 +14,25 @@ const navigation = [
   // { label: "HOW IT WORKS", href: "#how-it-works" },
   // { label: "PRICING", href: "#pricing" },
   // { label: "FAQ", href: "#faq" },
-  { label: "Lead Types", href: "#lead-types" },
-  { label: "About", href: "#about" },
-  { label: "Contact Us", href: "#contact" },
-  { label: "Support", href: "#support" },
+  { label: "Lead Types", href: "/lead-types" },
+  { label: "About", href: "/about" },
+  { label: "Contact Us", href: "/contact-us" },
+  { label: "Support", href: "/support" },
 ];
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const pathname = usePathname();
   const queryClient = useQueryClient();
   const { status } = useSession();
   const isAuthenticated = status === "authenticated";
+  const isFigmaMarketingPage =
+    pathname === "/support" ||
+    pathname === "/contact-us" ||
+    pathname === "/about" ||
+    pathname === "/lead-types";
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -67,11 +74,27 @@ const Navbar = () => {
   }, [isMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 -mb-[88px] h-[88px] lg:-mb-[66px] lg:h-[66px]">
+    <header
+      className={`sticky top-0 z-50 -mb-[88px] h-[88px] ${
+        isFigmaMarketingPage
+          ? "lg:-mb-[72px] lg:h-[72px]"
+          : "lg:-mb-[66px] lg:h-[66px]"
+      }`}
+    >
       <div
-        className={`pointer-events-auto absolute inset-x-0 top-0 transition-[background-color,box-shadow] duration-200 ${isScrolled ? "bg-white/95 shadow-[0_4px_18px_rgba(15,44,79,0.14)] backdrop-blur" : "bg-transparent"}`}
+        className={`pointer-events-auto absolute inset-x-0 top-0 transition-[background-color,box-shadow] duration-200 ${
+          isScrolled
+            ? "bg-white/95 shadow-[0_4px_18px_rgba(15,44,79,0.14)] backdrop-blur"
+            : isFigmaMarketingPage
+              ? "bg-white"
+              : "bg-transparent"
+        }`}
       >
-        <div className="container mx-auto flex h-[88px] items-center justify-between px-4 lg:h-[66px] lg:px-0">
+        <div
+          className={`container mx-auto flex h-[88px] items-center justify-between px-4 lg:px-0 ${
+            isFigmaMarketingPage ? "lg:h-[72px]" : "lg:h-[66px]"
+          }`}
+        >
           <Link
             href="/"
             aria-label="Foreclosure Gold home"
@@ -91,7 +114,9 @@ const Navbar = () => {
               width={198}
               height={42}
               priority
-              className="hidden h-auto w-[190px] lg:block"
+              className={`hidden h-auto lg:block ${
+                isFigmaMarketingPage ? "w-[164px]" : "w-[190px]"
+              }`}
             />
           </Link>
 
@@ -103,7 +128,9 @@ const Navbar = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className="px-3 py-2 text-[12px] font-bold leading-none text-[#104170] transition hover:text-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
+                className={`px-3 py-2 font-bold leading-none text-[#104170] transition hover:text-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 ${
+                  isFigmaMarketingPage ? "text-[16px]" : "text-[12px]"
+                }`}
               >
                 {item.label}
               </Link>
@@ -114,7 +141,11 @@ const Navbar = () => {
             {isAuthenticated ? (
               <Link
                 href="/dashboard"
-                className="inline-flex h-[34px] items-center justify-center rounded-[5px] bg-[#104170] px-3.5 text-[12px] font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
+                className={`inline-flex items-center justify-center rounded-[5px] bg-[#104170] font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 ${
+                  isFigmaMarketingPage
+                    ? "h-12 px-3 text-[16px]"
+                    : "h-[34px] px-3.5 text-[12px]"
+                }`}
               >
                 My Account
               </Link>
@@ -122,13 +153,21 @@ const Navbar = () => {
               <>
                 <Link
                   href="/sign-up"
-                  className="inline-flex h-[34px] items-center justify-center rounded-[5px] bg-[#104170] px-3.5 text-[12px] font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
+                  className={`inline-flex items-center justify-center rounded-[5px] bg-[#104170] font-bold text-white transition hover:bg-[#0d345a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 ${
+                    isFigmaMarketingPage
+                      ? "h-12 px-3 text-[16px]"
+                      : "h-[34px] px-3.5 text-[12px]"
+                  }`}
                 >
                   Create Free Account
                 </Link>
                 <Link
                   href="/login"
-                  className="inline-flex h-[34px] items-center justify-center rounded-[5px] border border-[#104170] px-3 text-[12px] font-bold text-[#104170] transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
+                  className={`inline-flex items-center justify-center rounded-[5px] border border-[#104170] font-bold text-[#104170] transition hover:bg-[#f4f8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2 ${
+                    isFigmaMarketingPage
+                      ? "h-12 px-3 text-[16px]"
+                      : "h-[34px] px-3 text-[12px]"
+                  }`}
                 >
                   Login
                 </Link>
