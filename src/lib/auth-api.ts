@@ -326,6 +326,59 @@ export const submitContactMessage = (
   input: ContactUsInput,
 ) => jsonRequest<ContactTicket>("/contact-us", "POST", input, accessToken);
 
+export type PublicContactUsInput = {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  interestedIn: string;
+  issueType: string;
+  message: string;
+};
+
+export type PublicContactUsMessage = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  type: "CONTACT" | string;
+  issueType: string;
+  subject: string;
+  message: string;
+  status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | string;
+  adminReply: string | null;
+  resolvedAt: string | null;
+  userId: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const sendPublicContactMessage = (input: PublicContactUsInput) =>
+  jsonRequest<PublicContactUsMessage>(
+    "/contact-us/send-message",
+    "POST",
+    input,
+  );
+
+export type PublicSupportRequestInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  issueType: string;
+  describeYourIssue: string;
+  message: string;
+};
+
+export const submitPublicSupportRequest = (input: PublicSupportRequestInput) =>
+  jsonRequest<PublicContactUsMessage>(
+    "/contact-us/support-request",
+    "POST",
+    input,
+  );
+
 export const getMyContactMessages = (accessToken: string) =>
   apiRequest<ContactTicket[]>("/contact-us/my", {
     headers: { Authorization: `Bearer ${accessToken}` },

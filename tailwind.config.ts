@@ -78,6 +78,7 @@ const config: Config = {
 
       fontFamily: {
         sans: ["var(--font-nunito-sans)", "sans-serif"],
+        barlow: ["var(--font-barlow-condensed)", "sans-serif"],
         crimson: ["var(--font-crimson-text)", "serif"],
         fredoka: ["var(--font-fredoka)", "sans-serif"],
       },
