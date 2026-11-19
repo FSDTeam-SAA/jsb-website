@@ -56,7 +56,7 @@ const AccountSettingsNav = ({
   <aside
     ref={sidebarRef}
     data-lenis-prevent
-    className={`h-fit w-full shrink-0 self-start rounded-[8px] bg-white p-3 transition-[box-shadow,border-color] duration-300 ease-out lg:sticky lg:top-[91px] lg:max-h-[calc(100vh-107px)] lg:w-[421px] lg:overflow-y-auto ${
+    className={`h-fit w-full shrink-0 self-start rounded-[8px] bg-white p-3 transition-[box-shadow,border-color] duration-300 ease-out lg:sticky lg:top-[91px] lg:max-h-[calc(100vh-107px)] lg:w-[240px] lg:overflow-y-auto ${
       isPinned
         ? "border border-[#dfe9f4] shadow-[0_12px_30px_rgba(16,65,112,0.12)]"
         : "border border-transparent shadow-none"

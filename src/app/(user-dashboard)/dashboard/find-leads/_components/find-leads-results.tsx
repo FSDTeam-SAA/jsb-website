@@ -272,7 +272,7 @@ const FindLeadsResults = ({
     <div className="min-w-0 flex-1">
       <div className="mt-4 flex flex-col gap-3 xl:flex-row xl:items-center">
         <form
-          className="relative w-full xl:max-w-[400px]"
+          className="relative w-full min-w-0 xl:max-w-[460px]"
           onSubmit={(event) => {
             event.preventDefault();
             applySearch();
@@ -300,13 +300,13 @@ const FindLeadsResults = ({
             </button>
           ) : null}
         </form>
-        <label className="relative flex h-11 shrink-0 items-center rounded-xl border border-[#cfd9e5] bg-white pl-3 pr-9 text-sm text-[#344054] transition hover:border-[#9ab9d9] focus-within:border-[#087ce7] focus-within:ring-4 focus-within:ring-[#087ce7]/10">
+        <label className="relative flex h-11 shrink-0 items-center rounded-xl border border-[#cfd9e5] bg-white pl-3 pr-7 text-sm text-[#344054] transition hover:border-[#9ab9d9] focus-within:border-[#087ce7] focus-within:ring-4 focus-within:ring-[#087ce7]/10 xl:w-[160px]">
           <SlidersHorizontal size={16} className="mr-2 shrink-0 text-[#087ce7]" />
           <select
             value={`${filters.sortBy ?? "createdAt"}:${filters.sortOrder ?? "desc"}`}
             onChange={(event) => changeSort(event.target.value)}
             aria-label="Sort marketplace leads"
-            className="h-full min-w-[150px] appearance-none bg-transparent pr-2 outline-none"
+            className="h-full min-w-0 flex-1 appearance-none bg-transparent outline-none"
           >
             <option value="createdAt:desc">Newest Leads</option>
             <option value="createdAt:asc">Oldest Leads</option>
@@ -316,10 +316,10 @@ const FindLeadsResults = ({
           </select>
           <ChevronDown
             size={16}
-            className="pointer-events-none absolute right-3 text-[#667085]"
+            className="pointer-events-none absolute right-2 text-[#667085]"
           />
         </label>
-        <div className="grid w-full grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:ml-auto xl:flex xl:w-auto">
+        <div className="grid w-full grid-cols-1 gap-2 min-[420px]:grid-cols-2 xl:ml-auto xl:flex xl:w-auto xl:shrink-0 xl:whitespace-nowrap">
           <button
             type="button"
             onClick={saveSearch}

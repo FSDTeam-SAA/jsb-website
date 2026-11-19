@@ -96,15 +96,15 @@ const ComparePlans = () => {
             <article
               key={plan.id}
               aria-current={isCurrentPlan ? "true" : undefined}
-              className={`relative rounded-[8px] border p-4 text-center ${isCurrentPlan ? "border-[#0073df] ring-1 ring-[#0073df]" : "border-[#d9dde5]"}`}
+              className={`relative rounded-[8px] border p-2 text-center ${isCurrentPlan ? "border-[#0073df] ring-1 ring-[#0073df]" : "border-[#d9dde5]"}`}
             >
               {isCurrentPlan && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#0073df] px-3 py-1 text-xs font-semibold text-white">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#0073df] px-3 py-1 text-[10px] leading-3 font-semibold text-white">
                   Current Plan
                 </span>
               )}
-              <h4 className="text-xl font-bold">{plan.title}</h4>
-              <p className="mt-2 min-h-10 text-sm text-[#545454]">{plan.subTitle}</p>
+              <h4 className="text-xl font-bold pt-2">{plan.title}</h4>
+              <p className="mt-2 min-h-10 text-sm 2xl:text-sm text-[#545454] ">{plan.subTitle}</p>
               <p className="mt-3 text-4xl font-bold">{formatPrice(plan)}<span className="text-sm">/month</span></p>
               <div className="mt-5 rounded-[8px] bg-[#f5f7ff] py-3 text-[#104170]"><b className="text-lg">{plan.discount}%</b><p className="mt-1 text-sm">Lead Discount</p></div>
               <button

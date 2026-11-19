@@ -1,4 +1,5 @@
 import Link from "next/link";
+import OtherLeadTypes from "./other-lead-types";
 
 const leadSections = [
   {
@@ -37,33 +38,32 @@ const dataFilters = [
   "Owner-occupied vs. absentee owner",
 ];
 
-const otherLeadTypes = [
-  "Foreclosure Leads",
-  "Pre-Foreclosure Leads",
-  "Mortgage Leads",
-  "Bankruptcy Leads",
-  "Tax Lien Leads",
-  "REO & Bank-Owned",
-  "Debt Settlement Leads",
-  "Probate Leads",
-];
+const LeadTypesContainer = ({
+  categoryName = "Foreclosure Leads",
+}: {
+  categoryName?: string;
+}) => {
+  const lastSpace = categoryName.lastIndexOf(" ");
+  const heading = lastSpace === -1 ? categoryName : categoryName.slice(0, lastSpace);
+  const accent = lastSpace === -1 ? null : categoryName.slice(lastSpace + 1);
 
-const LeadTypesContainer = () => {
+
   return (
     <main>
       <section className="bg-[linear-gradient(135deg,#0a2d52_0%,#104170_60%,#1a5a9e_100%)] pb-[50px] pt-[144px] text-white">
         <div className="container mx-auto px-4 lg:px-0">
           <div className="mx-auto max-w-[1240px] lg:px-6">
             <h1 className="font-barlow text-[40px] font-extrabold uppercase leading-none sm:text-[54px] sm:leading-[54px]">
-              Foreclosure <span className="text-[#c8870a]">Leads</span>
+              {heading}
+              {accent && <> <span className="text-[#c8870a]">{accent}</span></>}
             </h1>
             <nav aria-label="Breadcrumb" className="mt-[14px] text-[13.5px]">
               <ol className="flex flex-wrap items-center gap-2 text-white/70">
-                <li>Home</li>
+                <li><Link href="/" className="hover:underline">Home</Link></li>
                 <li aria-hidden="true" className="text-white/30">›</li>
-                <li>Lead Types</li>
+                <li><Link href="/lead-types" className="hover:underline">Lead Types</Link></li>
                 <li aria-hidden="true" className="text-white/30">›</li>
-                <li aria-current="page" className="text-white/60">Foreclosure Leads</li>
+                <li aria-current="page" className="text-white/60">{categoryName}</li>
               </ol>
             </nav>
           </div>
@@ -98,7 +98,7 @@ const LeadTypesContainer = () => {
                   Our proprietary data warehouse lets you pull foreclosure
                   records filtered by:
                 </p>
-                <ul className="mt-1 space-y-[7px] pl-[22px] text-[14.5px] leading-[23.93px] text-[#4a5f74] marker:text-[#4a5f74]">
+                <ul className="mt-1 list-disc space-y-[7px] pl-[22px] text-[14.5px] leading-[23.93px] text-[#4a5f74] marker:text-[#4a5f74]">
                   {dataFilters.map((filter) => (
                     <li key={filter}>{filter}</li>
                   ))}
@@ -134,24 +134,7 @@ const LeadTypesContainer = () => {
                 </a>
               </section>
 
-              <nav className="rounded-[12px] border border-[#dde6f0] bg-[#f4f7fb] px-[25px] py-[29px]" aria-label="Other lead types">
-                <h2 className="text-[18.7px] font-bold text-[#1c2a3a]">Other Lead Types</h2>
-                <ul className="mt-2 space-y-1">
-                  {otherLeadTypes.map((leadType, index) => (
-                    <li key={leadType}>
-                      <Link
-                        href={index === 0 ? "/lead-types" : "#lead-types"}
-                        className={`flex min-h-10 items-center justify-between border-b border-[#dde6f0] py-[10px] text-[14px] font-bold transition hover:text-[#104170] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] ${
-                          index === 0 ? "text-[#104170]" : "text-[#4a5f74]"
-                        }`}
-                      >
-                        {leadType}
-                        <span aria-hidden="true">›</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+              <OtherLeadTypes />
             </aside>
           </div>
         </div>
