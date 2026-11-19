@@ -40,6 +40,20 @@ function LeadTypesDropdown({
   const { data, isPending, isError, refetch } = useQuery(publicCategoriesQueryOptions);
   const isActive = pathname === "/lead-types" || pathname.startsWith("/lead-types/");
 
+  useEffect(() => {
+    if (mobile) return;
+
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      const dropdown = details.current;
+      if (dropdown?.open && event.target instanceof Node && !dropdown.contains(event.target)) {
+        dropdown.open = false;
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePointer);
+  }, [mobile]);
+
   const close = () => {
     if (details.current) details.current.open = false;
   };
@@ -53,7 +67,7 @@ function LeadTypesDropdown({
       ref={details}
       className="group relative"
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) close();
+        if (!mobile && event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) close();
       }}
       onKeyDown={(event) => {
         if (event.key !== "Escape" || !details.current?.open) return;
@@ -74,9 +88,15 @@ function LeadTypesDropdown({
         Lead Types
         <ChevronDown aria-hidden="true" size={14} className="group-open:rotate-180" />
       </summary>
-      <ul className={`max-h-64 space-y-1 overflow-y-auto rounded-lg border border-[#dde6f0] bg-white p-1.5 ${
-        mobile ? "ml-3" : "absolute left-0 top-full min-w-52 shadow-md"
-      }`}>
+      <ul
+        aria-label="Lead type categories"
+        tabIndex={mobile ? undefined : 0}
+        className={`space-y-1 rounded-lg border border-[#dde6f0] bg-white p-1.5 ${
+          mobile
+            ? "ml-3"
+            : "absolute left-0 top-full max-h-[min(22rem,calc(100dvh-5rem))] min-w-52 overflow-y-auto overscroll-y-contain shadow-md [scrollbar-color:#8ba5c0_#f1f6fb] [scrollbar-gutter:stable] [scrollbar-width:thin] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170]"
+        }`}
+      >
         <li>
           <Link
             href="/lead-types"
