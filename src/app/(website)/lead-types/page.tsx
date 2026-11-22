@@ -6,7 +6,7 @@ const LeadTypesPage = () => {
   return (
     <div>
       <LeadTypesContainer/>
-      <ReadyToStart variant="lead-types" />
+      <ReadyToStart />
     </div>
   )
 }

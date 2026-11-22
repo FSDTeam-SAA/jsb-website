@@ -6,7 +6,7 @@ const AboutPage = () => {
   return (
     <div>
       <AboutContainer/>
-      <ReadyToStart variant="about" />
+      <ReadyToStart />
     </div>
   )
 }

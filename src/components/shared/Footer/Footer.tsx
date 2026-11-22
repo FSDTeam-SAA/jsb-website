@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
-import { apiRequest } from "@/lib/api";
+import { categoryHref, publicCategoriesQueryOptions } from "@/lib/public-categories";
 
 type FooterGroup = {
   title: string;
@@ -11,18 +11,11 @@ type FooterGroup = {
   hrefs?: string[];
 };
 
-type Category = {
-  id: string;
-  name: string;
-};
-
-const getCategories = () => apiRequest<Category[]>("/categories");
-
 const footerGroups: FooterGroup[] = [
   {
     title: "Company",
     links: ["Home", "How It Works", "Pricing", "FAQ"],
-    hrefs: ["/", "#how-it-works", "#pricing", "#faq"],
+    hrefs: ["/", "/#how-it-works", "/#pricing", "/#faq"],
   },
   {
     title: "Account",
@@ -59,12 +52,8 @@ const LeadTypesNotFound = () => (
 );
 
 const Footer = () => {
-  const categoriesQuery = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-    staleTime: 5 * 60 * 1000,
-  });
-  const categories = categoriesQuery.data?.data ?? [];
+  const categoriesQuery = useQuery(publicCategoriesQueryOptions);
+  const categories = categoriesQuery.data ?? [];
 
   return (
     <footer className="bg-white text-black">
@@ -87,7 +76,7 @@ const Footer = () => {
                 {categories.map((category) => (
                   <li key={category.id} className="leading-none">
                     <Link
-                      href="#lead-types"
+                      href={categoryHref(category.id)}
                       className="text-xs font-medium leading-none text-black transition hover:text-[#104170] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104a7d] focus-visible:ring-offset-2"
                     >
                       {category.name}

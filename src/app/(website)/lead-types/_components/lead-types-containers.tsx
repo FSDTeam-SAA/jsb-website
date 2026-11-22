@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Phone } from "lucide-react";
+import MarketingPageHero from "../../_components/marketing-page-hero";
+import { marketingStyles as styles } from "../../_components/marketing-styles";
 import OtherLeadTypes from "./other-lead-types";
 
 const leadSections = [
@@ -43,35 +46,18 @@ const LeadTypesContainer = ({
 }: {
   categoryName?: string;
 }) => {
-  const lastSpace = categoryName.lastIndexOf(" ");
-  const heading = lastSpace === -1 ? categoryName : categoryName.slice(0, lastSpace);
-  const accent = lastSpace === -1 ? null : categoryName.slice(lastSpace + 1);
-
+  const accent = categoryName.slice(categoryName.lastIndexOf(" ") + 1);
 
   return (
     <main>
-      <section className="bg-[linear-gradient(135deg,#0a2d52_0%,#104170_60%,#1a5a9e_100%)] pb-[50px] pt-[144px] text-white">
-        <div className="container mx-auto px-4 lg:px-0">
-          <div className="mx-auto max-w-[1240px] lg:px-6">
-            <h1 className="font-barlow text-[40px] font-extrabold uppercase leading-none sm:text-[54px] sm:leading-[54px]">
-              {heading}
-              {accent && <> <span className="text-[#c8870a]">{accent}</span></>}
-            </h1>
-            <nav aria-label="Breadcrumb" className="mt-[14px] text-[13.5px]">
-              <ol className="flex flex-wrap items-center gap-2 text-white/70">
-                <li><Link href="/" className="hover:underline">Home</Link></li>
-                <li aria-hidden="true" className="text-white/30">›</li>
-                <li><Link href="/lead-types" className="hover:underline">Lead Types</Link></li>
-                <li aria-hidden="true" className="text-white/30">›</li>
-                <li aria-current="page" className="text-white/60">{categoryName}</li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-      </section>
+      <MarketingPageHero
+        title={categoryName}
+        accent={accent}
+        parent={{ label: "Lead Types", href: "/lead-types" }}
+      />
 
-      <section className="bg-white py-8">
-        <div className="container mx-auto px-4 lg:px-0">
+      <section className={styles.section}>
+        <div className={styles.container}>
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-10">
             <article className="pb-[14px]">
               {leadSections.map(({ title, paragraphs }, index) => (
@@ -79,10 +65,10 @@ const LeadTypesContainer = ({
                   key={title}
                   className={index === 0 ? "" : "border-t border-[#dde6f0] pt-[37px]"}
                 >
-                  <h2 className="text-[25px] font-bold uppercase leading-tight text-[#104170] lg:text-[30px]">
+                  <h2 className={styles.heading}>
                     {title}
                   </h2>
-                  <div className="mt-3 space-y-3 pb-6 text-[15px] leading-[27px] text-[#4a5f74]">
+                  <div className={`mt-3 space-y-3 pb-6 ${styles.body}`}>
                     {paragraphs.map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
@@ -91,19 +77,19 @@ const LeadTypesContainer = ({
               ))}
 
               <section className="border-t border-[#dde6f0] pt-[37px]">
-                <h2 className="text-[25px] font-bold uppercase leading-tight text-[#104170] lg:text-[30px]">
+                <h2 className={styles.heading}>
                   Targeted Foreclosure Data Lists
                 </h2>
-                <p className="mt-3 text-[15px] leading-[27px] text-[#4a5f74]">
+                <p className={`mt-3 ${styles.body}`}>
                   Our proprietary data warehouse lets you pull foreclosure
                   records filtered by:
                 </p>
-                <ul className="mt-1 list-disc space-y-[7px] pl-[22px] text-[14.5px] leading-[23.93px] text-[#4a5f74] marker:text-[#4a5f74]">
+                <ul className={`mt-3 list-disc space-y-2 pl-5 marker:text-[#104170] ${styles.body}`}>
                   {dataFilters.map((filter) => (
                     <li key={filter}>{filter}</li>
                   ))}
                 </ul>
-                <p className="mt-2 text-[15px] leading-[27px] text-[#4a5f74]">
+                <p className={`mt-3 ${styles.body}`}>
                   These lists are delivered in CSV or Excel format, ready to
                   load into your dialer or import into any system your team
                   uses, and can be scaled up or down based on your capacity.
@@ -114,23 +100,24 @@ const LeadTypesContainer = ({
             </article>
 
             <aside className="space-y-5 lg:pb-5">
-              <section className="rounded-[12px] bg-[#104170] px-6 py-7 text-center text-white">
-                <h2 className="text-[18.7px] font-bold">Ready to Get Started?</h2>
-                <p className="mt-1 text-[14px] leading-[22.4px] text-white/75">
+              <section className={`text-center ${styles.card}`}>
+                <h2 className={styles.subheading}>Ready to Get Started?</h2>
+                <p className={`mt-2 ${styles.body}`}>
                   Get a custom quote for your market and budget — prompt
                   response during normal business hours.
                 </p>
                 <Link
                   href="/sign-up"
-                  className="mt-5 flex h-12 items-center justify-center rounded-[5px] bg-[#c8870a] px-4 text-[15px] font-bold text-white shadow-[0_4px_10px_rgba(232,160,32,0.35)] transition hover:bg-[#ae7307] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className={`mt-5 w-full ${styles.primaryButton}`}
                 >
                   Get a Free Trial Account
                 </Link>
                 <a
                   href="tel:+19496301858"
-                  className="mt-[14px] inline-flex text-[15px] font-bold text-white/85 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="mt-4 inline-flex items-center gap-2 rounded text-sm font-bold text-[#104170] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170]"
                 >
-                  📞 (949) 630-1858
+                  <Phone aria-hidden="true" size={18} />
+                  (949) 630-1858
                 </a>
               </section>
 
