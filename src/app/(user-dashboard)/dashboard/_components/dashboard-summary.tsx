@@ -54,6 +54,8 @@ const DashboardSummary = () => {
       detail: overviewCards ? `${overviewCards.membership.discountPercentage}% Lead Discount` : "",
       icon: Crown,
       iconClass: "bg-[#fff5dd] text-[#d69b00]",
+      href: "/dashboard/account/subscription-plan",
+      cardClass: "border-[#f8e5c1] bg-[#fffcf5] hover:border-[#e5ba6e]",
     },
     {
       label: "Account Balance",
@@ -61,6 +63,7 @@ const DashboardSummary = () => {
       detail: "",
       icon: BriefcaseBusiness,
       iconClass: "bg-[#e7f2ff] text-[#0073df]",
+      cardClass: "border-[#ebf4ff] bg-white hover:border-[#b9dafa]",
     },
     {
       label: "Purchased Leads",
@@ -68,37 +71,47 @@ const DashboardSummary = () => {
       detail: "",
       icon: CircleDollarSign,
       iconClass: "bg-[#e7fbf2] text-[#00a77a]",
+      href: "/dashboard/my-leads",
+      cardClass: "border-[#ebf4ff] bg-white hover:border-[#b9dafa]",
     },
   ];
   return (
     <>
       <section className="grid gap-3 lg:grid-cols-3">
-        {metrics.map(({ label, value, detail, icon: Icon, iconClass }) => (
-          <article
-            key={label}
-            className={`flex h-[100px] items-center justify-between rounded-[8px] border px-4 ${label === "Current Membership" ? "border-[#f8e5c1] bg-[#fffcf5]" : "border-[#ebf4ff] bg-[#fefefe]"}`}
-          >
-            <div className="flex min-w-0 items-center gap-4">
-              <span
-                className={`grid size-[68px] place-items-center rounded-full ${iconClass}`}
-              >
-                <Icon size={29} />
+        {metrics.map(({ label, value, detail, icon: Icon, iconClass, href, cardClass }) => {
+          const className = `group flex h-[100px] min-w-0 w-full items-center justify-between gap-2 rounded-[8px] border px-4 text-left transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087ce7] focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5 ${cardClass}`;
+          const content = (
+            <>
+              <span className="flex min-w-0 items-center gap-4">
+                <span className={`grid size-[68px] shrink-0 place-items-center rounded-full ${iconClass}`}>
+                  <Icon aria-hidden="true" size={29} />
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-xs font-medium text-[#333]">{label}</span>
+                  {status === "loading" || overviewQuery.isLoading ? (
+                    <span aria-hidden="true" className="mt-1 block h-5 w-20 animate-pulse rounded bg-[#edf2f7]" />
+                  ) : (
+                    <span className="mt-1 block text-lg font-bold leading-none text-black">{value}</span>
+                  )}
+                  {detail && (
+                    <span className="mt-1 block text-xs font-medium leading-none text-[#734300]">{detail}</span>
+                  )}
+                </span>
               </span>
-              <div className="min-w-0">
-                <p className="truncate text-xs font-medium text-[#333]">
-                  {label}
-                </p>
-                {status === "loading" || overviewQuery.isLoading ? <span className="mt-1 block h-5 w-20 animate-pulse rounded bg-[#edf2f7]" /> : <p className="mt-1 text-lg font-bold leading-none text-black">{value}</p>}
-                {detail && (
-                  <p className="mt-1 text-xs font-medium leading-none text-[#734300]">
-                    {detail}
-                  </p>
-                )}
-              </div>
-            </div>
-            <ArrowRight size={18} />
-          </article>
-        ))}
+              <ArrowRight aria-hidden="true" size={18} className="shrink-0 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5" />
+            </>
+          );
+
+          return href ? (
+            <Link key={label} href={href} className={className}>
+              {content}
+            </Link>
+          ) : (
+            <button key={label} type="button" aria-haspopup="dialog" onClick={() => setAddFundsOpen(true)} className={className}>
+              {content}
+            </button>
+          );
+        })}
       </section>
       {overviewQuery.isError && <p role="alert" className="mt-2 text-xs text-[#d92d20]">Dashboard summary could not be loaded. <button type="button" onClick={() => overviewQuery.refetch()} className="font-semibold underline">Try again</button></p>}
       <section className="mt-3 grid gap-3 lg:grid-cols-3">

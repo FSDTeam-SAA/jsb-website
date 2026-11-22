@@ -28,7 +28,7 @@ export default async function LeadTypePage({
   return (
     <div>
       <LeadTypesContainer categoryName={category.name} />
-      <ReadyToStart variant="lead-types" />
+      <ReadyToStart />
     </div>
   );
 }

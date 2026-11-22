@@ -12,13 +12,9 @@ import { categoryHref, publicCategoriesQueryOptions } from "@/lib/public-categor
 
 const navigation = [
   { label: "HOME", href: "/" },
-  // { label: "HOW IT WORKS", href: "#how-it-works" },
-  // { label: "PRICING", href: "#pricing" },
-  // { label: "FAQ", href: "#faq" },
-  { label: "Lead Types", href: "/lead-types" },
-  { label: "About", href: "/about" },
-  { label: "Contact Us", href: "/contact-us" },
-  { label: "Support", href: "/support" },
+  { label: "ABOUT", href: "/about" },
+  { label: "LEAD TYPES", href: "/lead-types" },
+  { label: "CONTACT US", href: "/contact-us" },
 ];
 
 const desktopLinkClass =
@@ -85,7 +81,7 @@ function LeadTypesDropdown({
           mobile ? "data-[active=true]:text-[20px]" : "data-[active=true]:text-[14px]"
         } data-[active=true]:font-extrabold`}
       >
-        Lead Types
+        LEAD TYPES
         <ChevronDown aria-hidden="true" size={14} className="group-open:rotate-180" />
       </summary>
       <ul
@@ -210,20 +206,13 @@ const Navbar = () => {
             className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#104170] focus-visible:ring-offset-2"
           >
             <Image
-              src="/images/sm_logo.png"
+              src="/images/footer_logo.png"
               alt="Foreclosure Gold"
               width={1092}
               height={280}
+              sizes="(min-width: 1024px) 190px, (min-width: 477px) 200px, 42vw"
               priority
-              className="h-[56px] w-[200px] lg:hidden"
-            />
-            <Image
-              src="/images/figma/foreclosure-gold-logo.png"
-              alt="Foreclosure Gold"
-              width={198}
-              height={42}
-              priority
-              className="hidden h-auto lg:block w-[190px]"
+              className="h-auto w-[clamp(132px,42vw,200px)] lg:w-[190px]"
             />
           </Link>
 

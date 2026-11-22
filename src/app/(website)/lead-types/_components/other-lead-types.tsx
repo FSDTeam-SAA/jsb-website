@@ -4,14 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { categoryHref, publicCategoriesQueryOptions } from "@/lib/public-categories";
+import { marketingStyles as styles } from "../../_components/marketing-styles";
 
 export default function OtherLeadTypes() {
   const pathname = usePathname();
   const { data, isPending, isError, refetch } = useQuery(publicCategoriesQueryOptions);
 
   return (
-    <nav className="rounded-[12px] border border-[#dde6f0] bg-[#f4f7fb] px-[25px] py-[29px]" aria-label="Other lead types">
-      <h2 className="text-[18.7px] font-bold text-[#1c2a3a]">Other Lead Types</h2>
+    <nav className={styles.card} aria-label="Other lead types">
+      <h2 className={styles.subheading}>Other Lead Types</h2>
       {isPending && <p role="status" className="mt-2 text-sm text-[#4a5f74]">Loading categories…</p>}
       {isError && (
         <button type="button" onClick={() => void refetch()} className="mt-2 text-sm font-bold text-[#104170] hover:underline">
