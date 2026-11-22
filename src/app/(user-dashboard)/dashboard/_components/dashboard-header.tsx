@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import {
   Bell,
   ChevronDown,
+  CreditCard,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -21,9 +23,17 @@ import { getCurrentUserProfile, logoutUser } from "@/lib/auth-api";
 import { getCart } from "@/lib/cart-api";
 import { getUnreadNotificationCount } from "@/lib/notification-api";
 import LogoutModal from "@/components/modals/LogoutModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import DashboardNotificationPanel from "./dashboard-notification-panel";
 
 const displayCount = (count: number) => (count > 99 ? "99+" : String(count));
+const accountMenuLinkClass =
+  "flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-medium text-[#104170] outline-none data-[highlighted]:bg-[#eef5ff]";
 
 const mobileNavigation = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -131,26 +141,54 @@ const DashboardHeader = () => {
             {displayCount(unreadNotificationCount)}
           </span>
         </button>
-        <div className="hidden items-center gap-2 rounded-lg sm:flex">
-          <span className="grid size-10 place-items-center overflow-hidden rounded-full bg-[#157afb] text-base font-medium text-white">
-            {user?.photo ? (
-              // Profile image hosts are returned dynamically by the user API.
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={user.photo} alt="" className="size-full object-cover" />
-            ) : (
-              initials
-            )}
-          </span>
-          <div className="hidden leading-tight sm:block">
-            <p className="max-w-[120px] truncate text-sm font-medium text-[#0e1224]">
-              {fullName}
-            </p>
-            <p className="max-w-[120px] truncate text-xs text-[#b58400]">
-              {membershipLabel}
-            </p>
-          </div>
-          <ChevronDown className="hidden text-[#0e1224] sm:block" size={16} strokeWidth={1.8} />
-        </div>
+        <DropdownMenu
+          onOpenChange={(open) => {
+            if (open) setMobileNavOpen(false);
+          }}
+        >
+          <DropdownMenuTrigger
+            type="button"
+            aria-label={`Account menu for ${fullName}`}
+            className="group flex items-center gap-1 rounded-lg p-1 text-left transition hover:bg-[#eef5ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087ce7] sm:gap-2"
+          >
+            <span aria-hidden="true" className="grid size-8 place-items-center overflow-hidden rounded-full bg-[#157afb] text-base font-medium text-white sm:size-10">
+              {user?.photo ? (
+                // Profile image hosts are returned dynamically by the user API.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.photo} alt="" className="size-full object-cover" />
+              ) : (
+                initials
+              )}
+            </span>
+            <span className="hidden leading-tight sm:block">
+              <span className="block max-w-[120px] truncate text-sm font-medium text-[#0e1224]">
+                {fullName}
+              </span>
+              <span className="block max-w-[120px] truncate text-xs text-[#b58400]">
+                {membershipLabel}
+              </span>
+            </span>
+            <ChevronDown aria-hidden="true" className="text-[#0e1224] motion-safe:transition-transform group-aria-expanded:rotate-180" size={16} strokeWidth={1.8} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" sideOffset={8} className="w-48 border border-[#dbecff] bg-white p-1.5">
+            <MenuPrimitive.LinkItem render={<Link href="/dashboard/account/profile" />} className={accountMenuLinkClass}>
+              <UserRound aria-hidden="true" size={16} />
+              Profile
+            </MenuPrimitive.LinkItem>
+            <MenuPrimitive.LinkItem render={<Link href="/dashboard/account/subscription-plan" />} className={accountMenuLinkClass}>
+              <CreditCard aria-hidden="true" size={16} />
+              Subscription Plan
+            </MenuPrimitive.LinkItem>
+            <DropdownMenuSeparator />
+            <MenuPrimitive.Item
+              onClick={() => setLogoutModalOpen(true)}
+              className="flex min-h-10 cursor-pointer items-center gap-2 rounded-md px-3 text-sm font-medium text-[#ed2532] outline-none transition hover:bg-[#fff1f2] data-[highlighted]:bg-[#fff1f2]"
+            >
+              <LogOut aria-hidden="true" size={16} strokeWidth={1.9} />
+              Logout
+            </MenuPrimitive.Item>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       {notificationsOpen && (
         <DashboardNotificationPanel
