@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { apiRequest } from "@/lib/api";
+import { getCategoryDescriptionText, parseCategoryDescription } from "@/lib/category-description";
 
 type Category = {
   id: string;
@@ -107,6 +108,7 @@ const ExploreLeadTypes = () => {
             <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-12">
               {visibleCategories.map((category) => {
                 const Icon = iconForCategory(category.name);
+                const description = getCategoryDescriptionText(parseCategoryDescription(category.description));
 
                 return (
                   <article key={category.id} className="flex h-[220px] flex-col rounded-[18px] border border-black/10 p-4 shadow-[0_0_2px_rgba(0,0,0,0.25)] lg:h-[310px] lg:p-10">
@@ -116,8 +118,8 @@ const ExploreLeadTypes = () => {
                     <h3 className="mt-6 text-base font-bold leading-none tracking-[-0.035em] text-[#104170] lg:text-2xl">
                       {category.name}
                     </h3>
-                    <p className="mt-1 max-w-[240px] text-xs font-medium leading-[1.2] text-black lg:text-sm">
-                      {category.description || "Explore lead opportunities in this category."}
+                    <p className="mt-1 line-clamp-3 max-w-[240px] text-xs font-medium leading-[1.2] text-black lg:text-sm">
+                      {description || "Explore lead opportunities in this category."}
                     </p>
                     <Link
                       href={status === "authenticated" ? `/dashboard/find-leads?categoryId=${encodeURIComponent(category.id)}` : "/login"}

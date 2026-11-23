@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Phone } from "lucide-react";
+import { getCategoryDescriptionText, parseCategoryDescription } from "@/lib/category-description";
+import type { PublicCategory } from "@/lib/public-categories";
 import MarketingPageHero from "../../_components/marketing-page-hero";
 import { marketingStyles as styles } from "../../_components/marketing-styles";
+import CategoryDescription from "./category-description";
 import OtherLeadTypes from "./other-lead-types";
 
 const leadSections = [
@@ -42,10 +45,12 @@ const dataFilters = [
 ];
 
 const LeadTypesContainer = ({
-  categoryName = "Foreclosure Leads",
+  category,
 }: {
-  categoryName?: string;
+  category?: PublicCategory;
 }) => {
+  const categoryName = category?.name ?? "Foreclosure Leads";
+  const description = parseCategoryDescription(category?.description ?? null);
   const accent = categoryName.slice(categoryName.lastIndexOf(" ") + 1);
 
   return (
@@ -60,43 +65,53 @@ const LeadTypesContainer = ({
         <div className={styles.container}>
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-10">
             <article className="pb-[14px]">
-              {leadSections.map(({ title, paragraphs }, index) => (
-                <section
-                  key={title}
-                  className={index === 0 ? "" : "border-t border-[#dde6f0] pt-[37px]"}
-                >
-                  <h2 className={styles.heading}>
-                    {title}
-                  </h2>
-                  <div className={`mt-3 space-y-3 pb-6 ${styles.body}`}>
-                    {paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
-                </section>
-              ))}
-
-              <section className="border-t border-[#dde6f0] pt-[37px]">
-                <h2 className={styles.heading}>
-                  Targeted Foreclosure Data Lists
-                </h2>
-                <p className={`mt-3 ${styles.body}`}>
-                  Our proprietary data warehouse lets you pull foreclosure
-                  records filtered by:
-                </p>
-                <ul className={`mt-3 list-disc space-y-2 pl-5 marker:text-[#104170] ${styles.body}`}>
-                  {dataFilters.map((filter) => (
-                    <li key={filter}>{filter}</li>
+              {category ? (
+                getCategoryDescriptionText(description) ? (
+                  <CategoryDescription nodes={description} />
+                ) : (
+                  <p className={styles.body}>Explore lead opportunities in this category.</p>
+                )
+              ) : (
+                <>
+                  {leadSections.map(({ title, paragraphs }, index) => (
+                    <section
+                      key={title}
+                      className={index === 0 ? "" : "border-t border-[#dde6f0] pt-[37px]"}
+                    >
+                      <h2 className={styles.heading}>
+                        {title}
+                      </h2>
+                      <div className={`mt-3 space-y-3 pb-6 ${styles.body}`}>
+                        {paragraphs.map((paragraph) => (
+                          <p key={paragraph}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </section>
                   ))}
-                </ul>
-                <p className={`mt-3 ${styles.body}`}>
-                  These lists are delivered in CSV or Excel format, ready to
-                  load into your dialer or import into any system your team
-                  uses, and can be scaled up or down based on your capacity.
-                  Call <a href="tel:+19496301858" className="font-bold text-[#4a5f74] underline-offset-2 hover:underline">(949) 630-1858</a> today for
-                  pricing and current availability in your target counties.
-                </p>
-              </section>
+
+                  <section className="border-t border-[#dde6f0] pt-[37px]">
+                    <h2 className={styles.heading}>
+                      Targeted Foreclosure Data Lists
+                    </h2>
+                    <p className={`mt-3 ${styles.body}`}>
+                      Our proprietary data warehouse lets you pull foreclosure
+                      records filtered by:
+                    </p>
+                    <ul className={`mt-3 list-disc space-y-2 pl-5 marker:text-[#104170] ${styles.body}`}>
+                      {dataFilters.map((filter) => (
+                        <li key={filter}>{filter}</li>
+                      ))}
+                    </ul>
+                    <p className={`mt-3 ${styles.body}`}>
+                      These lists are delivered in CSV or Excel format, ready to
+                      load into your dialer or import into any system your team
+                      uses, and can be scaled up or down based on your capacity.
+                      Call <a href="tel:+19496301858" className="font-bold text-[#4a5f74] underline-offset-2 hover:underline">(949) 630-1858</a> today for
+                      pricing and current availability in your target counties.
+                    </p>
+                  </section>
+                </>
+              )}
             </article>
 
             <aside className="space-y-5 lg:pb-5">
